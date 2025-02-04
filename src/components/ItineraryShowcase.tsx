@@ -1,43 +1,43 @@
-import { motion } from 'framer-motion';
-import { useState } from 'react';
-import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
+import { motion } from "framer-motion";
+import { useState } from "react";
+import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 
 const sampleItineraries = [
   {
-    destination: 'Paris, France',
-    duration: '5 Days',
+    destination: "Paris, France",
+    duration: "5 Days",
     highlights: [
-      'Morning visit to the Eiffel Tower',
-      'Private tour of the Louvre Museum',
-      'Luxury dinner cruise on the Seine',
-      'Day trip to Versailles Palace',
-      'Wine tasting in Montmartre',
+      "Morning visit to the Eiffel Tower",
+      "Private tour of the Louvre Museum",
+      "Luxury dinner cruise on the Seine",
+      "Day trip to Versailles Palace",
+      "Wine tasting in Montmartre",
     ],
-    image: '/images/paris.jpg',
+    image: "/images/paris.jpg",
   },
   {
-    destination: 'Santorini, Greece',
-    duration: '7 Days',
+    destination: "Santorini, Greece",
+    duration: "7 Days",
     highlights: [
-      'Sunset yacht cruise around the caldera',
-      'Private wine tasting tour',
-      'Luxury spa day in Oia',
-      'Traditional cooking class',
-      'Beach hopping by private boat',
+      "Sunset yacht cruise around the caldera",
+      "Private wine tasting tour",
+      "Luxury spa day in Oia",
+      "Traditional cooking class",
+      "Beach hopping by private boat",
     ],
-    image: '/images/santorni.jpg',
+    image: "/images/santorni.jpg",
   },
   {
-    destination: 'Dubai, UAE',
-    duration: '6 Days',
+    destination: "Dubai, UAE",
+    duration: "6 Days",
     highlights: [
-      'Desert safari with luxury camping',
-      'VIP tour of Burj Khalifa',
-      'Private yacht tour of Dubai Marina',
-      'Gold Souk shopping experience',
-      'Helicopter tour of Palm Jumeirah',
+      "Desert safari with luxury camping",
+      "VIP tour of Burj Khalifa",
+      "Private yacht tour of Dubai Marina",
+      "Gold Souk shopping experience",
+      "Helicopter tour of Palm Jumeirah",
     ],
-    image: '/images/dubai.jpg',
+    image: "/images/dubai.jpg",
   },
 ];
 
@@ -49,13 +49,15 @@ export default function ItineraryShowcase() {
   };
 
   const prevItinerary = () => {
-    setCurrentIndex((prev) => (prev - 1 + sampleItineraries.length) % sampleItineraries.length);
+    setCurrentIndex(
+      (prev) => (prev - 1 + sampleItineraries.length) % sampleItineraries.length
+    );
   };
 
   return (
-    <section className="section-padding bg-navy relative overflow-hidden">
+    <section className="section-padding  relative overflow-hidden">
       <div className="absolute inset-0 bg-[url('/images/world-map.png')] opacity-5" />
-      
+
       <div className="max-w-6xl mx-auto px-4 relative">
         <motion.h2
           initial={{ opacity: 0, y: 20 }}
@@ -86,14 +88,21 @@ export default function ItineraryShowcase() {
                 <h3 className="text-2xl font-bold mb-2 gradient-text">
                   {sampleItineraries[currentIndex].destination}
                 </h3>
-                <p className="text-gold mb-4">{sampleItineraries[currentIndex].duration}</p>
+                <p className="text-gold mb-4">
+                  {sampleItineraries[currentIndex].duration}
+                </p>
                 <ul className="space-y-3">
-                  {sampleItineraries[currentIndex].highlights.map((highlight) => (
-                    <li key={highlight} className="flex items-center text-white/90">
-                      <span className="text-gold mr-2">✦</span>
-                      {highlight}
-                    </li>
-                  ))}
+                  {sampleItineraries[currentIndex].highlights.map(
+                    (highlight) => (
+                      <li
+                        key={highlight}
+                        className="flex items-center text-white/90"
+                      >
+                        <span className="text-gold mr-2">✦</span>
+                        {highlight}
+                      </li>
+                    )
+                  )}
                 </ul>
               </div>
             </div>

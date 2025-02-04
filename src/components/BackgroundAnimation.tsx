@@ -1,57 +1,63 @@
-'use client';
+"use client";
 
-import { motion } from 'framer-motion';
+import { motion } from "framer-motion";
+import { useEffect, useState } from "react";
 
-export default function BackgroundAnimation() {
+export default function DeepFusionWaves() {
+  const [windowSize, setWindowSize] = useState({ width: 1920, height: 1080 });
+
+  useEffect(() => {
+    setWindowSize({ width: window.innerWidth, height: window.innerHeight });
+
+    const handleResize = () => {
+      setWindowSize({ width: window.innerWidth, height: window.innerHeight });
+    };
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
   return (
-    <div className="fixed inset-0 pointer-events-none overflow-hidden">
-      {/* Background gradient */}
-      <div className="absolute inset-0 bg-gradient-to-b from-navy via-navy-dark to-navy opacity-90" />
+    <div className="fixed inset-0 overflow-hidden pointer-events-none">
+      {/* Background Gradient */}
+      <motion.div
+        className="absolute inset-0"
+        style={{
+          background: `radial-gradient(circle at 20% 30%, #0047AB, transparent),
+                       radial-gradient(circle at 80% 70%, #000, transparent)`,
+          filter: "blur(80px)", // Reduced for performance
+          willChange: "transform, opacity", // Helps browser optimize
+        }}
+        animate={{
+          scale: [1, 1.05, 1],
+          rotate: [0, 5, -5, 0],
+        }}
+        transition={{
+          duration: 8,
+          repeat: Infinity,
+          ease: "easeInOut",
+        }}
+      />
 
-      {/* Animated paths */}
-      <svg
-        className="absolute inset-0 w-full h-full"
-        viewBox="0 0 100 100"
-        preserveAspectRatio="none"
-      >
-        <motion.path
-          d="M10,90 Q90,90 90,45 Q90,10 50,10"
-          stroke="var(--navy-light)"
-          strokeWidth="0.5"
-          fill="none"
-          initial={{ pathLength: 0, opacity: 0.2 }}
-          animate={{ pathLength: 1, opacity: 0.4 }}
-          transition={{ duration: 4, repeat: Infinity, repeatType: "reverse", ease: "easeInOut" }}
-        />
-        <motion.path
-          d="M90,90 Q10,90 10,45 Q10,10 50,10"
-          stroke="var(--navy-light)"
-          strokeWidth="0.5"
-          fill="none"
-          initial={{ pathLength: 0, opacity: 0.2 }}
-          animate={{ pathLength: 1, opacity: 0.4 }}
-          transition={{ duration: 4, delay: 2, repeat: Infinity, repeatType: "reverse", ease: "easeInOut" }}
-        />
-      </svg>
-
-      {/* Glowing dots - reduced number for better performance */}
-      {Array.from({ length: 10 }).map((_, i) => (
+      {/* Wave Layers - Reduced to 3 */}
+      {Array.from({ length: 3 }).map((_, i) => (
         <motion.div
           key={i}
-          className="absolute w-1 h-1 bg-navy-light rounded-full"
-          initial={{
-            x: Math.random() * window.innerWidth,
-            y: Math.random() * window.innerHeight,
-            opacity: 0
+          className="absolute w-full h-full"
+          style={{
+            background: `radial-gradient(circle at 50% 50%, rgba(0, 123, 255, 0.3), transparent)`,
+            filter: "blur(120px)", // Lowered blur
+            willChange: "transform, opacity",
           }}
           animate={{
-            opacity: [0, 0.4, 0]
+            scale: [1, 1.08, 1],
+            rotate: [0, 3, -3, 0],
+            translateY: ["0%", "5%", "-5%", "0%"], // More efficient than x/y
           }}
           transition={{
-            duration: 4,
+            duration: 10 + i * 2,
             repeat: Infinity,
-            delay: Math.random() * 2,
-            ease: "easeInOut"
+            ease: "easeInOut",
           }}
         />
       ))}

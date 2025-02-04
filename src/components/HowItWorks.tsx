@@ -1,21 +1,21 @@
-import { motion } from 'framer-motion';
-import { FaQuestionCircle, FaMagic, FaPlane } from 'react-icons/fa';
+import { motion } from "framer-motion";
+import { FaQuestionCircle, FaMagic, FaPlane } from "react-icons/fa";
 
 const steps = [
   {
     icon: <FaQuestionCircle className="text-4xl md:text-5xl" />,
-    title: 'Answer a Few Questions',
-    description: 'Tell us about your dream trip preferences',
+    title: "Answer a Few Questions",
+    description: "Tell us about your dream trip preferences",
   },
   {
     icon: <FaMagic className="text-4xl md:text-5xl" />,
-    title: 'Let AI Curate Your Itinerary',
-    description: 'Get instant, personalized travel plans',
+    title: "Let AI Curate Your Itinerary",
+    description: "Get instant, personalized travel plans",
   },
   {
     icon: <FaPlane className="text-4xl md:text-5xl" />,
-    title: 'Download & Enjoy',
-    description: 'Start your dream journey hassle-free',
+    title: "Download & Enjoy",
+    description: "Start your dream journey hassle-free",
   },
 ];
 
@@ -41,13 +41,13 @@ const itemVariants = {
 
 export default function HowItWorks() {
   return (
-    <section className="section-padding bg-navy text-white">
+    <section className="section-padding  text-white">
       <div className="max-w-6xl mx-auto px-4">
         <motion.h2
           initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
+          whileInView={{ opacity: 1, y: 10 }}
           viewport={{ once: true }}
-          className="text-3xl md:text-4xl font-bold text-center mb-16"
+          className="text-3xl md:text-4xl font-bold text-gold text-center mb-16"
         >
           <span className="gradient-text">How It Works</span>
         </motion.h2>
@@ -68,7 +68,9 @@ export default function HowItWorks() {
               <div className="flex justify-center mb-6">
                 <div className="gradient-text">{step.icon}</div>
               </div>
-              <h3 className="text-xl md:text-2xl font-bold mb-4">{step.title}</h3>
+              <h3 className="text-xl md:text-2xl font-bold mb-4">
+                {step.title}
+              </h3>
               <p className="text-white/80">{step.description}</p>
             </motion.div>
           ))}

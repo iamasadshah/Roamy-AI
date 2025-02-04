@@ -1,26 +1,27 @@
-import { motion } from 'framer-motion';
-import { FaStar } from 'react-icons/fa';
+import { motion } from "framer-motion";
+import { FaStar } from "react-icons/fa";
+import Image from "next/image";
 
 const testimonials = [
   {
-    name: 'Sarah Johnson',
-    role: 'Solo Traveler',
-    image: '/images/sara-profile.jpg',
-    text: 'Travel Tactician made planning my solo trip to Japan effortless. The AI understood exactly what I was looking for and created the perfect balance of culture and adventure.',
+    name: "Sarah Johnson",
+    role: "Solo Traveler",
+    image: "/images/sara-profile.jpg",
+    text: "Travel Tactician made planning my solo trip to Japan effortless. The AI understood exactly what I was looking for and created the perfect balance of culture and adventure.",
     rating: 5,
   },
   {
-    name: 'Michael & Emma',
-    role: 'Couple',
-    image: '/images/couple.jpg',
-    text: 'We used Travel Tactician for our honeymoon in Greece, and it exceeded our expectations. The romantic dinner recommendations were spot-on!',
+    name: "Michael & Emma",
+    role: "Couple",
+    image: "/images/couple.jpg",
+    text: "We used Travel Tactician for our honeymoon in Greece, and it exceeded our expectations. The romantic dinner recommendations were spot-on!",
     rating: 5,
   },
   {
-    name: 'The Anderson Family',
-    role: 'Family of Four',
-    image: '/images/family-profile.jpg',
-    text: 'Planning a family trip can be overwhelming, but Travel Tactician made it simple. The kid-friendly activities and convenient logistics made our vacation stress-free.',
+    name: "The Anderson Family",
+    role: "Family of Four",
+    image: "/images/family-profile.jpg",
+    text: "Planning a family trip can be overwhelming, but Travel Tactician made it simple. The kid-friendly activities and convenient logistics made our vacation stress-free.",
     rating: 5,
   },
 ];
@@ -47,7 +48,7 @@ const itemVariants = {
 
 export default function Testimonials() {
   return (
-    <section className="section-padding bg-white/5 backdrop-blur-lg">
+    <section className="section-padding  backdrop-blur-lg">
       <div className="max-w-6xl mx-auto px-4">
         <motion.h2
           initial={{ opacity: 0, y: 20 }}
@@ -73,7 +74,9 @@ export default function Testimonials() {
             >
               <div className="mb-4 relative">
                 <div className="w-16 h-16 rounded-full overflow-hidden mx-auto">
-                  <img
+                  <Image
+                    width={200}
+                    height={200}
                     src={testimonial.image}
                     alt={testimonial.name}
                     className="w-full h-full object-cover"
@@ -88,10 +91,14 @@ export default function Testimonials() {
                 </div>
               </div>
               <div className="text-center mb-4">
-                <h3 className="font-bold text-lg text-gold">{testimonial.name}</h3>
+                <h3 className="font-bold text-lg text-gold">
+                  {testimonial.name}
+                </h3>
                 <p className="text-white/70 text-sm">{testimonial.role}</p>
               </div>
-              <p className="text-white/90 text-center italic flex-grow">"{testimonial.text}"</p>
+              <p className="text-white/90 text-center italic flex-grow">
+                "{testimonial.text}"
+              </p>
             </motion.div>
           ))}
         </motion.div>
