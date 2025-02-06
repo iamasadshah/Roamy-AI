@@ -3,17 +3,17 @@ import { FaQuestionCircle, FaMagic, FaPlane } from "react-icons/fa";
 
 const steps = [
   {
-    icon: <FaQuestionCircle className="text-4xl md:text-5xl" />,
+    icon: <FaQuestionCircle className="text-4xl md:text-5xl text-gold" />,
     title: "Answer a Few Questions",
     description: "Tell us about your dream trip preferences",
   },
   {
-    icon: <FaMagic className="text-4xl md:text-5xl" />,
+    icon: <FaMagic className="text-4xl md:text-5xl text-gold" />,
     title: "Let AI Curate Your Itinerary",
     description: "Get instant, personalized travel plans",
   },
   {
-    icon: <FaPlane className="text-4xl md:text-5xl" />,
+    icon: <FaPlane className="text-4xl md:text-5xl text-gold" />,
     title: "Download & Enjoy",
     description: "Start your dream journey hassle-free",
   },
@@ -59,7 +59,7 @@ export default function HowItWorks() {
           viewport={{ once: true }}
           className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12"
         >
-          {steps.map((step, index) => (
+          {steps.map((step) => (
             <motion.div
               key={step.title}
               variants={itemVariants}

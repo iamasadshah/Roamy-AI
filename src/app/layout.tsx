@@ -13,8 +13,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Travel Tactician",
-  description: "You AI Travel Guide",
+  title: "Roamy AI",
+  description: "Your Smart Travel Buddy! ",
 };
 
 export default function RootLayout({

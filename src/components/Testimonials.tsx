@@ -7,21 +7,21 @@ const testimonials = [
     name: "Sarah Johnson",
     role: "Solo Traveler",
     image: "/images/sara-profile.jpg",
-    text: "Travel Tactician made planning my solo trip to Japan effortless. The AI understood exactly what I was looking for and created the perfect balance of culture and adventure.",
+    text: "Roamy AI made planning my solo trip to Japan effortless. The AI understood exactly what I was looking for and created the perfect balance of culture and adventure.",
     rating: 5,
   },
   {
     name: "Michael & Emma",
     role: "Couple",
     image: "/images/couple.jpg",
-    text: "We used Travel Tactician for our honeymoon in Greece, and it exceeded our expectations. The romantic dinner recommendations were spot-on!",
+    text: "We used Roamy AI for our honeymoon in Greece, and it exceeded our expectations. The romantic dinner recommendations were spot-on!",
     rating: 5,
   },
   {
     name: "The Anderson Family",
     role: "Family of Four",
     image: "/images/family-profile.jpg",
-    text: "Planning a family trip can be overwhelming, but Travel Tactician made it simple. The kid-friendly activities and convenient logistics made our vacation stress-free.",
+    text: "Planning a family trip can be overwhelming, but Roamy AI made it simple. The kid-friendly activities and convenient logistics made our vacation stress-free.",
     rating: 5,
   },
 ];
@@ -97,7 +97,7 @@ export default function Testimonials() {
                 <p className="text-white/70 text-sm">{testimonial.role}</p>
               </div>
               <p className="text-white/90 text-center italic flex-grow">
-                "{testimonial.text}"
+                &quot;{testimonial.text}&quot;
               </p>
             </motion.div>
           ))}

@@ -1,16 +1,12 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 
 export default function DeepFusionWaves() {
-  const [windowSize, setWindowSize] = useState({ width: 1920, height: 1080 });
-
   useEffect(() => {
-    setWindowSize({ width: window.innerWidth, height: window.innerHeight });
-
     const handleResize = () => {
-      setWindowSize({ width: window.innerWidth, height: window.innerHeight });
+      // This will trigger re-render if needed (currently it's not doing anything)
     };
 
     window.addEventListener("resize", handleResize);
@@ -25,8 +21,8 @@ export default function DeepFusionWaves() {
         style={{
           background: `radial-gradient(circle at 20% 30%, #0047AB, transparent),
                        radial-gradient(circle at 80% 70%, #000, transparent)`,
-          filter: "blur(80px)", // Reduced for performance
-          willChange: "transform, opacity", // Helps browser optimize
+          filter: "blur(80px)",
+          willChange: "transform, opacity",
         }}
         animate={{
           scale: [1, 1.05, 1],
@@ -46,13 +42,13 @@ export default function DeepFusionWaves() {
           className="absolute w-full h-full"
           style={{
             background: `radial-gradient(circle at 50% 50%, rgba(0, 123, 255, 0.3), transparent)`,
-            filter: "blur(120px)", // Lowered blur
+            filter: "blur(120px)",
             willChange: "transform, opacity",
           }}
           animate={{
             scale: [1, 1.08, 1],
             rotate: [0, 3, -3, 0],
-            translateY: ["0%", "5%", "-5%", "0%"], // More efficient than x/y
+            translateY: ["0%", "5%", "-5%", "0%"],
           }}
           transition={{
             duration: 10 + i * 2,

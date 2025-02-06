@@ -58,7 +58,7 @@ export default function Features() {
           viewport={{ once: true }}
           className="text-3xl md:text-4xl font-bold text-center mb-16"
         >
-          <span className="gradient-text">Why Choose Travel Tactician</span>
+          <span className="gradient-text">Why Choose Roamy AI</span>
         </motion.h2>
 
         <motion.div

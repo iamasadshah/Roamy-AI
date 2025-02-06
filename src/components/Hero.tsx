@@ -1,5 +1,4 @@
 import { motion } from "framer-motion";
-import Image from "next/image";
 import { useEffect, useState } from "react";
 import { FaArrowDown } from "react-icons/fa";
 import Typewriter from "typewriter-effect";
