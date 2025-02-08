@@ -1,5 +1,5 @@
-import { TravelItinerary } from '@/types/itinerary';
-import StructuredItinerary from './StructuredItinerary';
+import { TravelItinerary } from "@/types/itinerary";
+import StructuredItinerary from "./StructuredItinerary";
 
 interface TripPlanProps {
   plan: TravelItinerary | null;
@@ -21,7 +21,9 @@ export default function TripPlan({ plan, isLoading }: TripPlanProps) {
 
   return (
     <div className="w-full max-w-4xl mx-auto">
-      <h2 className="text-3xl font-bold text-white mb-8 text-center">Your Travel Itinerary</h2>
+      <h2 className="text-3xl font-bold text-white mb-8 text-center">
+        Your Travel Itinerary
+      </h2>
       <StructuredItinerary itinerary={plan} />
     </div>
   );

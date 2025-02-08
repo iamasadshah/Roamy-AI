@@ -16,6 +16,14 @@ export default function DeepFusionWaves() {
   return (
     <div className="fixed inset-0 overflow-hidden pointer-events-none">
       {/* Background Gradient */}
+      <video
+        className="absolute inset-0 w-full h-full object-cover bg-center"
+        src="/images/bg-video.webm" // Ensure correct path
+        autoPlay
+        loop
+        muted
+        playsInline
+      />
       <motion.div
         className="absolute inset-0"
         style={{

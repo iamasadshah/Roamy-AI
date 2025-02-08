@@ -17,11 +17,13 @@ export default function Hero() {
 
   return (
     <div className="relative min-h-screen">
-      {/* Background Animation */}
+      {/* Background Video */}
+
+      {/* Background Animation (Optional) */}
       <BackgroundAnimation />
 
-      {/* Overlay gradient */}
-      <div className="absolute inset-0 " />
+      {/* Overlay gradient for readability */}
+      <div className="absolute inset-0" />
 
       {/* Content */}
       <div className="relative z-10 flex flex-col items-center justify-center min-h-screen text-white text-center px-4">

@@ -41,7 +41,7 @@ const itemVariants = {
 
 export default function HowItWorks() {
   return (
-    <section className="section-padding  text-white">
+    <section className="section-padding  text-white ">
       <div className="max-w-6xl mx-auto px-4">
         <motion.h2
           initial={{ opacity: 0, y: 20 }}
