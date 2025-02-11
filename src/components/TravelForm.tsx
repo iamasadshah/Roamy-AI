@@ -1,7 +1,15 @@
-import { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
+import { useState, useEffect } from "react";
+import { motion } from "framer-motion";
 import "react-datepicker/dist/react-datepicker.css";
-import { FaCalendar, FaPlane, FaUsers, FaHotel, FaUtensils, FaEnvelope, FaMoneyBillWave } from 'react-icons/fa';
+import {
+  FaCalendar,
+  FaPlane,
+  FaUsers,
+  FaHotel,
+  FaUtensils,
+  FaEnvelope,
+  FaMoneyBillWave,
+} from "react-icons/fa";
 
 interface TravelFormData {
   destination: string;
@@ -15,17 +23,21 @@ interface TravelFormData {
   dietaryPreferences: string;
 }
 
-export default function TravelForm({ onSubmit }: { onSubmit: (data: TravelFormData) => void }) {
+export default function TravelForm({
+  onSubmit,
+}: {
+  onSubmit: (data: TravelFormData) => void;
+}) {
   const [formData, setFormData] = useState<TravelFormData>({
-    destination: '',
-    duration: '',
+    destination: "",
+    duration: "",
     budget: 1000,
     interests: [],
-    travelStyle: '',
-    accommodation: '',
-    email: '',
+    travelStyle: "",
+    accommodation: "",
+    email: "",
     numberOfTravelers: 1,
-    dietaryPreferences: ''
+    dietaryPreferences: "",
   });
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -43,7 +55,7 @@ export default function TravelForm({ onSubmit }: { onSubmit: (data: TravelFormDa
     hover:border-white/30
     outline-none rounded-lg
   `;
-  
+
   const pickerClasses = `
     w-full px-4 py-3 rounded-lg
     border border-white/20
@@ -61,11 +73,12 @@ export default function TravelForm({ onSubmit }: { onSubmit: (data: TravelFormDa
     bg-no-repeat
     pr-12
   `;
-  
-  const labelClasses = "flex items-center gap-2 text-white/90 font-semibold mb-2 text-sm uppercase tracking-wide z-10";
+
+  const labelClasses =
+    "flex items-center gap-2 text-white/90 font-semibold mb-2 text-sm uppercase tracking-wide z-10";
   const iconClasses = "text-blue-400 text-lg";
 
-  // const datePickerWrapperClasses = "relative z-50";  
+  // const datePickerWrapperClasses = "relative z-50";
   // const datePickerCustomClasses = `
   //   ${inputClasses}
   //   !bg-transparent
@@ -73,26 +86,26 @@ export default function TravelForm({ onSubmit }: { onSubmit: (data: TravelFormDa
   // `;
 
   const dietaryOptions = [
-    'No Preference',
-    'Vegetarian',
-    'Vegan',
-    'Gluten-Free',
-    'Halal',
-    'Kosher',
-    'Pescatarian',
-    'Dairy-Free'
+    "No Preference",
+    "Vegetarian",
+    "Vegan",
+    "Gluten-Free",
+    "Halal",
+    "Kosher",
+    "Pescatarian",
+    "Dairy-Free",
   ];
 
   const formatBudget = (value: number) => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
-      maximumFractionDigits: 0
+    return new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency: "USD",
+      maximumFractionDigits: 0,
     }).format(value);
   };
 
   useEffect(() => {
-    const style = document.createElement('style');
+    const style = document.createElement("style");
     style.textContent = `
       .react-datepicker-wrapper {
         width: 100%;
@@ -140,7 +153,7 @@ export default function TravelForm({ onSubmit }: { onSubmit: (data: TravelFormDa
   }, []);
 
   useEffect(() => {
-    const style = document.createElement('style');
+    const style = document.createElement("style");
     style.textContent = `
       .react-datepicker {
         font-family: inherit;
@@ -182,10 +195,7 @@ export default function TravelForm({ onSubmit }: { onSubmit: (data: TravelFormDa
       onSubmit={handleSubmit}
     >
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-        <motion.div
-          whileHover={{ scale: 1.02 }}
-          className="col-span-full"
-        >
+        <motion.div whileHover={{ scale: 1.02 }} className="col-span-full">
           <label className={labelClasses}>
             <FaPlane className={iconClasses} />
             Destination
@@ -195,7 +205,9 @@ export default function TravelForm({ onSubmit }: { onSubmit: (data: TravelFormDa
             className={inputClasses}
             placeholder="Where would you like to go?"
             value={formData.destination}
-            onChange={(e) => setFormData({ ...formData, destination: e.target.value })}
+            onChange={(e) =>
+              setFormData({ ...formData, destination: e.target.value })
+            }
             required
           />
         </motion.div>
@@ -210,7 +222,9 @@ export default function TravelForm({ onSubmit }: { onSubmit: (data: TravelFormDa
             className={inputClasses}
             placeholder="e.g., 7 days"
             value={formData.duration}
-            onChange={(e) => setFormData({ ...formData, duration: e.target.value })}
+            onChange={(e) =>
+              setFormData({ ...formData, duration: e.target.value })
+            }
             required
           />
         </motion.div>
@@ -241,7 +255,12 @@ export default function TravelForm({ onSubmit }: { onSubmit: (data: TravelFormDa
                   [&::-webkit-slider-thumb]:transition-all
                   [&::-webkit-slider-thumb]:hover:scale-110"
                 value={formData.budget}
-                onChange={(e) => setFormData({ ...formData, budget: parseInt(e.target.value) })}
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    budget: parseInt(e.target.value),
+                  })
+                }
                 required
               />
               <input
@@ -268,27 +287,30 @@ export default function TravelForm({ onSubmit }: { onSubmit: (data: TravelFormDa
         </motion.div>
 
         <motion.div whileHover={{ scale: 1.02 }}>
-          <label className={labelClasses}>
-            Interests
-          </label>
+          <label className={labelClasses}>Interests</label>
           <input
             type="text"
             className={inputClasses}
             placeholder="Enter your interests"
-            value={formData.interests.join(', ')}
-            onChange={(e) => setFormData({ ...formData, interests: e.target.value.split(', ') })}
+            value={formData.interests.join(", ")}
+            onChange={(e) =>
+              setFormData({
+                ...formData,
+                interests: e.target.value.split(", "),
+              })
+            }
             required
           />
         </motion.div>
 
         <motion.div whileHover={{ scale: 1.02 }}>
-          <label className={labelClasses}>
-            Travel Style
-          </label>
+          <label className={labelClasses}>Travel Style</label>
           <select
             className={pickerClasses}
             value={formData.travelStyle}
-            onChange={(e) => setFormData({ ...formData, travelStyle: e.target.value })}
+            onChange={(e) =>
+              setFormData({ ...formData, travelStyle: e.target.value })
+            }
             required
           >
             <option value="">Select style</option>
@@ -307,7 +329,9 @@ export default function TravelForm({ onSubmit }: { onSubmit: (data: TravelFormDa
           <select
             className={pickerClasses}
             value={formData.accommodation}
-            onChange={(e) => setFormData({ ...formData, accommodation: e.target.value })}
+            onChange={(e) =>
+              setFormData({ ...formData, accommodation: e.target.value })
+            }
             required
           >
             <option value="">Select preference</option>
@@ -328,7 +352,12 @@ export default function TravelForm({ onSubmit }: { onSubmit: (data: TravelFormDa
             className={inputClasses}
             placeholder="e.g., 2"
             value={formData.numberOfTravelers}
-            onChange={(e) => setFormData({ ...formData, numberOfTravelers: parseInt(e.target.value) })}
+            onChange={(e) =>
+              setFormData({
+                ...formData,
+                numberOfTravelers: parseInt(e.target.value),
+              })
+            }
             required
           />
         </motion.div>
@@ -341,12 +370,20 @@ export default function TravelForm({ onSubmit }: { onSubmit: (data: TravelFormDa
           <select
             className={`${inputClasses} appearance-none bg-black/40`}
             value={formData.dietaryPreferences}
-            onChange={(e) => setFormData({ ...formData, dietaryPreferences: e.target.value })}
+            onChange={(e) =>
+              setFormData({ ...formData, dietaryPreferences: e.target.value })
+            }
             required
           >
-            <option value="" disabled>Select your dietary preference</option>
+            <option value="" disabled>
+              Select your dietary preference
+            </option>
             {dietaryOptions.map((option) => (
-              <option key={option} value={option} className="bg-gray-800 text-white">
+              <option
+                key={option}
+                value={option}
+                className="bg-gray-800 text-white"
+              >
                 {option}
               </option>
             ))}
@@ -363,7 +400,9 @@ export default function TravelForm({ onSubmit }: { onSubmit: (data: TravelFormDa
             className={inputClasses}
             placeholder="Enter your email"
             value={formData.email}
-            onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+            onChange={(e) =>
+              setFormData({ ...formData, email: e.target.value })
+            }
             required
           />
         </motion.div>

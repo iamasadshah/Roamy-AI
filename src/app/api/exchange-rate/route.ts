@@ -10,7 +10,7 @@ export async function GET(request: Request) {
   }
 
   try {
-    const exchangeApiKey = process.env.EXCHANGERATE_API_KEY;
+    const exchangeApiKey = process.env.NEXT_PUBLIC_EXCHANGERATE_API;
     if (!exchangeApiKey) {
       throw new Error('Exchange rate API key not configured');
     }

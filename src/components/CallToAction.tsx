@@ -36,8 +36,8 @@ export default function CallToAction() {
             Get My Free AI Itinerary
           </motion.button>
 
-          <p className="text-white/70">
-            No credit card required • Instant itinerary generation
+          <p className="text-white/70 font-semibold">
+            Retry if an error occurs. The app is in Testing mode.
           </p>
         </motion.div>
       </div>
