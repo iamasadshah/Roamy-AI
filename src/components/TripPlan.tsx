@@ -9,8 +9,15 @@ interface TripPlanProps {
 export default function TripPlan({ plan, isLoading }: TripPlanProps) {
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center min-h-[200px]">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-400"></div>
+      <div className="flex flex-col items-center justify-center min-h-[200px] space-y-4">
+        <div className="relative w-16 h-16">
+          <div className="absolute top-0 left-0 w-full h-full border-4 border-blue-400/30 rounded-full"></div>
+          <div className="absolute top-0 left-0 w-full h-full border-4 border-transparent border-t-blue-500 rounded-full animate-spin"></div>
+          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+            <div className="w-6 h-6 bg-blue-500/20 rounded-full pulse-animation"></div>
+          </div>
+        </div>
+        <p className="text-blue-400 animate-pulse">AI Processing...</p>
       </div>
     );
   }
