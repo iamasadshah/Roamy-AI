@@ -1,7 +1,16 @@
-import type { NextConfig } from "next";
 
-const nextConfig: NextConfig = {
-  /* config options here */
-};
+import withPWA from 'next-pwa';
+
+const nextConfig = withPWA({
+  dest: 'public',
+  register: true,
+  skipWaiting: true,
+  disable: process.env.NODE_ENV === 'development'
+})({
+  reactStrictMode: true,
+  images: {
+    domains: ['images.unsplash.com'],
+  },
+});
 
 export default nextConfig;

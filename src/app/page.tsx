@@ -20,12 +20,18 @@ export default function Home() {
 
   const handleSubmit = async (formData: FormData) => {
     setIsLoading(true);
+    setTripPlan(null);
+    
     try {
       const plan = await generateTripPlan(formData);
+      if (!plan || !plan.trip_overview) {
+        throw new Error('Invalid plan data received');
+      }
       setTripPlan(plan);
       toast.success("Trip itinerary generated successfully!");
     } catch (error) {
-      toast.error("Failed to generate itinerary. Please try again.");
+      const errorMessage = error instanceof Error ? error.message : "Failed to generate itinerary";
+      toast.error(errorMessage);
       console.error("Error generating trip plan:", error);
     } finally {
       setIsLoading(false);

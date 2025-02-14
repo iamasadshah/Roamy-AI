@@ -6,12 +6,27 @@ interface StructuredItineraryProps {
   itinerary: TravelItinerary;
 }
 
+import { useState, useEffect } from 'react';
+import { TravelItinerary } from '@/types/itinerary';
+
+interface StructuredItineraryProps {
+  itinerary: TravelItinerary;
+}
+
 export default function StructuredItinerary({ itinerary }: StructuredItineraryProps) {
   const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
     setIsClient(true);
   }, []);
+
+  if (!itinerary || !itinerary.trip_overview) {
+    return (
+      <div className="text-center p-4">
+        <p className="text-red-500">No itinerary data available</p>
+      </div>
+    );
+  }
 
   if (!itinerary) return null;
   if (!isClient) {
