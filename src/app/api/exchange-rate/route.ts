@@ -11,29 +11,24 @@ export async function GET(request: Request) {
       return NextResponse.json({ error: 'Currency code is required' }, { status: 400 });
     }
 
-    const exchangeApiKey = process.env.NEXT_PUBLIC_EXCHANGERATE_API;
-    if (!exchangeApiKey) {
+    const apiKey = process.env.NEXT_PUBLIC_EXCHANGERATE_API;
+    if (!apiKey) {
       return NextResponse.json({ error: 'API configuration error' }, { status: 500 });
     }
 
     const response = await axios.get(
-      `https://api.exchangerate-api.com/v4/latest/USD`,
-      {
-        headers: {
-          'Authorization': `Bearer ${exchangeApiKey}`
-        },
-        timeout: 5000
-      }
+      `https://api.freecurrencyapi.com/v1/latest?apikey=${apiKey}&base_currency=USD&currencies=${currency}`
     );
 
-    if (!response.data?.rates?.[currency]) {
+    const rate = response.data?.data?.[currency];
+    if (!rate) {
       return NextResponse.json(
         { error: `Exchange rate not available for ${currency}` },
         { status: 404 }
       );
     }
 
-    return NextResponse.json({ rate: response.data.rates[currency] });
+    return NextResponse.json({ rate });
   } catch (error) {
     console.error('Exchange rate error:', error);
     return NextResponse.json(
