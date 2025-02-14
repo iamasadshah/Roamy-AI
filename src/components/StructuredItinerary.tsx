@@ -6,13 +6,6 @@ interface StructuredItineraryProps {
   itinerary: TravelItinerary;
 }
 
-import { useState, useEffect } from 'react';
-import { TravelItinerary } from '@/types/itinerary';
-
-interface StructuredItineraryProps {
-  itinerary: TravelItinerary;
-}
-
 export default function StructuredItinerary({ itinerary }: StructuredItineraryProps) {
   const [isClient, setIsClient] = useState(false);
 
