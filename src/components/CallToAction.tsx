@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+import Link from "next/link";
 
 export default function CallToAction() {
   return (
@@ -22,20 +23,27 @@ export default function CallToAction() {
             Let AI handle the details while you focus on the excitement of your
             upcoming journey.
           </p>
-
-          <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            className="luxury-button text-lg px-8 py-4"
-            onClick={() =>
-              document
-                .getElementById("plan-trip")
-                ?.scrollIntoView({ behavior: "smooth" })
-            }
-          >
-            Get My Free AI Itinerary
-          </motion.button>
-
+          <div className="space-x-4">
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              className="luxury-button text-lg px-8 py-4"
+              onClick={() =>
+                document
+                  .getElementById("plan-trip")
+                  ?.scrollIntoView({ behavior: "smooth" })
+              }
+            >
+              Get My Free AI Itinerary
+            </motion.button>
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              className="navy-button text-gold ring-2 ring-gold rounded-full text-lg px-8 py-4"
+            >
+              <Link href="/pages/documentation">Documentation</Link>
+            </motion.button>
+          </div>
           <p className="text-white/70 font-semibold">
             Retry if an error occurs. The app is in Testing mode.
           </p>
