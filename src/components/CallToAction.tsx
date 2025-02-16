@@ -41,7 +41,13 @@ export default function CallToAction() {
               whileTap={{ scale: 0.95 }}
               className="navy-button text-gold ring-2 ring-gold rounded-full text-lg px-8 py-4"
             >
-              <Link href="/pages/documentation">Documentation</Link>
+              <Link
+                href="https://github.com/iamasadshah/RoamyAi-documentation.git"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Documentation
+              </Link>
             </motion.button>
           </div>
           <p className="text-white/70 font-semibold">

@@ -14,7 +14,7 @@ const sampleItineraries = [
       "Day trip to Versailles Palace",
       "Wine tasting in Montmartre",
     ],
-    image: "/images/paris.jpg",
+    image: "/images/paris.webp",
   },
   {
     destination: "Santorini, Greece",
@@ -26,7 +26,7 @@ const sampleItineraries = [
       "Traditional cooking class",
       "Beach hopping by private boat",
     ],
-    image: "/images/santorni.jpg",
+    image: "/images/santorni.webp",
   },
   {
     destination: "Dubai, UAE",
@@ -38,7 +38,7 @@ const sampleItineraries = [
       "Gold Souk shopping experience",
       "Helicopter tour of Palm Jumeirah",
     ],
-    image: "/images/dubai.jpg",
+    image: "/images/dubai.webp",
   },
 ];
 
