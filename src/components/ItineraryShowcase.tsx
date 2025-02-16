@@ -82,6 +82,7 @@ export default function ItineraryShowcase() {
                 <Image
                   width={500}
                   height={500}
+                  unoptimized={true}
                   src={sampleItineraries[currentIndex].image}
                   alt={sampleItineraries[currentIndex].destination}
                   className="absolute inset-0 w-full h-full object-cover"

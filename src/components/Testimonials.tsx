@@ -77,6 +77,7 @@ export default function Testimonials() {
                   <Image
                     width={200}
                     height={200}
+                    unoptimized={true}
                     src={testimonial.image}
                     alt={testimonial.name}
                     className="w-full h-full object-cover"

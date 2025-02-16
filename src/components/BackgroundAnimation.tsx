@@ -1,8 +1,21 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { useEffect, useState } from "react";
 
 export default function FullScreenWaves() {
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkScreenSize = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+
+    checkScreenSize();
+    window.addEventListener("resize", checkScreenSize);
+    return () => window.removeEventListener("resize", checkScreenSize);
+  }, []);
+
   return (
     <div className="fixed inset-0 overflow-hidden pointer-events-none">
       {/* Background Gradient */}
@@ -13,22 +26,22 @@ export default function FullScreenWaves() {
         }}
       />
 
-      {/* Full-Screen Waves Without Gaps */}
+      {/* Responsive Waves */}
       {[...Array(5)].map((_, index) => (
         <motion.div
           key={index}
           className="absolute w-full"
           style={{
-            top: `${index * 30}vh`, // Spread waves evenly
-            height: "50vh", // Overlapping height to remove lines
-            opacity: 0.6 - index * 0.1, // Depth effect
-            filter: "blur(1px)", // Soft blending effect
+            top: `calc(${index * 20}vh + 5vh)`, // Spread evenly
+            height: isMobile ? "30vh" : "40vh", // Adjust height for mobile
+            opacity: 0.7 - index * 0.1,
+            filter: "blur(3px)",
           }}
           animate={{
-            y: ["0px", "10px", "0px"], // Floating motion
+            y: ["0px", "15px", "0px"], // Floating motion
           }}
           transition={{
-            duration: 6 + index * 1, // Each wave moves slightly differently
+            duration: 7 + index * 0.5,
             repeat: Infinity,
             ease: "easeInOut",
           }}
@@ -38,6 +51,9 @@ export default function FullScreenWaves() {
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 1440 320"
             preserveAspectRatio="none"
+            style={{
+              transform: isMobile ? "scaleY(0.5)" : "scaleY(1)", // Bigger waves on mobile
+            }}
           >
             <defs>
               <linearGradient
@@ -61,12 +77,22 @@ export default function FullScreenWaves() {
             </defs>
             <motion.path
               fill={`url(#waveGradient${index})`}
-              d="M0,160 C240,260 480,60 720,160 C960,260 1200,60 1440,160 V320 H0 Z"
+              d={
+                isMobile
+                  ? "M0,220 C320,300 640,100 960,200 C1280,300 1440,100 1440,220 V320 H0 Z"
+                  : "M0,160 C240,260 480,60 720,160 C960,260 1200,60 1440,160 V320 H0 Z"
+              }
               animate={{
                 d: [
-                  "M0,160 C240,260 480,60 720,160 C960,260 1200,60 1440,160 V320 H0 Z",
-                  "M0,180 C240,240 480,80 720,140 C960,240 1200,80 1440,180 V320 H0 Z",
-                  "M0,160 C240,260 480,60 720,160 C960,260 1200,60 1440,160 V320 H0 Z",
+                  isMobile
+                    ? "M0,230 C320,280 640,120 960,200 C1280,280 1440,120 1440,230 V320 H0 Z"
+                    : "M0,160 C240,260 480,60 720,160 C960,260 1200,60 1440,160 V320 H0 Z",
+                  isMobile
+                    ? "M0,220 C320,300 640,100 960,200 C1280,300 1440,100 1440,220 V320 H0 Z"
+                    : "M0,180 C240,240 480,80 720,140 C960,240 1200,80 1440,180 V320 H0 Z",
+                  isMobile
+                    ? "M0,230 C320,280 640,120 960,200 C1280,280 1440,120 1440,230 V320 H0 Z"
+                    : "M0,160 C240,260 480,60 720,160 C960,260 1200,60 1440,160 V320 H0 Z",
                 ],
               }}
               transition={{
