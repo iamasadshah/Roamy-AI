@@ -10,8 +10,6 @@ import {
   FaUtensils,
   FaEnvelope,
   FaMoneyBillWave,
-  FaSearch,
-  FaTimes,
   FaChevronDown,
 } from "react-icons/fa";
 

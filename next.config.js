@@ -9,7 +9,13 @@ const withPWA = require("next-pwa")({
 const nextConfig = {
   reactStrictMode: true,
   images: {
-    domains: ["your-image-domain.com"], // Add your image domains here
+    domains: [
+      "lh3.googleusercontent.com", // For Google auth profile images
+      "avatars.githubusercontent.com", // For GitHub auth profile images
+    ],
+  },
+  experimental: {
+    appDir: true,
   },
 };
 
