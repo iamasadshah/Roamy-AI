@@ -1,5 +1,6 @@
-import { useState, useEffect } from "react";
-import { motion } from "framer-motion";
+"use client";
+import { useState, useEffect, useMemo } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import "react-datepicker/dist/react-datepicker.css";
 import {
   FaCalendar,
@@ -9,6 +10,9 @@ import {
   FaUtensils,
   FaEnvelope,
   FaMoneyBillWave,
+  FaSearch,
+  FaTimes,
+  FaChevronDown,
 } from "react-icons/fa";
 
 interface TravelFormData {
@@ -22,6 +26,227 @@ interface TravelFormData {
   numberOfTravelers: number;
   dietaryPreferences: string;
 }
+
+const countries = [
+  "Afghanistan",
+  "Albania",
+  "Algeria",
+  "Andorra",
+  "Angola",
+  "Antigua and Barbuda",
+  "Argentina",
+  "Armenia",
+  "Australia",
+  "Austria",
+  "Azerbaijan",
+  "Bahamas",
+  "Bahrain",
+  "Bangladesh",
+  "Barbados",
+  "Belarus",
+  "Belgium",
+  "Belize",
+  "Benin",
+  "Bhutan",
+  "Bolivia",
+  "Bosnia and Herzegovina",
+  "Botswana",
+  "Brazil",
+  "Brunei",
+  "Bulgaria",
+  "Burkina Faso",
+  "Burundi",
+  "Cambodia",
+  "Cameroon",
+  "Canada",
+  "Chile",
+  "China",
+  "Colombia",
+  "Costa Rica",
+  "Croatia",
+  "Cuba",
+  "Cyprus",
+  "Czech Republic",
+  "Denmark",
+  "Dominican Republic",
+  "Ecuador",
+  "Egypt",
+  "El Salvador",
+  "Estonia",
+  "Ethiopia",
+  "Finland",
+  "France",
+  "Georgia",
+  "Germany",
+  "Ghana",
+  "Greece",
+  "Guatemala",
+  "Haiti",
+  "Honduras",
+  "Hungary",
+  "Iceland",
+  "India",
+  "Indonesia",
+  "Iran",
+  "Iraq",
+  "Ireland",
+  "Israel",
+  "Italy",
+  "Jamaica",
+  "Japan",
+  "Jordan",
+  "Kazakhstan",
+  "Kenya",
+  "Kuwait",
+  "Latvia",
+  "Lebanon",
+  "Libya",
+  "Lithuania",
+  "Luxembourg",
+  "Madagascar",
+  "Malaysia",
+  "Maldives",
+  "Malta",
+  "Mexico",
+  "Monaco",
+  "Mongolia",
+  "Montenegro",
+  "Morocco",
+  "Nepal",
+  "Netherlands",
+  "New Zealand",
+  "Nigeria",
+  "Norway",
+  "Oman",
+  "Pakistan",
+  "Panama",
+  "Peru",
+  "Philippines",
+  "Poland",
+  "Portugal",
+  "Qatar",
+  "Romania",
+  "Russia",
+  "Saudi Arabia",
+  "Serbia",
+  "Singapore",
+  "Slovakia",
+  "Slovenia",
+  "South Africa",
+  "South Korea",
+  "Spain",
+  "Sri Lanka",
+  "Sweden",
+  "Switzerland",
+  "Syria",
+  "Taiwan",
+  "Thailand",
+  "Turkey",
+  "Ukraine",
+  "United Arab Emirates",
+  "United Kingdom",
+  "United States",
+  "Uruguay",
+  "Venezuela",
+  "Vietnam",
+  "Yemen",
+];
+
+const DestinationInput = ({
+  value,
+  onChange,
+  inputClasses,
+  labelClasses,
+  iconClasses,
+}: {
+  value: string;
+  onChange: (value: string) => void;
+  inputClasses: string;
+  labelClasses: string;
+  iconClasses: string;
+}) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
+
+  const filteredCountries = useMemo(() => {
+    const search = (searchTerm || value).toLowerCase();
+    return countries
+      .filter((country) => country.toLowerCase().includes(search))
+      .slice(0, 10); // Limit to 10 results for better performance
+  }, [searchTerm, value]);
+
+  return (
+    <div className="relative">
+      <label className={labelClasses}>
+        <FaPlane className={iconClasses} />
+        Destination
+      </label>
+      <div className="relative">
+        <input
+          type="text"
+          className={`${inputClasses} pr-12`}
+          placeholder="Select a country"
+          value={value || searchTerm}
+          onChange={(e) => {
+            setSearchTerm(e.target.value);
+            setIsOpen(true);
+          }}
+          onFocus={() => setIsOpen(true)}
+          required
+        />
+        <button
+          type="button"
+          className="absolute right-3 top-1/2 -translate-y-1/2 text-white/60 hover:text-white/90 transition-colors"
+          onClick={() => setIsOpen(!isOpen)}
+        >
+          <FaChevronDown
+            className={`transform transition-transform ${
+              isOpen ? "rotate-180" : ""
+            }`}
+          />
+        </button>
+      </div>
+
+      <AnimatePresence>
+        {isOpen && (
+          <>
+            <motion.div
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              className="absolute z-50 w-full mt-1 max-h-60 overflow-y-auto rounded-lg border border-white/20 bg-black/90 backdrop-blur-xl shadow-xl"
+            >
+              {filteredCountries.length > 0 ? (
+                filteredCountries.map((country) => (
+                  <button
+                    key={country}
+                    type="button"
+                    className="w-full px-4 py-2 text-left text-white hover:bg-white/10 transition-colors"
+                    onClick={() => {
+                      onChange(country);
+                      setSearchTerm("");
+                      setIsOpen(false);
+                    }}
+                  >
+                    {country}
+                  </button>
+                ))
+              ) : (
+                <div className="p-4 text-white/60 text-center">
+                  No countries found
+                </div>
+              )}
+            </motion.div>
+            <div
+              className="fixed inset-0 z-40"
+              onClick={() => setIsOpen(false)}
+            />
+          </>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+};
 
 export default function TravelForm({
   onSubmit,
@@ -77,13 +302,6 @@ export default function TravelForm({
   const labelClasses =
     "flex items-center gap-2 text-white/90 font-semibold mb-2 text-sm uppercase tracking-wide z-10";
   const iconClasses = "text-blue-400 text-lg";
-
-  // const datePickerWrapperClasses = "relative z-50";
-  // const datePickerCustomClasses = `
-  //   ${inputClasses}
-  //   !bg-transparent
-  //   cursor-pointer
-  // `;
 
   const dietaryOptions = [
     "No Preference",
@@ -196,19 +414,14 @@ export default function TravelForm({
     >
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         <motion.div whileHover={{ scale: 1.02 }} className="col-span-full">
-          <label className={labelClasses}>
-            <FaPlane className={iconClasses} />
-            Destination
-          </label>
-          <input
-            type="text"
-            className={inputClasses}
-            placeholder="Where would you like to go?"
+          <DestinationInput
             value={formData.destination}
-            onChange={(e) =>
-              setFormData({ ...formData, destination: e.target.value })
+            onChange={(value) =>
+              setFormData({ ...formData, destination: value })
             }
-            required
+            inputClasses={inputClasses}
+            labelClasses={labelClasses}
+            iconClasses={iconClasses}
           />
         </motion.div>
 
