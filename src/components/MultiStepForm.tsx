@@ -6,6 +6,7 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { FormData, FormStep } from "@/types/itinerary";
 import { FaChevronDown, FaSearch } from "react-icons/fa";
+import { style } from "framer-motion/client";
 
 const steps: FormStep[] = [
   {
@@ -214,8 +215,7 @@ const DestinationInput = ({
                 animate={{ scale: 1, y: 0 }}
                 exit={{ scale: 0.95, y: 20 }}
                 onClick={(e) => e.stopPropagation()}
-                className="w-full max-w-lg bg-gradient-to-b from-navy/95 to-slate-900/95 border border-white/10 rounded-2xl shadow-2xl"
-                style={{ height: "400px" }}
+                className="w-full h-[300px] max-w-lg bg-gradient-to-b from-navy/95 to-slate-900/95 border border-white/10 rounded-2xl shadow-2xl max-h-[80vh] flex flex-col"
               >
                 {/* Header */}
                 <div className="p-6 border-b border-white/10">
@@ -236,10 +236,7 @@ const DestinationInput = ({
                 </div>
 
                 {/* Countries List */}
-                <div
-                  className="overflow-y-auto custom-scrollbar p-4"
-                  style={{ height: "calc(600px - 116px)" }}
-                >
+                <div className="flex-1 overflow-y-auto custom-scrollbar p-4">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
                     {filteredCountries.length > 0 ? (
                       filteredCountries.map((country) => (
@@ -254,11 +251,11 @@ const DestinationInput = ({
                           whileHover={{ scale: 1.02 }}
                           whileTap={{ scale: 0.98 }}
                         >
-                          <span className="flex-1">{country}</span>
+                          <span className="flex-1 truncate">{country}</span>
                           <motion.span
                             initial={{ opacity: 0, x: -10 }}
                             animate={{ opacity: 1, x: 0 }}
-                            className="text-blue-400 opacity-0 group-hover:opacity-100 transition-opacity"
+                            className="text-blue-400 opacity-0 group-hover:opacity-100 transition-opacity ml-2"
                           >
                             →
                           </motion.span>
@@ -338,7 +335,7 @@ export default function MultiStepForm({ onSubmit, isLoading }: Props) {
         );
       case 2:
         return (
-          <div className="space-y-4">
+          <div className=" py-16">
             <div>
               <label className="block text-sm mb-2">Start Date</label>
               <DatePicker
