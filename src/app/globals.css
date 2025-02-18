@@ -570,3 +570,24 @@ body {
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
   background-color: rgba(255, 255, 255, 0.3);
 }
+
+/* Add these to your existing styles */
+.navy-button {
+  @apply bg-navy hover:bg-navy-light transition-colors duration-300 rounded-lg;
+}
+
+.luxury-button {
+  @apply bg-gold hover:bg-gold/90 text-navy transition-colors duration-300 rounded-lg font-medium;
+}
+
+/* Add hover effect for both button types */
+.navy-button:hover,
+.luxury-button:hover {
+  @apply transform -translate-y-0.5 shadow-lg;
+}
+
+/* Add active effect for both button types */
+.navy-button:active,
+.luxury-button:active {
+  @apply transform translate-y-0;
+}

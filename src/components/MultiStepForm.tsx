@@ -336,7 +336,9 @@ export default function MultiStepForm({ onSubmit, isLoading }: Props) {
         return (
           <div className=" py-16">
             <div>
-              <label className="block text-sm mb-2">Start Date</label>
+              <label className="block text-sm mb-2 text-white">
+                Start Date
+              </label>
               <DatePicker
                 selected={formData.startDate}
                 onChange={(date) =>
@@ -348,7 +350,7 @@ export default function MultiStepForm({ onSubmit, isLoading }: Props) {
               />
             </div>
             <div>
-              <label className="block text-sm mb-2">End Date</label>
+              <label className="block text-sm mb-2 text-white">End Date</label>
               <DatePicker
                 selected={formData.endDate}
                 onChange={(date) => setFormData({ ...formData, endDate: date })}
