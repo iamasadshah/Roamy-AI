@@ -6,7 +6,6 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { FormData, FormStep } from "@/types/itinerary";
 import { FaChevronDown, FaSearch } from "react-icons/fa";
-import { style } from "framer-motion/client";
 
 const steps: FormStep[] = [
   {
