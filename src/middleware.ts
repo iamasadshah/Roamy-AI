@@ -10,9 +10,10 @@ export async function middleware(req: NextRequest) {
     data: { session },
   } = await supabase.auth.getSession();
 
-  // Protect the trip planning route
+  // Protect routes
   if (req.nextUrl.pathname.startsWith("/plan") && !session) {
-    return NextResponse.redirect(new URL("/auth", req.url));
+    const redirectUrl = req.nextUrl.origin + "/auth";
+    return NextResponse.redirect(redirectUrl);
   }
 
   return res;

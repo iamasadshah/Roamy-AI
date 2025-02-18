@@ -12,5 +12,9 @@ export async function GET(request: Request) {
     await supabase.auth.exchangeCodeForSession(code);
   }
 
-  return NextResponse.redirect(requestUrl.origin);
+  // Get the site URL from environment variable or use the request origin
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || requestUrl.origin;
+
+  // Redirect to the home page of the site
+  return NextResponse.redirect(siteUrl);
 } 

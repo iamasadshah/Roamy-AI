@@ -12,8 +12,9 @@ export default function AuthPage() {
   const supabase = createClientComponentClient();
 
   useEffect(() => {
-    // Set redirect URL after component mounts (client-side)
-    setRedirectUrl(`${window.location.origin}/auth/callback`);
+    // Get the current site URL dynamically
+    const siteUrl = window.location.origin;
+    setRedirectUrl(`${siteUrl}/auth/callback`);
   }, []);
 
   return (
