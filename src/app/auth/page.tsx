@@ -4,7 +4,6 @@ import { Auth } from "@supabase/auth-ui-react";
 import { ThemeSupa } from "@supabase/auth-ui-shared";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { motion } from "framer-motion";
-import Image from "next/image";
 
 export default function AuthPage() {
   const [view, setView] = useState<"sign_in" | "sign_up">("sign_in");
@@ -18,20 +17,13 @@ export default function AuthPage() {
   }, []);
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-navy to-slate-900 px-4">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-navy to-slate-900 px-4 py-16">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         className="max-w-md w-full"
       >
         <div className="text-center mb-8">
-          <Image
-            src="/favicon.png"
-            alt="Roamy AI"
-            width={80}
-            height={80}
-            className="mx-auto rounded-2xl"
-          />
           <h1 className="text-3xl font-bold text-white mt-6 mb-2">
             Welcome to Roamy AI
           </h1>

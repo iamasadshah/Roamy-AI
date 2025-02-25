@@ -71,7 +71,7 @@ export default function Navbar() {
         isScrolled ? " backdrop-blur-lg shadow-lg" : "bg-transparent"
       }`}
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 bg-navy/90">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 bg-[#0148A9]">
         <div className="flex items-center justify-between h-20">
           {/* Logo */}
           <Link href="/" className="flex-shrink-0 relative z-50">
@@ -148,7 +148,7 @@ export default function Navbar() {
               ) : (
                 <motion.button
                   onClick={handleLogin}
-                  className="luxury-button text-sm px-6 py-2.5 font-medium tracking-wide"
+                  className="luxury-button text-sm px-2 py-1 font-medium tracking-wide"
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                 >
@@ -245,7 +245,7 @@ export default function Navbar() {
                   ) : (
                     <button
                       onClick={handleLogin}
-                      className="luxury-button text-sm px-8 py-3"
+                      className="luxury-button text-sm px-4 py-1"
                     >
                       Sign In
                     </button>
