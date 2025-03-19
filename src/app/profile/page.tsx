@@ -14,15 +14,32 @@ import {
   FaEdit,
   FaSave,
   FaTimes,
+  FaMapMarkerAlt,
+  FaCalendar,
+  FaUsers,
+  FaHotel,
+  FaWallet,
+  FaDownload,
+  FaEye,
 } from "react-icons/fa";
 import Image from "next/image";
 import { toast } from "react-hot-toast";
+import { format } from "date-fns";
+import { PDFDownloadLink } from "@react-pdf/renderer";
+import TripPDF from "@/components/TripPDF";
 
 // Add interface for saved trip type
-interface SavedTrip {
+interface Trip {
   id: string;
   user_id: string;
-  // Add other trip properties as needed
+  destination: string;
+  start_date: string;
+  end_date: string;
+  budget: string;
+  accommodation: string;
+  travelers: string;
+  created_at: string;
+  itinerary: any;
 }
 
 // Add interface for profile data
@@ -36,7 +53,7 @@ interface ProfileData {
 
 export default function ProfilePage() {
   const [user, setUser] = useState<User | null>(null);
-  const [savedTrips, setSavedTrips] = useState<SavedTrip[]>([]);
+  const [savedTrips, setSavedTrips] = useState<Trip[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("profile");
   const supabase = createClientComponentClient();
@@ -51,7 +68,7 @@ export default function ProfilePage() {
           setUser(user);
           // Load saved trips
           const { data: trips } = await supabase
-            .from("saved_trips")
+            .from("trips")
             .select("*")
             .eq("user_id", user.id);
           setSavedTrips(trips || []);
@@ -426,22 +443,240 @@ function ProfileContent({ user }: { user: User | null }) {
   );
 }
 
-function TripsContent({ trips }: { trips: SavedTrip[] }) {
+// Add TripDetailsModal component
+function TripDetailsModal({
+  trip,
+  isOpen,
+  onClose,
+}: {
+  trip: Trip | null;
+  isOpen: boolean;
+  onClose: () => void;
+}) {
+  if (!trip || !isOpen) return null;
+
   return (
-    <div className="space-y-6">
-      <h3 className="text-2xl font-bold text-white">My Trips</h3>
-      <div className="text-white">
-        {trips.length > 0 ? (
-          trips.map((trip) => <div key={trip.id}>Trip ID: {trip.id}</div>)
-        ) : (
-          <p>No trips found</p>
-        )}
+    <div className="fixed inset-0 z-50 overflow-y-auto">
+      <div className="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
+        <div className="fixed inset-0 transition-opacity" onClick={onClose}>
+          <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" />
+        </div>
+
+        <div className="inline-block w-full max-w-4xl p-6 my-8 overflow-hidden text-left align-middle transition-all transform bg-navy shadow-xl rounded-2xl border border-white/10">
+          <div className="flex justify-between items-center mb-6">
+            <h3 className="text-2xl font-bold text-white">
+              Trip to {trip.destination}
+            </h3>
+            <div className="flex gap-4">
+              <PDFDownloadLink
+                document={<TripPDF trip={trip} />}
+                fileName={`${trip.destination
+                  .toLowerCase()
+                  .replace(/\s+/g, "-")}-itinerary.pdf`}
+              >
+                {({ loading }) => (
+                  <button
+                    className="luxury-button px-4 py-2 flex items-center gap-2"
+                    disabled={loading}
+                  >
+                    <FaDownload />
+                    {loading ? "Loading..." : "Download PDF"}
+                  </button>
+                )}
+              </PDFDownloadLink>
+              <button
+                onClick={onClose}
+                className="text-white/60 hover:text-white transition-colors"
+              >
+                <FaTimes size={24} />
+              </button>
+            </div>
+          </div>
+
+          <div className="max-h-[70vh] overflow-y-auto custom-scrollbar pr-4">
+            {/* Trip Overview */}
+            <div className="bg-white/5 rounded-xl p-4 mb-6">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="flex items-center gap-3">
+                  <FaCalendar className="text-gold" />
+                  <div>
+                    <p className="text-white/60 text-sm">Dates</p>
+                    <p className="text-white">
+                      {format(new Date(trip.start_date), "MMM d")} -{" "}
+                      {format(new Date(trip.end_date), "MMM d, yyyy")}
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-3">
+                  <FaWallet className="text-gold" />
+                  <div>
+                    <p className="text-white/60 text-sm">Budget</p>
+                    <p className="text-white">{trip.budget}</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-3">
+                  <FaUsers className="text-gold" />
+                  <div>
+                    <p className="text-white/60 text-sm">Travelers</p>
+                    <p className="text-white">{trip.travelers}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Itinerary Details */}
+            <div className="space-y-6">
+              {trip.itinerary.itinerary.map((day: any, index: number) => (
+                <div key={index} className="bg-white/5 rounded-xl p-4">
+                  <h4 className="text-xl font-semibold text-white mb-4">
+                    Day {day.day}
+                  </h4>
+                  <div className="space-y-4">
+                    {["morning", "afternoon", "evening"].map((time) => (
+                      <div key={time}>
+                        <h5 className="text-gold capitalize mb-2">{time}</h5>
+                        <ul className="space-y-2">
+                          {day[time].map((activity: string, i: number) => (
+                            <li
+                              key={i}
+                              className="text-white/80 pl-4 border-l border-gold/30"
+                            >
+                              {activity}
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );
 }
 
-function SavedContent({ savedTrips }: { savedTrips: SavedTrip[] }) {
+// Update the TripsContent component
+function TripsContent({ trips }: { trips: Trip[] }) {
+  const [selectedTrip, setSelectedTrip] = useState<Trip | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  return (
+    <div className="space-y-6">
+      <div className="flex justify-between items-center mb-8">
+        <h3 className="text-2xl font-bold text-white">My Trips</h3>
+        <p className="text-white/60">{trips.length} trips saved</p>
+      </div>
+
+      {trips.length > 0 ? (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {trips.map((trip) => (
+            <motion.div
+              key={trip.id}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="bg-white/5 backdrop-blur-sm rounded-xl p-6 border border-white/10 hover:border-gold/30 transition-all group"
+            >
+              <div className="flex justify-between items-start mb-4">
+                <div>
+                  <h4 className="text-xl font-semibold text-white group-hover:text-gold transition-colors">
+                    {trip.destination}
+                  </h4>
+                  <p className="text-white/60 text-sm">
+                    Created on{" "}
+                    {format(new Date(trip.created_at), "MMM d, yyyy")}
+                  </p>
+                </div>
+              </div>
+
+              <div className="space-y-3 mb-6">
+                <div className="flex items-center gap-2 text-white/80">
+                  <FaCalendar className="text-gold" />
+                  <span>
+                    {format(new Date(trip.start_date), "MMM d")} -{" "}
+                    {format(new Date(trip.end_date), "MMM d, yyyy")}
+                  </span>
+                </div>
+                <div className="flex items-center gap-2 text-white/80">
+                  <FaUsers className="text-gold" />
+                  <span>{trip.travelers}</span>
+                </div>
+                <div className="flex items-center gap-2 text-white/80">
+                  <FaHotel className="text-gold" />
+                  <span>{trip.accommodation}</span>
+                </div>
+                <div className="flex items-center gap-2 text-white/80">
+                  <FaWallet className="text-gold" />
+                  <span>{trip.budget}</span>
+                </div>
+              </div>
+
+              <div className="flex gap-3">
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  onClick={() => {
+                    setSelectedTrip(trip);
+                    setIsModalOpen(true);
+                  }}
+                  className="flex-1 py-2 px-4 bg-gold text-navy rounded-lg hover:bg-gold/90 transition-colors flex items-center justify-center gap-2"
+                >
+                  <FaEye />
+                  View Details
+                </motion.button>
+                <PDFDownloadLink
+                  document={<TripPDF trip={trip} />}
+                  fileName={`${trip.destination
+                    .toLowerCase()
+                    .replace(/\s+/g, "-")}-itinerary.pdf`}
+                  className="flex-1"
+                >
+                  {({ loading }) => (
+                    <motion.button
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
+                      className="w-full py-2 px-4 bg-white/10 text-white rounded-lg hover:bg-white/20 transition-colors flex items-center justify-center gap-2"
+                      disabled={loading}
+                    >
+                      <FaDownload />
+                      {loading ? "Loading..." : "Download"}
+                    </motion.button>
+                  )}
+                </PDFDownloadLink>
+              </div>
+            </motion.div>
+          ))}
+        </div>
+      ) : (
+        <div className="text-center py-12 bg-white/5 rounded-xl backdrop-blur-sm">
+          <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-white/10 flex items-center justify-center">
+            <FaMapMarkerAlt className="text-2xl text-gold" />
+          </div>
+          <h4 className="text-xl font-semibold text-white mb-2">
+            No trips yet
+          </h4>
+          <p className="text-white/60">
+            Start planning your next adventure to see your trips here!
+          </p>
+        </div>
+      )}
+
+      {/* Trip Details Modal */}
+      <TripDetailsModal
+        trip={selectedTrip}
+        isOpen={isModalOpen}
+        onClose={() => {
+          setIsModalOpen(false);
+          setSelectedTrip(null);
+        }}
+      />
+    </div>
+  );
+}
+
+function SavedContent({ savedTrips }: { savedTrips: Trip[] }) {
   return (
     <div className="space-y-6">
       <h3 className="text-2xl font-bold text-white">Saved Destinations</h3>

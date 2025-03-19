@@ -54,3 +54,16 @@ export type FormData = {
   travelers: string;
   dietaryPlan: string;
 }
+
+export interface Trip {
+  id: string;
+  user_id: string;
+  destination: string;
+  start_date: string;
+  end_date: string;
+  budget: string;
+  accommodation: string;
+  travelers: string;
+  created_at: string;
+  itinerary: TravelItinerary;
+}
