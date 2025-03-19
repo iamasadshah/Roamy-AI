@@ -13,6 +13,19 @@ const nextConfig = {
       "lh3.googleusercontent.com", // For Google auth profile images
       "avatars.githubusercontent.com", // For GitHub auth profile images
     ],
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "hucdeaomnflmaztiggbo.supabase.co",
+        pathname: "/storage/v1/object/public/**",
+      },
+      // Keep any existing patterns you have
+      {
+        protocol: "https",
+        hostname: "i.pinimg.com",
+        pathname: "/**",
+      },
+    ],
   },
   experimental: {
     appDir: true,
