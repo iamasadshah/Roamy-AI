@@ -138,17 +138,7 @@ export default function ProfilePage() {
                   <FaHistory />
                   <span>My Trips</span>
                 </button>
-                <button
-                  onClick={() => setActiveTab("saved")}
-                  className={`w-full flex items-center space-x-2 px-4 py-2 rounded-lg transition-colors ${
-                    activeTab === "saved"
-                      ? "bg-gold text-navy"
-                      : "text-white hover:bg-white/10"
-                  }`}
-                >
-                  <FaHeart />
-                  <span>Saved</span>
-                </button>
+
                 <button
                   onClick={() => setActiveTab("settings")}
                   className={`w-full flex items-center space-x-2 px-4 py-2 rounded-lg transition-colors ${
@@ -176,9 +166,6 @@ export default function ProfilePage() {
               {/* Content based on active tab */}
               {activeTab === "profile" && <ProfileContent user={user} />}
               {activeTab === "trips" && <TripsContent trips={savedTrips} />}
-              {activeTab === "saved" && (
-                <SavedContent savedTrips={savedTrips} />
-              )}
               {activeTab === "settings" && <SettingsContent user={user} />}
             </motion.div>
           </div>
@@ -672,23 +659,6 @@ function TripsContent({ trips }: { trips: Trip[] }) {
           setSelectedTrip(null);
         }}
       />
-    </div>
-  );
-}
-
-function SavedContent({ savedTrips }: { savedTrips: Trip[] }) {
-  return (
-    <div className="space-y-6">
-      <h3 className="text-2xl font-bold text-white">Saved Destinations</h3>
-      <div className="text-white">
-        {savedTrips.length > 0 ? (
-          savedTrips.map((trip) => (
-            <div key={trip.id}>Saved Trip ID: {trip.id}</div>
-          ))
-        ) : (
-          <p>No saved destinations</p>
-        )}
-      </div>
     </div>
   );
 }
