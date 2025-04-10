@@ -39,7 +39,37 @@ interface Trip {
   accommodation: string;
   travelers: string;
   created_at: string;
-  itinerary: any;
+  itinerary: {
+    trip_overview: {
+      destination: string;
+      dates: string;
+      duration: string;
+      budget_level: "Budget" | "Mid-range" | "Luxury";
+      accommodation: string;
+      travelers: string;
+      dietary_plan: string;
+    };
+    itinerary: Array<{
+      day: number;
+      morning: string[];
+      afternoon: string[];
+      evening: string[];
+    }>;
+    additional_info: {
+      weather_forecast: string;
+      packing_tips: string[];
+      local_currency: {
+        code: string;
+        exchangeRate: number;
+      };
+      transportation: string[];
+      emergency: {
+        police: string;
+        ambulance: string;
+        touristPolice?: string;
+      };
+    };
+  };
 }
 
 // Add interface for profile data
@@ -430,125 +460,75 @@ function ProfileContent({ user }: { user: User | null }) {
   );
 }
 
-// Add TripDetailsModal component
-function TripDetailsModal({
-  trip,
-  isOpen,
-  onClose,
-}: {
-  trip: Trip | null;
-  isOpen: boolean;
-  onClose: () => void;
-}) {
-  if (!trip || !isOpen) return null;
-
-  return (
-    <div className="fixed inset-0 z-50 overflow-y-auto">
-      <div className="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
-        <div className="fixed inset-0 transition-opacity" onClick={onClose}>
-          <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" />
-        </div>
-
-        <div className="inline-block w-full max-w-4xl p-6 my-8 overflow-hidden text-left align-middle transition-all transform bg-navy shadow-xl rounded-2xl border border-white/10">
-          <div className="flex justify-between items-center mb-6">
-            <h3 className="text-2xl font-bold text-white">
-              Trip to {trip.destination}
-            </h3>
-            <div className="flex gap-4">
-              <PDFDownloadLink
-                document={<TripPDF trip={trip} />}
-                fileName={`${trip.destination
-                  .toLowerCase()
-                  .replace(/\s+/g, "-")}-itinerary.pdf`}
-              >
-                {({ loading }) => (
-                  <button
-                    className="luxury-button px-4 py-2 flex items-center gap-2"
-                    disabled={loading}
-                  >
-                    <FaDownload />
-                    {loading ? "Loading..." : "Download PDF"}
-                  </button>
-                )}
-              </PDFDownloadLink>
-              <button
-                onClick={onClose}
-                className="text-white/60 hover:text-white transition-colors"
-              >
-                <FaTimes size={24} />
-              </button>
-            </div>
-          </div>
-
-          <div className="max-h-[70vh] overflow-y-auto custom-scrollbar pr-4">
-            {/* Trip Overview */}
-            <div className="bg-white/5 rounded-xl p-4 mb-6">
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div className="flex items-center gap-3">
-                  <FaCalendar className="text-gold" />
-                  <div>
-                    <p className="text-white/60 text-sm">Dates</p>
-                    <p className="text-white">
-                      {format(new Date(trip.start_date), "MMM d")} -{" "}
-                      {format(new Date(trip.end_date), "MMM d, yyyy")}
-                    </p>
-                  </div>
-                </div>
-                <div className="flex items-center gap-3">
-                  <FaWallet className="text-gold" />
-                  <div>
-                    <p className="text-white/60 text-sm">Budget</p>
-                    <p className="text-white">{trip.budget}</p>
-                  </div>
-                </div>
-                <div className="flex items-center gap-3">
-                  <FaUsers className="text-gold" />
-                  <div>
-                    <p className="text-white/60 text-sm">Travelers</p>
-                    <p className="text-white">{trip.travelers}</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Itinerary Details */}
-            <div className="space-y-6">
-              {trip.itinerary.itinerary.map((day: any, index: number) => (
-                <div key={index} className="bg-white/5 rounded-xl p-4">
-                  <h4 className="text-xl font-semibold text-white mb-4">
-                    Day {day.day}
-                  </h4>
-                  <div className="space-y-4">
-                    {["morning", "afternoon", "evening"].map((time) => (
-                      <div key={time}>
-                        <h5 className="text-gold capitalize mb-2">{time}</h5>
-                        <ul className="space-y-2">
-                          {day[time].map((activity: string, i: number) => (
-                            <li
-                              key={i}
-                              className="text-white/80 pl-4 border-l border-gold/30"
-                            >
-                              {activity}
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-// Update the TripsContent component
 function TripsContent({ trips }: { trips: Trip[] }) {
   const [selectedTrip, setSelectedTrip] = useState<Trip | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const handleViewDetails = (trip: Trip) => {
+    if (!trip) return;
+    setSelectedTrip(trip);
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setSelectedTrip(null);
+  };
+
+  // Add type checking for the modal content
+  const renderItineraryDetails = (trip: Trip) => {
+    const hasItinerary =
+      trip?.itinerary?.itinerary &&
+      Array.isArray(trip.itinerary.itinerary) &&
+      trip.itinerary.itinerary.length > 0;
+
+    if (!hasItinerary) {
+      return (
+        <div className="text-center py-8">
+          <p className="text-white/60">No itinerary details available</p>
+        </div>
+      );
+    }
+
+    return (
+      <div className="space-y-6">
+        {trip.itinerary.itinerary.map((day, index) => {
+          if (!day) return null;
+
+          return (
+            <div key={index} className="bg-white/5 rounded-xl p-4">
+              <h4 className="text-xl font-semibold text-white mb-4">
+                Day {day.day}
+              </h4>
+              <div className="space-y-4">
+                {["morning", "afternoon", "evening"].map((time) => {
+                  const activities = day[time as keyof typeof day] as string[];
+                  if (!Array.isArray(activities) || activities.length === 0)
+                    return null;
+
+                  return (
+                    <div key={time}>
+                      <h5 className="text-gold capitalize mb-2">{time}</h5>
+                      <ul className="space-y-2">
+                        {activities.map((activity: string, i: number) => (
+                          <li
+                            key={i}
+                            className="text-white/80 pl-4 border-l border-gold/30"
+                          >
+                            {activity}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    );
+  };
 
   return (
     <div className="space-y-6">
@@ -604,10 +584,7 @@ function TripsContent({ trips }: { trips: Trip[] }) {
                 <motion.button
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
-                  onClick={() => {
-                    setSelectedTrip(trip);
-                    setIsModalOpen(true);
-                  }}
+                  onClick={() => handleViewDetails(trip)}
                   className="flex-1 py-2 px-4 bg-gold text-navy rounded-lg hover:bg-gold/90 transition-colors flex items-center justify-center gap-2"
                 >
                   <FaEye />
@@ -651,14 +628,88 @@ function TripsContent({ trips }: { trips: Trip[] }) {
       )}
 
       {/* Trip Details Modal */}
-      <TripDetailsModal
-        trip={selectedTrip}
-        isOpen={isModalOpen}
-        onClose={() => {
-          setIsModalOpen(false);
-          setSelectedTrip(null);
-        }}
-      />
+      {selectedTrip && isModalOpen && (
+        <div className="fixed inset-0 z-50 overflow-y-auto">
+          <div className="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
+            <div
+              className="fixed inset-0 transition-opacity"
+              onClick={handleCloseModal}
+            >
+              <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" />
+            </div>
+
+            <div className="inline-block w-full max-w-4xl p-6 my-8 overflow-hidden text-left align-middle transition-all transform bg-navy shadow-xl rounded-2xl border border-white/10">
+              <div className="flex justify-between items-center mb-6">
+                <h3 className="text-2xl font-bold text-white">
+                  Trip to {selectedTrip.destination}
+                </h3>
+                <div className="flex gap-4">
+                  <PDFDownloadLink
+                    document={<TripPDF trip={selectedTrip} />}
+                    fileName={`${selectedTrip.destination
+                      .toLowerCase()
+                      .replace(/\s+/g, "-")}-itinerary.pdf`}
+                  >
+                    {({ loading }) => (
+                      <button
+                        className="luxury-button px-4 py-2 flex items-center gap-2"
+                        disabled={loading}
+                      >
+                        <FaDownload />
+                        {loading ? "Loading..." : "Download PDF"}
+                      </button>
+                    )}
+                  </PDFDownloadLink>
+                  <button
+                    onClick={handleCloseModal}
+                    className="text-white/60 hover:text-white transition-colors"
+                  >
+                    <FaTimes size={24} />
+                  </button>
+                </div>
+              </div>
+
+              <div className="max-h-[70vh] overflow-y-auto custom-scrollbar pr-4">
+                {/* Trip Overview */}
+                <div className="bg-white/5 rounded-xl p-4 mb-6">
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div className="flex items-center gap-3">
+                      <FaCalendar className="text-gold" />
+                      <div>
+                        <p className="text-white/60 text-sm">Dates</p>
+                        <p className="text-white">
+                          {format(new Date(selectedTrip.start_date), "MMM d")} -{" "}
+                          {format(
+                            new Date(selectedTrip.end_date),
+                            "MMM d, yyyy"
+                          )}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <FaWallet className="text-gold" />
+                      <div>
+                        <p className="text-white/60 text-sm">Budget</p>
+                        <p className="text-white">{selectedTrip.budget}</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <FaUsers className="text-gold" />
+                      <div>
+                        <p className="text-white/60 text-sm">Travelers</p>
+                        <p className="text-white">{selectedTrip.travelers}</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Itinerary Details */}
+                {renderItineraryDetails(selectedTrip)}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
