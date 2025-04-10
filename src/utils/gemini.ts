@@ -20,7 +20,7 @@ export async function generateTripPlan(formData: FormData): Promise<TravelItiner
     // Fetch real-time destination data
     const destinationData = await getDestinationData(formData.destination);
 
-    const model = genAI.getGenerativeModel({ model: 'gemini-pro' });
+    const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash' });
 
     const prompt = `You are a travel planning assistant. Your task is to generate a detailed travel itinerary in valid JSON format.
 Please follow these requirements exactly:
@@ -80,20 +80,20 @@ Requirements:
       const result = await model.generateContent(prompt);
       const response = await result.response;
       const text = response.text();
-      
-     
+
+
 
       // Function to extract and validate JSON
       function extractJSON(str: string): string {
         // Remove any leading/trailing whitespace and common text markers
         str = str.trim().replace(/```json\s*|\s*```/g, '');
-        
+
         try {
           // First attempt: Try to parse the entire string
           JSON.parse(str);
           return str;
         } catch {
-          
+
           try {
             // Second attempt: Find the largest JSON-like substring
             const matches = str.match(/\{(?:[^{}]|(\{[^{}]*\}))*\}/g);
@@ -101,10 +101,10 @@ Requirements:
               console.error('No JSON-like structure found in:', str);
               throw new Error('No valid JSON object found in the response');
             }
-            
+
             // Find the largest matching substring
             const jsonStr = matches.reduce((a, b) => a.length > b.length ? a : b);
-            
+
             // Validate that it can be parsed
             JSON.parse(jsonStr);
             return jsonStr;
@@ -118,18 +118,18 @@ Requirements:
 
       // Extract and validate JSON
       const jsonStr = extractJSON(text);
-      
+
 
       let itinerary: TravelItinerary;
       try {
         itinerary = JSON.parse(jsonStr);
-        
+
         // Detailed validation of the structure
-       
+
         if (!itinerary.trip_overview) throw new Error('Missing trip_overview');
         if (!Array.isArray(itinerary.itinerary)) throw new Error('Missing or invalid itinerary array');
         if (!itinerary.additional_info) throw new Error('Missing additional_info');
-        
+
         // Validate trip_overview fields
         const requiredOverviewFields = ['destination', 'dates', 'duration', 'budget_level', 'accommodation', 'travelers', 'dietary_plan'] as const;
         for (const field of requiredOverviewFields) {
@@ -137,7 +137,7 @@ Requirements:
             throw new Error(`Missing required field in trip_overview: ${field}`);
           }
         }
-        
+
       } catch (parseError) {
         console.error('JSON Parse Error:', parseError);
         console.error('Attempted to parse:', jsonStr);
@@ -155,7 +155,7 @@ Requirements:
         ambulance: destinationData.emergency.ambulance,
         touristPolice: destinationData.emergency.touristPolice || undefined
       };
-      
+
       return itinerary;
     } catch (error) {
       console.error('Error generating trip plan:', error);
