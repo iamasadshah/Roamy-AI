@@ -8,7 +8,6 @@ import {
 } from "@react-pdf/renderer";
 import { Trip } from "@/types/itinerary";
 import { format } from "date-fns";
-import Link from "next/link";
 
 // Register fonts
 Font.register({

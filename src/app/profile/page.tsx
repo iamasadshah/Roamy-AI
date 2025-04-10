@@ -8,7 +8,6 @@ import { motion } from "framer-motion";
 import {
   FaUser,
   FaHistory,
-  FaHeart,
   FaCog,
   FaCamera,
   FaEdit,
@@ -241,7 +240,7 @@ function ProfileContent({ user }: { user: User | null }) {
       // Upload image to Supabase Storage
       const fileExt = file.name.split(".").pop();
       const fileName = `${Math.random()}.${fileExt}`;
-      const { data, error } = await supabase.storage
+      const { error } = await supabase.storage
         .from("avatars")
         .upload(`${user?.id}/${fileName}`, file);
 
@@ -272,7 +271,7 @@ function ProfileContent({ user }: { user: User | null }) {
 
   const handleProfileUpdate = async (newData: ProfileData) => {
     try {
-      const { data, error } = await supabase.auth.updateUser({
+      const { error } = await supabase.auth.updateUser({
         data: newData,
       });
 
