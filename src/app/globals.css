@@ -591,3 +591,33 @@ body {
 .luxury-button:active {
   @apply transform translate-y-0;
 }
+
+@keyframes enter {
+  from {
+    transform: translate3d(0, 100%, 0) skewY(-3deg);
+    opacity: 0;
+  }
+  to {
+    transform: translate3d(0, 0, 0) skewY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes leave {
+  from {
+    transform: translate3d(0, 0, 0) skewY(0);
+    opacity: 1;
+  }
+  to {
+    transform: translate3d(0, 100%, 0) skewY(3deg);
+    opacity: 0;
+  }
+}
+
+.animate-enter {
+  animation: enter 0.3s ease-out forwards;
+}
+
+.animate-leave {
+  animation: leave 0.3s ease-in forwards;
+}

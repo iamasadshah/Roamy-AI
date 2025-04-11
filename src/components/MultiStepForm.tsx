@@ -6,6 +6,9 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { FormData, FormStep } from "@/types/itinerary";
 import { FaChevronDown, FaSearch } from "react-icons/fa";
+import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
+import { useRouter } from "next/navigation";
+import { toast } from "react-hot-toast";
 
 const steps: FormStep[] = [
   {
@@ -287,12 +290,76 @@ export default function MultiStepForm({ onSubmit, isLoading }: Props) {
     travelers: "",
     dietaryPlan: "",
   });
+  const router = useRouter();
+  const supabase = createClientComponentClient();
 
-  const handleNext = () => {
-    if (currentStep < steps.length) {
-      setCurrentStep((prev) => prev + 1);
-    } else {
+  const handleNext = async () => {
+    if (currentStep === steps.length) {
+      // Check if user is authenticated before generating itinerary
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+
+      if (!user) {
+        toast.custom(
+          (t) => (
+            <div
+              className={`${
+                t.visible ? "animate-enter" : "animate-leave"
+              } max-w-md w-full bg-white shadow-lg rounded-lg pointer-events-auto flex ring-1 ring-black ring-opacity-5`}
+            >
+              <div className="flex-1 w-0 p-4">
+                <div className="flex items-start">
+                  <div className="flex-shrink-0 pt-0.5">
+                    <svg
+                      className="h-10 w-10 text-blue-500"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+                      />
+                    </svg>
+                  </div>
+                  <div className="ml-3 flex-1">
+                    <p className="text-sm font-medium text-gray-900">
+                      Sign In Required
+                    </p>
+                    <p className="mt-1 text-sm text-gray-500">
+                      Please sign in to generate your personalized travel
+                      itinerary.
+                    </p>
+                  </div>
+                </div>
+              </div>
+              <div className="flex border-l border-gray-200">
+                <button
+                  onClick={() => {
+                    toast.dismiss(t.id);
+                    router.push("/auth");
+                  }}
+                  className="w-full border border-transparent rounded-none rounded-r-lg p-4 flex items-center justify-center text-sm font-medium text-blue-600 hover:text-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                  Sign In
+                </button>
+              </div>
+            </div>
+          ),
+          {
+            duration: 5000,
+            position: "bottom-right",
+          }
+        );
+        return;
+      }
+
       onSubmit(formData);
+    } else {
+      setCurrentStep((prev) => prev + 1);
     }
   };
 
