@@ -20,6 +20,7 @@ import {
   FaWallet,
   FaDownload,
   FaEye,
+  FaTrash,
 } from "react-icons/fa";
 import Image from "next/image";
 import { toast } from "react-hot-toast";
@@ -459,19 +460,101 @@ function ProfileContent({ user }: { user: User | null }) {
   );
 }
 
-function TripsContent({ trips }: { trips: Trip[] }) {
+function DeleteConfirmationModal({
+  isOpen,
+  onClose,
+  onConfirm,
+  tripName,
+}: {
+  isOpen: boolean;
+  onClose: () => void;
+  onConfirm: () => void;
+  tripName: string;
+}) {
+  if (!isOpen) return null;
+
+  return (
+    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
+      <motion.div
+        initial={{ opacity: 0, scale: 0.9 }}
+        animate={{ opacity: 1, scale: 1 }}
+        className="bg-white/10 backdrop-blur-xl rounded-2xl p-6 max-w-md w-full mx-4"
+      >
+        <h3 className="text-xl font-bold text-white mb-4">Delete Trip</h3>
+        <p className="text-white/80 mb-6">
+          Are you sure you want to delete "{tripName}"? This action cannot be
+          undone.
+        </p>
+        <div className="flex justify-end space-x-4">
+          <button
+            onClick={onClose}
+            className="px-4 py-2 text-white hover:bg-white/10 rounded-lg transition-colors"
+          >
+            Cancel
+          </button>
+          <button
+            onClick={onConfirm}
+            className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors"
+          >
+            Delete
+          </button>
+        </div>
+      </motion.div>
+    </div>
+  );
+}
+
+function TripsContent({ trips: initialTrips }: { trips: Trip[] }) {
   const [selectedTrip, setSelectedTrip] = useState<Trip | null>(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [tripToDelete, setTripToDelete] = useState<Trip | null>(null);
+  const [trips, setTrips] = useState<Trip[]>(initialTrips);
+  const supabase = createClientComponentClient();
+
+  useEffect(() => {
+    setTrips(initialTrips);
+  }, [initialTrips]);
 
   const handleViewDetails = (trip: Trip) => {
-    if (!trip) return;
     setSelectedTrip(trip);
-    setIsModalOpen(true);
   };
 
   const handleCloseModal = () => {
-    setIsModalOpen(false);
     setSelectedTrip(null);
+  };
+
+  const handleDeleteClick = (trip: Trip) => {
+    setTripToDelete(trip);
+    setIsDeleteModalOpen(true);
+  };
+
+  const handleDeleteConfirm = async () => {
+    if (!tripToDelete) return;
+
+    try {
+      const { error } = await supabase
+        .from("trips")
+        .delete()
+        .eq("id", tripToDelete.id);
+
+      if (error) throw error;
+
+      setTrips((prevTrips) =>
+        prevTrips.filter((trip) => trip.id !== tripToDelete.id)
+      );
+      toast.success("Trip deleted successfully");
+    } catch (error) {
+      console.error("Error deleting trip:", error);
+      toast.error("Failed to delete trip");
+    } finally {
+      setIsDeleteModalOpen(false);
+      setTripToDelete(null);
+    }
+  };
+
+  const handleDeleteCancel = () => {
+    setIsDeleteModalOpen(false);
+    setTripToDelete(null);
   };
 
   // Add type checking for the modal content
@@ -531,182 +614,110 @@ function TripsContent({ trips }: { trips: Trip[] }) {
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center mb-8">
-        <h3 className="text-2xl font-bold text-white">My Trips</h3>
-        <p className="text-white/60">{trips.length} trips saved</p>
-      </div>
-
-      {trips.length > 0 ? (
+      <h2 className="text-2xl font-bold text-white mb-6">My Saved Trips</h2>
+      {trips.length === 0 ? (
+        <p className="text-white/60 text-center py-8">
+          You haven't saved any trips yet.
+        </p>
+      ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {trips.map((trip) => (
             <motion.div
               key={trip.id}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              className="bg-white/5 backdrop-blur-sm rounded-xl p-6 border border-white/10 hover:border-gold/30 transition-all group"
+              className="bg-white/5 backdrop-blur-xl rounded-2xl p-6 relative group"
             >
-              <div className="flex justify-between items-start mb-4">
-                <div>
-                  <h4 className="text-xl font-semibold text-white group-hover:text-gold transition-colors">
+              <button
+                onClick={() => handleDeleteClick(trip)}
+                className="absolute top-4 right-4 p-2 text-white/60 hover:text-red-500 transition-colors"
+              >
+                <FaTrash className="w-5 h-5" />
+              </button>
+              <div className="space-y-4">
+                <div className="flex items-center space-x-2">
+                  <FaMapMarkerAlt className="text-gold" />
+                  <h3 className="text-xl font-bold text-white">
                     {trip.destination}
-                  </h4>
-                  <p className="text-white/60 text-sm">
-                    Created on{" "}
-                    {format(new Date(trip.created_at), "MMM d, yyyy")}
+                  </h3>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <FaCalendar className="text-gold" />
+                  <p className="text-white/80">
+                    {format(new Date(trip.start_date), "MMM d, yyyy")} -{" "}
+                    {format(new Date(trip.end_date), "MMM d, yyyy")}
                   </p>
                 </div>
-              </div>
-
-              <div className="space-y-3 mb-6">
-                <div className="flex items-center gap-2 text-white/80">
-                  <FaCalendar className="text-gold" />
-                  <span>
-                    {format(new Date(trip.start_date), "MMM d")} -{" "}
-                    {format(new Date(trip.end_date), "MMM d, yyyy")}
-                  </span>
-                </div>
-                <div className="flex items-center gap-2 text-white/80">
+                <div className="flex items-center space-x-2">
                   <FaUsers className="text-gold" />
-                  <span>{trip.travelers}</span>
+                  <p className="text-white/80">{trip.travelers} travelers</p>
                 </div>
-                <div className="flex items-center gap-2 text-white/80">
+                <div className="flex items-center space-x-2">
                   <FaHotel className="text-gold" />
-                  <span>{trip.accommodation}</span>
+                  <p className="text-white/80">{trip.accommodation}</p>
                 </div>
-                <div className="flex items-center gap-2 text-white/80">
+                <div className="flex items-center space-x-2">
                   <FaWallet className="text-gold" />
-                  <span>{trip.budget}</span>
+                  <p className="text-white/80">{trip.budget}</p>
                 </div>
-              </div>
-
-              <div className="flex gap-3">
-                <motion.button
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                  onClick={() => handleViewDetails(trip)}
-                  className="flex-1 py-2 px-4 bg-gold text-navy rounded-lg hover:bg-gold/90 transition-colors flex items-center justify-center gap-2"
-                >
-                  <FaEye />
-                  View Details
-                </motion.button>
-                <PDFDownloadLink
-                  document={<TripPDF trip={trip} />}
-                  fileName={`${trip.destination
-                    .toLowerCase()
-                    .replace(/\s+/g, "-")}-itinerary.pdf`}
-                  className="flex-1"
-                >
-                  {({ loading }) => (
-                    <motion.button
-                      whileHover={{ scale: 1.02 }}
-                      whileTap={{ scale: 0.98 }}
-                      className="w-full py-2 px-4 bg-white/10 text-white rounded-lg hover:bg-white/20 transition-colors flex items-center justify-center gap-2"
-                      disabled={loading}
-                    >
-                      <FaDownload />
-                      {loading ? "Loading..." : "Download"}
-                    </motion.button>
-                  )}
-                </PDFDownloadLink>
+                <div className="flex justify-end space-x-2">
+                  <button
+                    onClick={() => handleViewDetails(trip)}
+                    className="px-4 py-2 bg-white/10 text-white rounded-lg hover:bg-white/20 transition-colors flex items-center space-x-2"
+                  >
+                    <FaEye />
+                    <span>View Details</span>
+                  </button>
+                  <PDFDownloadLink
+                    document={<TripPDF trip={trip} />}
+                    fileName={`${trip.destination}-itinerary.pdf`}
+                  >
+                    {({ loading }) => (
+                      <button
+                        disabled={loading}
+                        className="px-4 py-2 bg-gold text-navy rounded-lg hover:bg-gold/90 transition-colors flex items-center space-x-2"
+                      >
+                        <FaDownload />
+                        <span>{loading ? "Preparing..." : "Download PDF"}</span>
+                      </button>
+                    )}
+                  </PDFDownloadLink>
+                </div>
               </div>
             </motion.div>
           ))}
         </div>
-      ) : (
-        <div className="text-center py-12 bg-white/5 rounded-xl backdrop-blur-sm">
-          <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-white/10 flex items-center justify-center">
-            <FaMapMarkerAlt className="text-2xl text-gold" />
-          </div>
-          <h4 className="text-xl font-semibold text-white mb-2">
-            No trips yet
-          </h4>
-          <p className="text-white/60">
-            Start planning your next adventure to see your trips here!
-          </p>
-        </div>
       )}
 
-      {/* Trip Details Modal */}
-      {selectedTrip && isModalOpen && (
-        <div className="fixed inset-0 z-50 overflow-y-auto">
-          <div className="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
-            <div
-              className="fixed inset-0 transition-opacity"
-              onClick={handleCloseModal}
-            >
-              <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" />
+      {/* Delete Confirmation Modal */}
+      <DeleteConfirmationModal
+        isOpen={isDeleteModalOpen}
+        onClose={handleDeleteCancel}
+        onConfirm={handleDeleteConfirm}
+        tripName={tripToDelete?.destination || ""}
+      />
+
+      {/* View Details Modal */}
+      {selectedTrip && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="bg-white/10 backdrop-blur-xl rounded-2xl p-6 max-w-4xl w-full mx-4 max-h-[90vh] overflow-y-auto"
+          >
+            <div className="flex justify-between items-center mb-6">
+              <h3 className="text-2xl font-bold text-white">
+                {selectedTrip.destination}
+              </h3>
+              <button
+                onClick={handleCloseModal}
+                className="text-white/60 hover:text-white transition-colors"
+              >
+                <FaTimes className="w-6 h-6" />
+              </button>
             </div>
-
-            <div className="inline-block w-full max-w-4xl p-6 my-8 overflow-hidden text-left align-middle transition-all transform bg-navy shadow-xl rounded-2xl border border-white/10">
-              <div className="flex justify-between items-center mb-6">
-                <h3 className="text-2xl font-bold text-white">
-                  Trip to {selectedTrip.destination}
-                </h3>
-                <div className="flex gap-4">
-                  <PDFDownloadLink
-                    document={<TripPDF trip={selectedTrip} />}
-                    fileName={`${selectedTrip.destination
-                      .toLowerCase()
-                      .replace(/\s+/g, "-")}-itinerary.pdf`}
-                  >
-                    {({ loading }) => (
-                      <button
-                        className="luxury-button px-4 py-2 flex items-center gap-2"
-                        disabled={loading}
-                      >
-                        <FaDownload />
-                        {loading ? "Loading..." : "Download PDF"}
-                      </button>
-                    )}
-                  </PDFDownloadLink>
-                  <button
-                    onClick={handleCloseModal}
-                    className="text-white/60 hover:text-white transition-colors"
-                  >
-                    <FaTimes size={24} />
-                  </button>
-                </div>
-              </div>
-
-              <div className="max-h-[70vh] overflow-y-auto custom-scrollbar pr-4">
-                {/* Trip Overview */}
-                <div className="bg-white/5 rounded-xl p-4 mb-6">
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div className="flex items-center gap-3">
-                      <FaCalendar className="text-gold" />
-                      <div>
-                        <p className="text-white/60 text-sm">Dates</p>
-                        <p className="text-white">
-                          {format(new Date(selectedTrip.start_date), "MMM d")} -{" "}
-                          {format(
-                            new Date(selectedTrip.end_date),
-                            "MMM d, yyyy"
-                          )}
-                        </p>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-3">
-                      <FaWallet className="text-gold" />
-                      <div>
-                        <p className="text-white/60 text-sm">Budget</p>
-                        <p className="text-white">{selectedTrip.budget}</p>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-3">
-                      <FaUsers className="text-gold" />
-                      <div>
-                        <p className="text-white/60 text-sm">Travelers</p>
-                        <p className="text-white">{selectedTrip.travelers}</p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Itinerary Details */}
-                {renderItineraryDetails(selectedTrip)}
-              </div>
-            </div>
-          </div>
+            {renderItineraryDetails(selectedTrip)}
+          </motion.div>
         </div>
       )}
     </div>

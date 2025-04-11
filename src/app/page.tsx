@@ -39,6 +39,15 @@ export default function Home() {
     }
   };
 
+  const handleGenerateNew = () => {
+    setTripPlan(null);
+    // Scroll to the form section
+    const formSection = document.getElementById("plan-trip");
+    if (formSection) {
+      formSection.scrollIntoView({ behavior: "smooth" });
+    }
+  };
+
   return (
     <main className="min-h-screen bg-gradient-to-br from-slate-900 to-blue-900 relative">
       <Toaster position="top-center" />
@@ -54,8 +63,14 @@ export default function Home() {
       <ItineraryShowcase />
       <div id="plan-trip" className="section-padding">
         <div className="max-w-4xl mx-auto">
-          <MultiStepForm onSubmit={handleSubmit} isLoading={isLoading} />
-          <TripPlan plan={tripPlan} isLoading={isLoading} />
+          {!tripPlan && !isLoading && (
+            <MultiStepForm onSubmit={handleSubmit} isLoading={isLoading} />
+          )}
+          <TripPlan
+            plan={tripPlan}
+            isLoading={isLoading}
+            onGenerateNew={handleGenerateNew}
+          />
         </div>
       </div>
       <Testimonials />
