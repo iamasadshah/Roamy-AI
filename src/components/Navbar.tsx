@@ -186,7 +186,7 @@ export default function Navbar() {
             }}
             className="fixed inset-0 bg-navy/98 backdrop-blur-xl lg:hidden pt-20"
           >
-            <div className="flex flex-col items-center justify-start h-full p-6 space-y-8">
+            <div className="flex flex-col items-center justify-start h-full p-6 space-y-8 bg-[#0148A9]">
               {menuItems.map((item, index) => (
                 <motion.div
                   key={item.href}
