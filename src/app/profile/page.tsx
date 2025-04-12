@@ -482,8 +482,8 @@ function DeleteConfirmationModal({
       >
         <h3 className="text-xl font-bold text-white mb-4">Delete Trip</h3>
         <p className="text-white/80 mb-6">
-          Are you sure you want to delete "{tripName}"? This action cannot be
-          undone.
+          Are you sure you want to delete &quot;{tripName}&quot;? This action
+          cannot be undone.
         </p>
         <div className="flex justify-end space-x-4">
           <button
@@ -617,7 +617,7 @@ function TripsContent({ trips: initialTrips }: { trips: Trip[] }) {
       <h2 className="text-2xl font-bold text-white mb-6">My Saved Trips</h2>
       {trips.length === 0 ? (
         <p className="text-white/60 text-center py-8">
-          You haven't saved any trips yet.
+          You haven&apos;t saved any trips yet.
         </p>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Briefcase, Globe, Compass, Users, ArrowRight } from "lucide-react";
+import { Globe, Compass, Users, ArrowRight } from "lucide-react";
 import { useInView } from "framer-motion";
 import { useRef } from "react";
 import Image from "next/image";
@@ -59,8 +59,8 @@ const About = () => {
               Revolutionizing Travel with AI
             </h1>
             <p className="text-base sm:text-lg md:text-xl text-white/90 leading-relaxed">
-              We're building the future of travel planning with cutting-edge AI
-              technology and personalized experiences.
+              We&apos;re building the future of travel planning with
+              cutting-edge AI technology and personalized experiences.
             </p>
           </motion.div>
         </div>

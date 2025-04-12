@@ -178,7 +178,7 @@ const Goals = () => {
                 Making a Difference
               </h2>
               <p className="text-base sm:text-lg text-gray-600 leading-relaxed mb-8 sm:mb-10">
-                Our goals are not just aspirations - they're commitments to
+                Our goals are not just aspirations - they&apos;re commitments to
                 making travel planning better for everyone.
               </p>
               <div className="space-y-4 sm:space-y-6">

@@ -85,30 +85,18 @@ export default function TripPlan({
 
       // Parse dates properly
       const parseDate = (dateStr: string) => {
-        // Handle different date formats
-        const formats = [
-          "MMM d, yyyy", // e.g., "Jan 1, 2024"
-          "MMM d yyyy", // e.g., "Jan 1 2024"
-          "MMMM d, yyyy", // e.g., "January 1, 2024"
-          "MMMM d yyyy", // e.g., "January 1 2024"
-        ];
-
-        for (const format of formats) {
-          try {
-            const parsedDate = new Date(dateStr);
-            if (!isNaN(parsedDate.getTime())) {
-              return parsedDate.toISOString().split("T")[0];
-            }
-          } catch (e) {
-            continue;
+        try {
+          const parsedDate = new Date(dateStr);
+          if (!isNaN(parsedDate.getTime())) {
+            return parsedDate.toISOString().split("T")[0];
           }
+        } catch {
+          // If parsing fails, use today's date
+          console.warn(
+            `Could not parse date: ${dateStr}, using today's date instead`
+          );
+          return new Date().toISOString().split("T")[0];
         }
-
-        // If all parsing attempts fail, use today's date
-        console.warn(
-          `Could not parse date: ${dateStr}, using today's date instead`
-        );
-        return new Date().toISOString().split("T")[0];
       };
 
       const [startDate, endDate] = plan.trip_overview.dates
