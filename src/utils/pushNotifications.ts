@@ -3,6 +3,15 @@ import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 // Replace with your VAPID public key
 const VAPID_PUBLIC_KEY = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY;
 
+interface PushSubscriptionKeys {
+  p256dh: string;
+  auth: string;
+}
+
+interface PushSubscriptionWithKeys extends PushSubscription {
+  keys: PushSubscriptionKeys;
+}
+
 export async function requestNotificationPermission(): Promise<NotificationPermission> {
   return await Notification.requestPermission();
 }
@@ -23,12 +32,13 @@ export async function subscribeUserToPush(): Promise<PushSubscription | null> {
 
 export async function saveSubscriptionToSupabase(subscription: PushSubscription, userId: string) {
   const supabase = createClientComponentClient();
+  const subscriptionWithKeys = subscription as PushSubscriptionWithKeys;
 
   const { error } = await supabase.from('subscriptions').upsert({
     user_id: userId,
     endpoint: subscription.endpoint,
-    p256dh: (subscription as any).keys.p256dh,
-    auth: (subscription as any).keys.auth,
+    p256dh: subscriptionWithKeys.keys.p256dh,
+    auth: subscriptionWithKeys.keys.auth,
   });
 
   if (error) {
