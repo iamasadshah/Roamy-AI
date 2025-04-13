@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Toaster, toast } from "react-hot-toast";
 import Hero from "@/components/Hero";
 import HowItWorks from "@/components/HowItWorks";
@@ -13,10 +13,31 @@ import TripPlan from "@/components/TripPlan";
 import BackgroundAnimation from "@/components/BackgroundAnimation";
 import { generateTripPlan } from "@/utils/gemini";
 import { FormData, TravelItinerary } from "@/types/itinerary";
+import {
+  requestNotificationPermission,
+  subscribeUserToPush,
+  saveSubscriptionToSupabase,
+} from "@/utils/pushNotifications";
+import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 
 export default function Home() {
   const [isLoading, setIsLoading] = useState(false);
   const [tripPlan, setTripPlan] = useState<TravelItinerary | null>(null);
+  const supabase = createClientComponentClient();
+
+  useEffect(() => {
+    // Register service worker
+    if ("serviceWorker" in navigator && "PushManager" in window) {
+      navigator.serviceWorker
+        .register("/service-worker.js")
+        .then((registration) => {
+          console.log("Service Worker registered:", registration);
+        })
+        .catch((error) => {
+          console.error("Service Worker registration failed:", error);
+        });
+    }
+  }, []);
 
   const handleSubmit = async (formData: FormData) => {
     setIsLoading(true);
@@ -29,6 +50,20 @@ export default function Home() {
       }
       setTripPlan(plan);
       toast.success("Trip itinerary generated successfully!");
+
+      // Request notification permission and subscribe
+      const permission = await requestNotificationPermission();
+      if (permission === "granted") {
+        const subscription = await subscribeUserToPush();
+        if (subscription) {
+          const {
+            data: { user },
+          } = await supabase.auth.getUser();
+          if (user) {
+            await saveSubscriptionToSupabase(subscription, user.id);
+          }
+        }
+      }
     } catch (error) {
       const errorMessage =
         error instanceof Error ? error.message : "Failed to generate itinerary";

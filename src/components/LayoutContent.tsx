@@ -1,9 +1,9 @@
-import type { Metadata } from "next";
+"use client";
+
 import { Geist, Geist_Mono } from "next/font/google";
-import "./globals.css";
 import Navbar from "@/components/Navbar";
 import { Toaster } from "react-hot-toast";
-import NotificationProvider from "@/components/NotificationProvider";
+import { useNotifications } from "@/hooks/useNotifications";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -15,41 +15,13 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-export const metadata: Metadata = {
-  title: "Roamy AI",
-  description: "Your Smart Travel Buddy!",
-  manifest: "/manifest.json",
-  appleWebApp: {
-    capable: true,
-    statusBarStyle: "default",
-    title: "Roamy AI",
-  },
-  formatDetection: {
-    telephone: false,
-  },
-  icons: {
-    apple: [{ url: "/favicon.png", sizes: "180x180", type: "image/png" }],
-    other: [
-      { url: "/favicon.png", sizes: "16x16", type: "image/png" },
-      { url: "/favicon.png", sizes: "32x32", type: "image/png" },
-      { url: "/favicon.png", sizes: "96x96", type: "image/png" },
-    ],
-  },
-};
-
-export const viewport = {
-  themeColor: "#0a4d93",
-  width: "device-width",
-  initialScale: 1,
-  maximumScale: 1,
-  userScalable: false,
-};
-
-export default function RootLayout({
+export default function LayoutContent({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
+  useNotifications();
+
   return (
     <html
       lang="en"
@@ -67,7 +39,6 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <NotificationProvider />
         <Toaster position="top-center" />
         <Navbar />
         {children}
