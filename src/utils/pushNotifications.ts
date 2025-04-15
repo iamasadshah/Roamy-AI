@@ -1,7 +1,7 @@
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 
 // Replace with your VAPID public key
-const VAPID_PUBLIC_KEY = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY;
+const VAPID_PUBLIC_KEY = process.env.NEXT_PUBLIC_VAPID_API;
 
 interface PushSubscriptionKeys {
   p256dh: string;
@@ -39,6 +39,7 @@ export async function saveSubscriptionToSupabase(subscription: PushSubscription,
     endpoint: subscription.endpoint,
     p256dh: subscriptionWithKeys.keys.p256dh,
     auth: subscriptionWithKeys.keys.auth,
+    created_at: new Date().toISOString(),
   });
 
   if (error) {
@@ -57,4 +58,41 @@ function urlBase64ToUint8Array(base64String: string): Uint8Array {
     outputArray[i] = rawData.charCodeAt(i);
   }
   return outputArray;
+}
+
+// Function to send a notification
+export async function sendNotification(userId: string, title: string, body: string) {
+  const supabase = createClientComponentClient();
+
+  // Get the user's subscription
+  const { data: subscription } = await supabase
+    .from('subscriptions')
+    .select('*')
+    .eq('user_id', userId)
+    .single();
+
+  if (!subscription) return;
+
+  // Send the notification using the subscription details
+  const response = await fetch('/api/send-notification', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      subscription: {
+        endpoint: subscription.endpoint,
+        keys: {
+          p256dh: subscription.p256dh,
+          auth: subscription.auth,
+        },
+      },
+      title,
+      body,
+    }),
+  });
+
+  if (!response.ok) {
+    throw new Error('Failed to send notification');
+  }
 } 

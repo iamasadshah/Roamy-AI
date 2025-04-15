@@ -10,14 +10,25 @@ export function useNotifications() {
 
     async function setupNotifications() {
       try {
+        // Check if user is logged in
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) return;
+
+        // Check if already subscribed
+        const { data: existingSubscriptions } = await supabase
+          .from('subscriptions')
+          .select('*')
+          .eq('user_id', user.id)
+          .single();
+
+        if (existingSubscriptions) return;
+
+        // Request permission and subscribe
         const permission = await requestNotificationPermission();
         if (permission === "granted") {
           const subscription = await subscribeUserToPush();
           if (subscription) {
-            const { data: { user } } = await supabase.auth.getUser();
-            if (user) {
-              await saveSubscriptionToSupabase(subscription, user.id);
-            }
+            await saveSubscriptionToSupabase(subscription, user.id);
           }
         }
       } catch (error) {
