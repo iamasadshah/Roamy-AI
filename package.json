@@ -31,8 +31,7 @@
     "react-icons": "^5.4.0",
     "tailwind-merge": "^3.2.0",
     "tailwindcss-animate": "^1.0.7",
-    "typewriter-effect": "^2.21.0",
-    "web-push": "^3.6.7"
+    "typewriter-effect": "^2.21.0"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
