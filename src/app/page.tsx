@@ -1,115 +1,58 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { Toaster, toast } from "react-hot-toast";
-import Hero from "@/components/Hero";
-import HowItWorks from "@/components/HowItWorks";
-import Features from "@/components/Features";
-import ItineraryShowcase from "@/components/ItineraryShowcase";
-import Testimonials from "@/components/Testimonials";
-import CallToAction from "@/components/CallToAction";
-import MultiStepForm from "@/components/MultiStepForm";
-import TripPlan from "@/components/TripPlan";
-import BackgroundAnimation from "@/components/BackgroundAnimation";
-import { generateTripPlan } from "@/utils/gemini";
-import { FormData, TravelItinerary } from "@/types/itinerary";
-import {
-  requestNotificationPermission,
-  subscribeUserToPush,
-  saveSubscriptionToSupabase,
-} from "@/utils/pushNotifications";
+import { useState } from "react";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
+import { useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import { toast } from "react-hot-toast";
+import { Loader2 } from "lucide-react";
 
 export default function Home() {
   const [isLoading, setIsLoading] = useState(false);
-  const [tripPlan, setTripPlan] = useState<TravelItinerary | null>(null);
+  const router = useRouter();
   const supabase = createClientComponentClient();
 
-  useEffect(() => {
-    // Register service worker
-    if ("serviceWorker" in navigator && "PushManager" in window) {
-      navigator.serviceWorker
-        .register("/service-worker.js")
-        .then((registration) => {
-          console.log("Service Worker registered:", registration);
-        })
-        .catch((error) => {
-          console.error("Service Worker registration failed:", error);
-        });
-    }
-  }, []);
-
-  const handleSubmit = async (formData: FormData) => {
-    setIsLoading(true);
-    setTripPlan(null);
-
+  const handleGetStarted = async () => {
     try {
-      const plan = await generateTripPlan(formData);
-      if (!plan || !plan.trip_overview) {
-        throw new Error("Invalid plan data received");
-      }
-      setTripPlan(plan);
-      toast.success("Trip itinerary generated successfully!");
+      setIsLoading(true);
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
 
-      // Request notification permission and subscribe
-      const permission = await requestNotificationPermission();
-      if (permission === "granted") {
-        const subscription = await subscribeUserToPush();
-        if (subscription) {
-          const {
-            data: { user },
-          } = await supabase.auth.getUser();
-          if (user) {
-            await saveSubscriptionToSupabase(subscription, user.id);
-          }
-        }
+      if (!user) {
+        router.push("/auth/login");
+        return;
       }
+
+      router.push("/dashboard");
     } catch (error) {
-      const errorMessage =
-        error instanceof Error ? error.message : "Failed to generate itinerary";
-      toast.error(errorMessage);
-      console.error("Error generating trip plan:", error);
+      console.error("Error:", error);
+      toast.error("Something went wrong. Please try again.");
     } finally {
       setIsLoading(false);
     }
   };
 
-  const handleGenerateNew = () => {
-    setTripPlan(null);
-    // Scroll to the form section
-    const formSection = document.getElementById("plan-trip");
-    if (formSection) {
-      formSection.scrollIntoView({ behavior: "smooth" });
-    }
-  };
-
   return (
-    <main className="min-h-screen bg-gradient-to-br from-slate-900 to-blue-900 relative">
-      <Toaster position="top-center" />
-      <BackgroundAnimation />
-
-      {/* Hero Section */}
-      <section className="relative">
-        <Hero />
-      </section>
-
-      <HowItWorks />
-      <Features />
-      <ItineraryShowcase />
-      <div id="plan-trip" className="section-padding">
-        <div className="max-w-4xl mx-auto">
-          {!tripPlan && !isLoading && (
-            <MultiStepForm onSubmit={handleSubmit} isLoading={isLoading} />
+    <main className="flex min-h-screen flex-col items-center justify-center p-4">
+      <div className="text-center space-y-6">
+        <h1 className="text-4xl font-bold">Welcome to Roamy AI</h1>
+        <p className="text-xl text-gray-600">Your Smart Travel Buddy</p>
+        <Button
+          onClick={handleGetStarted}
+          disabled={isLoading}
+          className="w-full max-w-xs"
+        >
+          {isLoading ? (
+            <>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              Loading...
+            </>
+          ) : (
+            "Get Started"
           )}
-          <TripPlan
-            plan={tripPlan}
-            isLoading={isLoading}
-            onGenerateNew={handleGenerateNew}
-          />
-        </div>
+        </Button>
       </div>
-      <Testimonials />
-      <CallToAction />
     </main>
   );
 }

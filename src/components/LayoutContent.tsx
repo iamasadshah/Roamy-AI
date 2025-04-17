@@ -3,7 +3,6 @@
 import { Geist, Geist_Mono } from "next/font/google";
 import Navbar from "@/components/Navbar";
 import { Toaster } from "react-hot-toast";
-import { useNotifications } from "@/hooks/useNotifications";
 import Head from "next/head";
 
 const geistSans = Geist({
@@ -21,8 +20,6 @@ export default function LayoutContent({
 }: {
   children: React.ReactNode;
 }) {
-  useNotifications();
-
   return (
     <html
       lang="en"

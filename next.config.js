@@ -7,32 +7,13 @@ const withPWA = require("next-pwa")({
 });
 
 const nextConfig = {
-  reactStrictMode: true,
   images: {
-    domains: [
-      "lh3.googleusercontent.com", // For Google auth profile images
-      "avatars.githubusercontent.com", // For GitHub auth profile images
-    ],
     remotePatterns: [
       {
         protocol: "https",
-        hostname: "hucdeaomnflmaztiggbo.supabase.co",
-        pathname: "/storage/v1/object/public/**",
-      },
-      // Keep any existing patterns you have
-      {
-        protocol: "https",
-        hostname: "i.pinimg.com",
-        pathname: "/**",
+        hostname: "**",
       },
     ],
-  },
-  experimental: {
-    appDir: true,
-  },
-  webpack: (config) => {
-    config.resolve.alias.canvas = false;
-    return config;
   },
 };
 
