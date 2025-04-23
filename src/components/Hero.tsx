@@ -69,7 +69,7 @@ export default function Hero() {
             className="text-lg md:text-xl text-white/90"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
+            transition={{ duration: 1.6, delay: 0.5 }}
           >
             Get a personalized, AI-generated itinerary for your dream vacation
             in seconds.
