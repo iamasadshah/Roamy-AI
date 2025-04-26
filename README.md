@@ -82,7 +82,6 @@ Visit [http://localhost:3000](http://localhost:3000) to see your app running!
 Roamy AI is a Progressive Web App (PWA) that offers:
 
 - 📲 Installable on any device
-- 🔄 Offline functionality
 - 📱 Native app-like experience
 - 🚀 Fast loading times
 - 🔔 Push notifications (coming soon)
