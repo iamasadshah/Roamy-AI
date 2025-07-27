@@ -4,8 +4,20 @@ import { useState, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import { FormData, FormStep } from "@/types/itinerary";
-import { FaChevronDown, FaSearch } from "react-icons/fa";
+import { FormData } from "@/types/itinerary";
+import { 
+  FaChevronDown, 
+  FaSearch, 
+  FaChevronRight, 
+  FaChevronLeft, 
+  FaCalendarAlt, 
+  FaWallet, 
+  FaHotel, 
+  FaUsers, 
+  FaUtensils,
+  FaPlane,
+  FaCheck
+} from "react-icons/fa";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { useRouter } from "next/navigation";
 import { toast } from "react-hot-toast";
@@ -13,33 +25,39 @@ import { toast } from "react-hot-toast";
 const steps: FormStep[] = [
   {
     id: 1,
-    title: "Where are you traveling? 🌎",
-    description: "Enter your dream destination",
+    title: "Destination",
+    description: "Where would you like to go?",
+    icon: <FaPlane className="text-blue-500" />
   },
   {
     id: 2,
-    title: "When are you traveling? 📅",
-    description: "Select your travel dates",
+    title: "Travel Dates",
+    description: "When are you planning to travel?",
+    icon: <FaCalendarAlt className="text-blue-500" />
   },
   {
     id: 3,
-    title: "What's your budget? 💰",
-    description: "Choose your preferred budget range",
+    title: "Budget",
+    description: "What's your spending range?",
+    icon: <FaWallet className="text-blue-500" />
   },
   {
     id: 4,
-    title: "Where would you like to stay? 🏨",
-    description: "Select your accommodation preference",
+    title: "Accommodation",
+    description: "Where would you like to stay?",
+    icon: <FaHotel className="text-blue-500" />
   },
   {
     id: 5,
-    title: "Who's traveling? 👥",
-    description: "Tell us about your travel group",
+    title: "Travelers",
+    description: "Who's coming along?",
+    icon: <FaUsers className="text-blue-500" />
   },
   {
     id: 6,
-    title: "Any dietary preferences? 🍽️",
-    description: "Select your dietary requirements",
+    title: "Dietary Preferences",
+    description: "Any food restrictions?",
+    icon: <FaUtensils className="text-blue-500" />
   },
 ];
 
@@ -152,6 +170,13 @@ const countries = [
   "Vietnam",
   "Yemen",
 ];
+
+interface FormStep {
+  id: number;
+  title: string;
+  description: string;
+  icon: React.ReactNode;
+}
 
 interface Props {
   onSubmit: (data: FormData) => void;
@@ -509,83 +534,198 @@ export default function MultiStepForm({ onSubmit, isLoading }: Props) {
     }
   };
 
+  // Animation variants
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1,
+        delayChildren: 0.1,
+      },
+    },
+  };
+
+  const itemVariants = {
+    hidden: { y: 10, opacity: 0 },
+    visible: {
+      y: 0,
+      opacity: 1,
+      transition: {
+        type: 'spring',
+        stiffness: 300,
+        damping: 24,
+      },
+    },
+  };
+
   return (
-    <div className="max-w-md w-full mx-auto bg-black/30 backdrop-blur-lg rounded-xl p-6 shadow-xl border border-white/10">
-      <div className="mb-8">
-        <div className="flex justify-between items-center mb-2">
-          <h2 className="text-xl font-semibold text-white">
-            {steps[currentStep - 1].title}
-          </h2>
-          <span className="text-sm text-gray-400">
-            Step {currentStep} of {steps.length}
-          </span>
-        </div>
-        <p className="text-gray-400">{steps[currentStep - 1].description}</p>
+    <div className="w-full max-w-2xl mx-auto bg-white rounded-2xl shadow-xl overflow-hidden">
+      {/* Progress bar */}
+      <div className="h-1.5 bg-gray-100 w-full">
+        <motion.div 
+          className="h-full bg-gradient-to-r from-blue-500 to-indigo-600"
+          initial={{ width: '0%' }}
+          animate={{ width: `${(currentStep / steps.length) * 100}%` }}
+          transition={{ duration: 0.4, ease: 'easeInOut' }}
+        />
       </div>
-
-      <AnimatePresence mode="wait">
-        <motion.div
-          key={currentStep}
-          initial={{ opacity: 0, x: 20 }}
-          animate={{ opacity: 1, x: 0 }}
-          exit={{ opacity: 0, x: -20 }}
-          transition={{ duration: 0.2 }}
-        >
-          {renderStepContent()}
-        </motion.div>
-      </AnimatePresence>
-
-      <div className="mt-8 flex justify-between">
-        <button
-          onClick={handleBack}
-          disabled={currentStep === 1}
-          className={`px-4 py-2 rounded-lg ${
-            currentStep === 1
-              ? "bg-gray-600 cursor-not-allowed"
-              : "bg-white/10 hover:bg-white/20"
-          } text-white backdrop-blur-sm transition-colors`}
-        >
-          Back
-        </button>
-        <button
-          onClick={handleNext}
-          disabled={!isStepValid() || isLoading}
-          className={`px-4 py-2 rounded-lg ${
-            !isStepValid() || isLoading
-              ? "bg-gray-600 cursor-not-allowed"
-              : "bg-blue-500 hover:bg-blue-600"
-          } text-white backdrop-blur-sm transition-colors`}
-        >
-          {isLoading ? (
-            <span className="flex items-center">
-              <svg
-                className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
+      
+      <div className="p-6 md:p-8">
+        {/* Step indicator */}
+        <div className="flex justify-between items-center mb-8">
+          {steps.map((step, index) => (
+            <div key={step.id} className="flex flex-col items-center relative">
+              <motion.div
+                className={`flex items-center justify-center w-10 h-10 rounded-full border-2 ${
+                  currentStep > step.id
+                    ? 'bg-green-500 border-green-500 text-white'
+                    : currentStep === step.id
+                    ? 'border-blue-500 bg-white text-blue-500'
+                    : 'border-gray-200 bg-white text-gray-400'
+                } font-medium text-sm relative z-10 transition-colors`}
+                variants={itemVariants}
               >
-                <circle
-                  className="opacity-25"
-                  cx="12"
-                  cy="12"
-                  r="10"
-                  stroke="currentColor"
-                  strokeWidth="4"
-                ></circle>
-                <path
-                  className="opacity-75"
-                  fill="currentColor"
-                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                ></path>
-              </svg>
-              Generating...
-            </span>
-          ) : currentStep === steps.length ? (
-            "Generate Itinerary"
-          ) : (
-            "Next"
-          )}
-        </button>
+                {currentStep > step.id ? <FaCheck className="h-4 w-4" /> : step.id}
+              </motion.div>
+              <span 
+                className={`text-xs mt-2 font-medium ${
+                  currentStep >= step.id ? 'text-gray-900' : 'text-gray-400'
+                }`}
+              >
+                {step.title}
+              </span>
+              
+              {index < steps.length - 1 && (
+                <div className="hidden md:block absolute top-5 left-full w-16 h-0.5 bg-gray-200 -ml-8">
+                  <motion.div 
+                    className="h-full bg-blue-500"
+                    initial={{ width: '0%' }}
+                    animate={{ 
+                      width: currentStep > step.id ? '100%' : '0%' 
+                    }}
+                    transition={{ duration: 0.4, delay: 0.2 }}
+                  />
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+        
+        {/* Step content */}
+        <div className="mb-8">
+          <motion.div 
+            key={currentStep}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.3 }}
+            className="text-center mb-8"
+          >
+            <div className="w-16 h-16 mx-auto mb-4 flex items-center justify-center bg-blue-50 rounded-2xl text-blue-500">
+              {steps[currentStep - 1].icon}
+            </div>
+            <h2 className="text-2xl font-bold text-gray-900 mb-2">
+              {steps[currentStep - 1].title}
+            </h2>
+            <p className="text-gray-500">
+              {steps[currentStep - 1].description}
+            </p>
+          </motion.div>
+
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={currentStep}
+              initial={{ opacity: 0, x: 20, position: 'absolute' }}
+              animate={{ opacity: 1, x: 0, position: 'relative' }}
+              exit={{ opacity: 0, x: -20, position: 'absolute' }}
+              transition={{ 
+                type: 'spring',
+                stiffness: 300,
+                damping: 30,
+                duration: 0.3 
+              }}
+              className="w-full"
+            >
+              <div className="min-h-[300px] flex items-center justify-center">
+                {renderStepContent()}
+              </div>
+            </motion.div>
+          </AnimatePresence>
+
+        </div>
+        
+        <motion.div 
+          className="mt-8 flex justify-between border-t border-gray-100 pt-6"
+          variants={containerVariants}
+          initial="hidden"
+          animate="visible"
+        >
+          <motion.button
+            onClick={handleBack}
+            disabled={currentStep === 1}
+            className={`flex items-center px-5 py-2.5 rounded-xl font-medium ${
+              currentStep === 1
+                ? "text-gray-400 cursor-not-allowed"
+                : "text-gray-600 hover:bg-gray-50"
+            } transition-colors`}
+            variants={itemVariants}
+            whileHover={{ scale: currentStep === 1 ? 1 : 1.03 }}
+            whileTap={{ scale: currentStep === 1 ? 1 : 0.98 }}
+          >
+            <FaChevronLeft className="mr-2" />
+            Back
+          </motion.button>
+          
+          <motion.button
+            onClick={handleNext}
+            disabled={!isStepValid() || isLoading}
+            className={`flex items-center px-6 py-2.5 rounded-xl font-medium text-white ${
+              !isStepValid() || isLoading
+                ? "bg-gray-300 cursor-not-allowed"
+                : "bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 shadow-lg shadow-blue-500/20"
+            } transition-all`}
+            variants={itemVariants}
+            whileHover={!isStepValid() || isLoading ? {} : { scale: 1.03, boxShadow: '0 5px 15px -3px rgba(59, 130, 246, 0.3)' }}
+            whileTap={!isStepValid() || isLoading ? {} : { scale: 0.98 }}
+          >
+            {isLoading ? (
+              <span className="flex items-center">
+                <svg
+                  className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <circle
+                    className="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    strokeWidth="4"
+                  ></circle>
+                  <path
+                    className="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                  ></path>
+                </svg>
+                Generating...
+              </span>
+            ) : currentStep === steps.length ? (
+              <span className="flex items-center">
+                Generate Itinerary
+                <FaPlane className="ml-2 transform group-hover:translate-x-1 transition-transform" />
+              </span>
+            ) : (
+              <span className="flex items-center">
+                Next
+                <FaChevronRight className="ml-2" />
+              </span>
+            )}
+          </motion.button>
+        </motion.div>
       </div>
     </div>
   );

@@ -11,6 +11,13 @@ import {
   FaEnvelope,
   FaMoneyBillWave,
   FaChevronDown,
+  FaGlobeAmericas,
+  FaRoute,
+  FaStar,
+  FaUserTie,
+  FaHeart,
+  FaUtensilSpoon,
+  FaMapMarkerAlt
 } from "react-icons/fa";
 
 interface TravelFormData {
@@ -268,49 +275,75 @@ export default function TravelForm({
     onSubmit(formData);
   };
 
+    // Form input styles
   const inputClasses = `
-    w-full px-4 py-3 rounded-lg
-    border border-white/20
-    bg-white/10 backdrop-blur-md
-    text-white placeholder-white/60
-    focus:ring-2 focus:ring-blue-400 focus:border-transparent
-    transition-all duration-300
-    hover:border-white/30
-    outline-none rounded-lg
+    w-full px-5 py-3.5 rounded-xl
+    border border-gray-200
+    bg-white/95 text-gray-800 placeholder-gray-400
+    focus:ring-2 focus:ring-blue-400 focus:border-transparent focus:ring-opacity-50
+    transition-all duration-200
+    hover:border-blue-200
+    outline-none
+    shadow-sm
+    font-medium
   `;
 
   const pickerClasses = `
-    w-full px-4 py-3 rounded-lg
-    border border-white/20
-    bg-black/40 backdrop-blur-xl
-    text-white placeholder-white/60
-    focus:ring-2 focus:ring-blue-400 focus:border-transparent
-    transition-all duration-300
-    hover:border-white/30 hover:bg-black/50
-    outline-none
-    shadow-lg
+    ${inputClasses}
     appearance-none
-    bg-[url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23FFFFFF%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E')]
+    bg-white/95
+    bg-[url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%234b5563%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E')]
     bg-[length:12px_12px]
-    bg-[right_1rem_center]
+    bg-[right_1.25rem_center]
     bg-no-repeat
     pr-12
+    cursor-pointer
   `;
 
-  const labelClasses =
-    "flex items-center gap-2 text-white/90 font-semibold mb-2 text-sm uppercase tracking-wide z-10";
-  const iconClasses = "text-blue-400 text-lg";
+  const labelClasses = "flex items-center gap-2 text-gray-700 font-semibold mb-2 text-sm tracking-wide z-10";
+  const iconClasses = "text-blue-500 text-base";
+  
+  // Animation variants
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1,
+        delayChildren: 0.2,
+      },
+    },
+  };
+
+  const itemVariants = {
+    hidden: { y: 10, opacity: 0 },
+    visible: {
+      y: 0,
+      opacity: 1,
+      transition: {
+        duration: 0.4,
+        ease: [0.16, 1, 0.3, 1],
+      },
+    },
+  };
 
   const dietaryOptions = [
     "No Preference",
     "Vegetarian",
     "Vegan",
     "Gluten-Free",
+    "Dairy-Free",
+    "Nut-Free",
     "Halal",
     "Kosher",
     "Pescatarian",
-    "Dairy-Free",
+    "Keto",
+    "Paleo",
   ];
+  
+  // Add missing icon imports
+  const FaUmbrellaBeach = FaMapMarkerAlt;
+  const FaHome = FaHotel;
 
   const formatBudget = (value: number) => {
     return new Intl.NumberFormat("en-US", {
@@ -404,55 +437,77 @@ export default function TravelForm({
 
   return (
     <motion.form
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5 }}
-      className="w-full max-w-4xl mx-auto space-y-8 bg-black/30 backdrop-blur-md p-8 rounded-2xl shadow-2xl border border-white/10"
+      initial="hidden"
+      animate="visible"
+      variants={containerVariants}
+      className="w-full max-w-4xl mx-auto space-y-8 bg-white p-8 rounded-2xl shadow-xl border border-gray-100"
       onSubmit={handleSubmit}
     >
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-        <motion.div whileHover={{ scale: 1.02 }} className="col-span-full">
-          <DestinationInput
-            value={formData.destination}
-            onChange={(value) =>
-              setFormData({ ...formData, destination: value })
-            }
-            inputClasses={inputClasses}
-            labelClasses={labelClasses}
-            iconClasses={iconClasses}
-          />
+      <motion.div variants={itemVariants} className="text-center mb-8">
+        <h2 className="text-3xl font-bold text-gray-900 mb-3">Plan Your Perfect Trip</h2>
+        <p className="text-gray-500">Fill in the details below to get a personalized travel itinerary</p>
+      </motion.div>
+      
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <motion.div 
+          variants={itemVariants}
+          className="col-span-full relative group"
+        >
+          <div className="absolute -inset-1 bg-gradient-to-r from-blue-400 to-indigo-500 rounded-xl opacity-0 group-hover:opacity-20 blur transition duration-200"></div>
+          <div className="relative bg-white rounded-xl p-1">
+            <DestinationInput
+              value={formData.destination}
+              onChange={(value) =>
+                setFormData({ ...formData, destination: value })
+              }
+              inputClasses={inputClasses}
+              labelClasses={labelClasses}
+              iconClasses={iconClasses}
+            />
+          </div>
         </motion.div>
 
-        <motion.div whileHover={{ scale: 1.02 }}>
+        <motion.div 
+          variants={itemVariants}
+          className="relative group"
+        >
           <label className={labelClasses}>
             <FaCalendar className={iconClasses} />
             Trip Duration
           </label>
-          <input
-            type="text"
-            className={inputClasses}
-            placeholder="e.g., 7 days"
-            value={formData.duration}
-            onChange={(e) =>
-              setFormData({ ...formData, duration: e.target.value })
-            }
-            required
-          />
+          <div className="relative">
+            <input
+              type="text"
+              className={inputClasses}
+              placeholder="e.g., 7 days"
+              value={formData.duration}
+              onChange={(e) =>
+                setFormData({ ...formData, duration: e.target.value })
+              }
+              required
+            />
+            <div className="absolute inset-y-0 right-0 flex items-center pr-4 pointer-events-none">
+              <FaCalendar className="text-gray-400" />
+            </div>
+          </div>
         </motion.div>
 
-        <motion.div whileHover={{ scale: 1.02 }}>
+        <motion.div 
+          variants={itemVariants}
+          className="relative group col-span-full"
+        >
           <label className={labelClasses}>
             <FaMoneyBillWave className={iconClasses} />
-            Budget Range
+            Budget Range: {formatBudget(formData.budget)}
           </label>
-          <div className="flex flex-col gap-3">
-            <div className="flex items-center gap-4">
+          <div className="bg-white p-5 rounded-xl border border-gray-100 shadow-sm">
+            <div className="flex items-center gap-4 mb-2">
               <input
                 type="range"
                 min="500"
                 max="10000"
                 step="100"
-                className="flex-1 h-2 bg-gradient-to-r from-blue-500 to-blue-700 rounded-lg appearance-none cursor-pointer 
+                className="flex-1 h-2 bg-gradient-to-r from-blue-400 via-blue-500 to-indigo-500 rounded-full appearance-none cursor-pointer 
                   [&::-webkit-slider-thumb]:appearance-none 
                   [&::-webkit-slider-thumb]:w-5 
                   [&::-webkit-slider-thumb]:h-5 
@@ -474,159 +529,228 @@ export default function TravelForm({
                 }
                 required
               />
-              <input
-                type="number"
-                min="500"
-                max="10000"
-                step="100"
-                className="w-32 px-3 py-2 bg-black/40 border border-white/20 rounded-lg text-white text-center focus:ring-2 focus:ring-blue-400 focus:border-transparent"
-                value={formData.budget}
-                onChange={(e) => {
-                  const value = parseInt(e.target.value);
-                  if (value >= 500 && value <= 10000) {
-                    setFormData({ ...formData, budget: value });
-                  }
-                }}
-                required
-              />
             </div>
-            <div className="flex justify-between text-sm text-white/60">
-              <span>{formatBudget(500)}</span>
-              <span>{formatBudget(10000)}</span>
+            <div className="flex justify-between text-sm text-gray-500">
+              <span>Budget</span>
+              <span>Luxury</span>
             </div>
           </div>
         </motion.div>
 
-        <motion.div whileHover={{ scale: 1.02 }}>
-          <label className={labelClasses}>Interests</label>
-          <input
-            type="text"
-            className={inputClasses}
-            placeholder="Enter your interests"
-            value={formData.interests.join(", ")}
-            onChange={(e) =>
-              setFormData({
-                ...formData,
-                interests: e.target.value.split(", "),
-              })
-            }
-            required
-          />
+        <motion.div 
+          variants={itemVariants}
+          className="relative group"
+        >
+          <label className={labelClasses}>
+            <FaHeart className={iconClasses} />
+            Interests
+          </label>
+          <div className="relative">
+            <input
+              type="text"
+              className={inputClasses}
+              placeholder="e.g., Hiking, Museums, Food"
+              value={formData.interests.join(", ")}
+              onChange={(e) =>
+                setFormData({
+                  ...formData,
+                  interests: e.target.value.split(", ").map(i => i.trim()).filter(Boolean),
+                })
+              }
+              required
+            />
+            <div className="absolute inset-y-0 right-0 flex items-center pr-4 pointer-events-none">
+              <FaHeart className="text-gray-400" />
+            </div>
+          </div>
+          <p className="mt-1 text-xs text-gray-500">Separate interests with commas</p>
         </motion.div>
 
-        <motion.div whileHover={{ scale: 1.02 }}>
-          <label className={labelClasses}>Travel Style</label>
-          <select
-            className={pickerClasses}
-            value={formData.travelStyle}
-            onChange={(e) =>
-              setFormData({ ...formData, travelStyle: e.target.value })
-            }
-            required
-          >
-            <option value="">Select style</option>
-            <option value="relaxing">Relaxing</option>
-            <option value="adventurous">Adventurous</option>
-            <option value="cultural">Cultural</option>
-            <option value="foodie">Foodie</option>
-          </select>
+        <motion.div 
+          variants={itemVariants}
+          className="relative group"
+        >
+          <label className={labelClasses}>
+            <FaRoute className={iconClasses} />
+            Travel Style
+          </label>
+          <div className="relative">
+            <select
+              className={pickerClasses}
+              value={formData.travelStyle}
+              onChange={(e) =>
+                setFormData({ ...formData, travelStyle: e.target.value })
+              }
+              required
+            >
+              <option value="">Select travel style</option>
+              <option value="relaxing" className="flex items-center gap-2">
+                <FaStar className="inline mr-2 text-yellow-400" /> Relaxing
+              </option>
+              <option value="adventurous" className="flex items-center gap-2">
+                <FaRoute className="inline mr-2 text-green-500" /> Adventurous
+              </option>
+              <option value="cultural" className="flex items-center gap-2">
+                <FaGlobeAmericas className="inline mr-2 text-blue-500" /> Cultural
+              </option>
+              <option value="foodie" className="flex items-center gap-2">
+                <FaUtensilSpoon className="inline mr-2 text-red-400" /> Foodie
+              </option>
+              <option value="luxury" className="flex items-center gap-2">
+                <FaUserTie className="inline mr-2 text-purple-500" /> Luxury
+              </option>
+            </select>
+          </div>
         </motion.div>
 
-        <motion.div whileHover={{ scale: 1.02 }}>
+        <motion.div 
+          variants={itemVariants}
+          className="relative group"
+        >
           <label className={labelClasses}>
             <FaHotel className={iconClasses} />
-            Accommodation Preference
+            Accommodation
           </label>
-          <select
-            className={pickerClasses}
-            value={formData.accommodation}
-            onChange={(e) =>
-              setFormData({ ...formData, accommodation: e.target.value })
-            }
-            required
-          >
-            <option value="">Select preference</option>
-            <option value="hotel">Hotel</option>
-            <option value="hostel">Hostel</option>
-            <option value="apartment">Apartment</option>
-            <option value="resort">Resort</option>
-          </select>
+          <div className="relative">
+            <select
+              className={pickerClasses}
+              value={formData.accommodation}
+              onChange={(e) =>
+                setFormData({ ...formData, accommodation: e.target.value })
+              }
+              required
+            >
+              <option value="">Select accommodation type</option>
+              <option value="hotel" className="flex items-center gap-2">
+                <FaHotel className="inline mr-2 text-blue-400" /> Hotel
+              </option>
+              <option value="hostel" className="flex items-center gap-2">
+                <FaUsers className="inline mr-2 text-green-400" /> Hostel
+              </option>
+              <option value="apartment" className="flex items-center gap-2">
+                <FaMapMarkerAlt className="inline mr-2 text-orange-400" /> Apartment
+              </option>
+              <option value="resort" className="flex items-center gap-2">
+                <FaUmbrellaBeach className="inline mr-2 text-teal-400" /> Resort
+              </option>
+              <option value="villa" className="flex items-center gap-2">
+                <FaHome className="inline mr-2 text-purple-400" /> Villa
+              </option>
+            </select>
+          </div>
         </motion.div>
 
-        <motion.div whileHover={{ scale: 1.02 }}>
+        <motion.div 
+          variants={itemVariants}
+          className="relative group"
+        >
           <label className={labelClasses}>
             <FaUsers className={iconClasses} />
-            Number of Travelers
+            Travelers
           </label>
-          <input
-            type="number"
-            className={inputClasses}
-            placeholder="e.g., 2"
-            value={formData.numberOfTravelers}
-            onChange={(e) =>
-              setFormData({
-                ...formData,
-                numberOfTravelers: parseInt(e.target.value),
-              })
-            }
-            required
-          />
+          <div className="relative">
+            <select
+              className={pickerClasses}
+              value={formData.numberOfTravelers}
+              onChange={(e) =>
+                setFormData({
+                  ...formData,
+                  numberOfTravelers: parseInt(e.target.value),
+                })
+              }
+              required
+            >
+              {[1, 2, 3, 4, 5, 6, 7, 8, '9+'].map((num) => (
+                <option key={num} value={num}>
+                  {num} {num === 1 ? 'Traveler' : 'Travelers'}
+                </option>
+              ))}
+            </select>
+          </div>
         </motion.div>
 
-        <motion.div whileHover={{ scale: 1.02 }}>
+        <motion.div 
+          variants={itemVariants}
+          className="relative group"
+        >
           <label className={labelClasses}>
             <FaUtensils className={iconClasses} />
             Dietary Preferences
           </label>
-          <select
-            className={`${inputClasses} appearance-none bg-black/40`}
-            value={formData.dietaryPreferences}
-            onChange={(e) =>
-              setFormData({ ...formData, dietaryPreferences: e.target.value })
-            }
-            required
-          >
-            <option value="" disabled>
-              Select your dietary preference
-            </option>
-            {dietaryOptions.map((option) => (
-              <option
-                key={option}
-                value={option}
-                className="bg-gray-800 text-white"
-              >
-                {option}
+          <div className="relative">
+            <select
+              className={pickerClasses}
+              value={formData.dietaryPreferences}
+              onChange={(e) =>
+                setFormData({ ...formData, dietaryPreferences: e.target.value })
+              }
+              required
+            >
+              <option value="" disabled>
+                Select your dietary preference
               </option>
-            ))}
-          </select>
+              {dietaryOptions.map((option) => (
+                <option
+                  key={option}
+                  value={option}
+                  className="text-gray-700"
+                >
+                  {option}
+                </option>
+              ))}
+            </select>
+          </div>
         </motion.div>
 
-        <motion.div whileHover={{ scale: 1.02 }} className="col-span-full">
+        <motion.div 
+          variants={itemVariants}
+          className="col-span-full relative group"
+        >
           <label className={labelClasses}>
             <FaEnvelope className={iconClasses} />
             Email Address
           </label>
-          <input
-            type="email"
-            className={inputClasses}
-            placeholder="Enter your email"
-            value={formData.email}
-            onChange={(e) =>
-              setFormData({ ...formData, email: e.target.value })
-            }
-            required
-          />
+          <div className="relative">
+            <input
+              type="email"
+              className={inputClasses}
+              placeholder="your@email.com"
+              value={formData.email}
+              onChange={(e) =>
+                setFormData({ ...formData, email: e.target.value })
+              }
+              required
+            />
+            <div className="absolute inset-y-0 right-0 flex items-center pr-4 pointer-events-none">
+              <FaEnvelope className="text-gray-400" />
+            </div>
+          </div>
+          <p className="mt-1 text-xs text-gray-500">We'll send your itinerary to this email</p>
         </motion.div>
       </div>
 
-      <motion.button
-        whileHover={{ scale: 1.05 }}
-        whileTap={{ scale: 0.95 }}
-        className="w-full bg-blue-500 text-white py-4 rounded-lg font-semibold mt-8 hover:bg-blue-600 transition-colors duration-300 text-lg shadow-lg shadow-blue-500/30"
-        type="submit"
+      <motion.div 
+        variants={itemVariants}
+        className="mt-8"
       >
-        Plan My Dream Trip
-      </motion.button>
+        <motion.button
+          whileHover={{ 
+            scale: 1.02,
+            boxShadow: '0 10px 25px -5px rgba(59, 130, 246, 0.4)'
+          }}
+          whileTap={{ scale: 0.98 }}
+          className="w-full bg-gradient-to-r from-blue-500 to-indigo-600 text-white py-4 rounded-xl font-semibold hover:from-blue-600 hover:to-indigo-700 transition-all duration-300 text-lg shadow-lg group"
+          type="submit"
+        >
+          <span className="flex items-center justify-center gap-2">
+            Plan My Dream Trip
+            <FaPlane className="transform transition-transform duration-300 group-hover:translate-x-1" />
+          </span>
+        </motion.button>
+        <p className="text-center text-sm text-gray-500 mt-3">
+          Get your personalized itinerary in seconds
+        </p>
+      </motion.div>
     </motion.form>
   );
 }
