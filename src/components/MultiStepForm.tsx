@@ -1,26 +1,52 @@
 "use client";
 
-import { useState, useMemo } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import DatePicker from "react-datepicker";
-import "react-datepicker/dist/react-datepicker.css";
-import { FormData } from "@/types/itinerary";
+import * as React from 'react';
+import { useState, useEffect, useMemo } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { 
-  FaChevronDown, 
-  FaSearch, 
-  FaChevronRight, 
   FaChevronLeft, 
+  FaChevronRight, 
+  FaPlane, 
   FaCalendarAlt, 
   FaWallet, 
   FaHotel, 
   FaUsers, 
-  FaUtensils,
-  FaPlane,
-  FaCheck
-} from "react-icons/fa";
-import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
-import { useRouter } from "next/navigation";
-import { toast } from "react-hot-toast";
+  FaUtensils, 
+  FaCheck,
+  FaHome, 
+  FaBed, 
+  FaUmbrellaBeach, 
+  FaUser, 
+  FaHeart, 
+  FaUserFriends, 
+  FaLeaf, 
+  FaSeedling, 
+  FaMosque,
+  FaSearch,
+  FaChevronDown
+} from 'react-icons/fa';
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
+import { useRouter } from 'next/navigation';
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
+import toast from 'react-hot-toast';
+
+interface FormStep {
+  id: number;
+  title: string;
+  description: string;
+  icon: React.ReactNode;
+}
+
+interface FormData {
+  destination: string;
+  startDate: Date | null;
+  endDate: Date | null;
+  budget: string;
+  accommodation: string;
+  travelers: string;
+  dietaryPlan: string;
+}
 
 const steps: FormStep[] = [
   {
@@ -171,13 +197,6 @@ const countries = [
   "Yemen",
 ];
 
-interface FormStep {
-  id: number;
-  title: string;
-  description: string;
-  icon: React.ReactNode;
-}
-
 interface Props {
   onSubmit: (data: FormData) => void;
   isLoading: boolean;
@@ -304,7 +323,7 @@ const DestinationInput = ({
   );
 };
 
-export default function MultiStepForm({ onSubmit, isLoading }: Props) {
+const MultiStepForm: React.FC<Props> = ({ onSubmit, isLoading }) => {
   const [currentStep, setCurrentStep] = useState(1);
   const [formData, setFormData] = useState<FormData>({
     destination: "",
@@ -318,7 +337,7 @@ export default function MultiStepForm({ onSubmit, isLoading }: Props) {
   const router = useRouter();
   const supabase = createClientComponentClient();
 
-  const handleNext = async () => {
+  const handleNext = async (): Promise<void> => {
     if (currentStep === steps.length) {
       // Check if user is authenticated before generating itinerary
       const {
@@ -388,144 +407,197 @@ export default function MultiStepForm({ onSubmit, isLoading }: Props) {
     }
   };
 
-  const handleBack = () => {
+  const handleBack = (): void => {
     if (currentStep > 1) {
       setCurrentStep((prev) => prev - 1);
     }
   };
 
-  const isStepValid = () => {
+  const isStepValid = (): boolean => {
     switch (currentStep) {
       case 1:
-        return formData.destination.length > 0;
+        return formData.destination.trim() !== '';
       case 2:
-        return formData.startDate && formData.endDate;
+        return formData.startDate !== null && formData.endDate !== null;
       case 3:
-        return formData.budget.length > 0;
+        return formData.budget !== '';
       case 4:
-        return formData.accommodation.length > 0;
+        return formData.accommodation !== '';
       case 5:
-        return formData.travelers.length > 0;
+        return formData.travelers !== '';
       case 6:
-        return formData.dietaryPlan.length > 0;
+        return true; // Dietary preferences are optional
       default:
         return false;
     }
   };
 
-  const renderStepContent = () => {
+  const renderStepContent = (): React.ReactNode => {
+    const optionButtonClasses = (isSelected: boolean) => `
+      w-full p-4 rounded-xl text-left transition-all duration-200
+      ${isSelected 
+        ? 'bg-gradient-to-r from-blue-500 to-indigo-600 text-white shadow-lg shadow-blue-500/20' 
+        : 'bg-white border border-gray-200 text-gray-700 hover:border-blue-300 hover:shadow-md'}
+      hover:scale-[1.02] active:scale-[0.98]
+    `;
+
     switch (currentStep) {
       case 1:
         return (
-          <DestinationInput
-            value={formData.destination}
-            onChange={(value) =>
-              setFormData({ ...formData, destination: value })
-            }
-          />
+          <div className="w-full max-w-md">
+            <DestinationInput 
+              value={formData.destination} 
+              onChange={(value) => setFormData({ ...formData, destination: value })} 
+            />
+          </div>
         );
       case 2:
         return (
-          <div className=" py-16">
-            <div>
-              <label className="block text-sm mb-2 text-white">
-                Start Date
-              </label>
+          <div className="w-full max-w-md space-y-5">
+            <motion.div 
+              className="space-y-1"
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.1 }}
+            >
+              <label className="block text-sm font-medium text-gray-600 mb-1.5">Start Date</label>
               <DatePicker
                 selected={formData.startDate}
-                onChange={(date) =>
-                  setFormData({ ...formData, startDate: date })
-                }
-                className="w-full p-3 rounded-lg bg-white/10 text-white placeholder-gray-400 backdrop-blur-sm border border-white/20"
-                placeholderText="Select start date"
+                onChange={(date) => setFormData({ ...formData, startDate: date })}
+                selectsStart
+                startDate={formData.startDate}
+                endDate={formData.endDate}
                 minDate={new Date()}
+                className="w-full p-3.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all duration-200"
+                placeholderText="Select start date"
+                dateFormat="MMMM d, yyyy"
+                calendarClassName="rounded-xl shadow-xl border border-gray-100"
               />
-            </div>
-            <div>
-              <label className="block text-sm mb-2 text-white">End Date</label>
+            </motion.div>
+            <motion.div 
+              className="space-y-1"
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 }}
+            >
+              <label className="block text-sm font-medium text-gray-600 mb-1.5">End Date</label>
               <DatePicker
                 selected={formData.endDate}
                 onChange={(date) => setFormData({ ...formData, endDate: date })}
-                className="w-full p-3 rounded-lg bg-white/10 text-white placeholder-gray-400 backdrop-blur-sm border border-white/20"
-                placeholderText="Select end date"
+                selectsEnd
+                startDate={formData.startDate}
+                endDate={formData.endDate}
                 minDate={formData.startDate || new Date()}
+                className="w-full p-3.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all duration-200"
+                placeholderText="Select end date"
+                dateFormat="MMMM d, yyyy"
+                calendarClassName="rounded-xl shadow-xl border border-gray-100"
               />
-            </div>
+            </motion.div>
           </div>
         );
       case 3:
         return (
-          <div className="space-y-3">
-            {["Budget", "Mid-range", "Luxury"].map((option) => (
-              <button
+          <div className="w-full max-w-md space-y-3">
+            {["Budget", "Mid-range", "Luxury"].map((option, index) => (
+              <motion.button
                 key={option}
                 onClick={() => setFormData({ ...formData, budget: option })}
-                className={`w-full p-3 rounded-lg ${
-                  formData.budget === option
-                    ? "bg-blue-500 text-white"
-                    : "bg-white/10 text-white"
-                } backdrop-blur-sm border border-white/20 transition-colors`}
+                className={optionButtonClasses(formData.budget === option)}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.1 * index }}
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
               >
-                {option}
-              </button>
+                <div className="flex items-center">
+                  <span className="font-medium">{option}</span>
+                  {formData.budget === option && (
+                    <FaCheck className="ml-auto h-4 w-4 text-white/90" />
+                  )}
+                </div>
+              </motion.button>
             ))}
           </div>
         );
       case 4:
         return (
-          <div className="space-y-3">
-            {["Hotel", "Airbnb", "Hostel", "Resort"].map((option) => (
-              <button
+          <div className="w-full max-w-md grid grid-cols-2 gap-3">
+            {["Hotel", "Airbnb", "Hostel", "Resort"].map((option, index) => (
+              <motion.button
                 key={option}
-                onClick={() =>
-                  setFormData({ ...formData, accommodation: option })
-                }
-                className={`w-full p-3 rounded-lg ${
+                onClick={() => setFormData({ ...formData, accommodation: option })}
+                className={`h-24 rounded-xl p-4 flex flex-col items-center justify-center transition-all duration-200 ${
                   formData.accommodation === option
-                    ? "bg-blue-500 text-white"
-                    : "bg-white/10 text-white"
-                } backdrop-blur-sm border border-white/20 transition-colors`}
+                    ? 'bg-gradient-to-br from-blue-500 to-indigo-600 text-white shadow-lg shadow-blue-500/20'
+                    : 'bg-white border border-gray-200 text-gray-700 hover:border-blue-300 hover:shadow-md'
+                }`}
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 0.1 * index, type: 'spring', stiffness: 300 }}
+                whileHover={{ scale: 1.03 }}
+                whileTap={{ scale: 0.97 }}
               >
-                {option}
-              </button>
+                {option === 'Hotel' && <FaHotel className="h-6 w-6 mb-2" />}
+                {option === 'Airbnb' && <FaHome className="h-6 w-6 mb-2" />}
+                {option === 'Hostel' && <FaBed className="h-6 w-6 mb-2" />}
+                {option === 'Resort' && <FaUmbrellaBeach className="h-6 w-6 mb-2" />}
+                <span className="text-sm font-medium">{option}</span>
+              </motion.button>
             ))}
           </div>
         );
       case 5:
         return (
-          <div className="space-y-3">
-            {["Solo", "Couple", "Family", "Group"].map((option) => (
-              <button
+          <div className="w-full max-w-md grid grid-cols-2 gap-3">
+            {["Solo", "Couple", "Family", "Group"].map((option, index) => (
+              <motion.button
                 key={option}
                 onClick={() => setFormData({ ...formData, travelers: option })}
-                className={`w-full p-3 rounded-lg ${
+                className={`h-24 rounded-xl p-4 flex flex-col items-center justify-center transition-all duration-200 ${
                   formData.travelers === option
-                    ? "bg-blue-500 text-white"
-                    : "bg-white/10 text-white"
-                } backdrop-blur-sm border border-white/20 transition-colors`}
+                    ? 'bg-gradient-to-br from-blue-500 to-indigo-600 text-white shadow-lg shadow-blue-500/20'
+                    : 'bg-white border border-gray-200 text-gray-700 hover:border-blue-300 hover:shadow-md'
+                }`}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.1 * index }}
+                whileHover={{ scale: 1.03 }}
+                whileTap={{ scale: 0.97 }}
               >
-                {option}
-              </button>
+                {option === 'Solo' && <FaUser className="h-6 w-6 mb-2" />}
+                {option === 'Couple' && <FaHeart className="h-6 w-6 mb-2" />}
+                {option === 'Family' && <FaUsers className="h-6 w-6 mb-2" />}
+                {option === 'Group' && <FaUserFriends className="h-6 w-6 mb-2" />}
+                <span className="text-sm font-medium">{option}</span>
+              </motion.button>
             ))}
           </div>
         );
       case 6:
         return (
-          <div className="space-y-3">
-            {["No Preference", "Vegetarian", "Vegan", "Halal"].map((option) => (
-              <button
+          <div className="w-full max-w-md grid grid-cols-2 gap-3">
+            {["No Preference", "Vegetarian", "Vegan", "Halal"].map((option, index) => (
+              <motion.button
                 key={option}
-                onClick={() =>
-                  setFormData({ ...formData, dietaryPlan: option })
-                }
-                className={`w-full p-3 rounded-lg ${
+                onClick={() => setFormData({ ...formData, dietaryPlan: option })}
+                className={`h-24 rounded-xl p-4 flex flex-col items-center justify-center transition-all duration-200 ${
                   formData.dietaryPlan === option
-                    ? "bg-blue-500 text-white"
-                    : "bg-white/10 text-white"
-                } backdrop-blur-sm border border-white/20 transition-colors`}
+                    ? 'bg-gradient-to-br from-blue-500 to-indigo-600 text-white shadow-lg shadow-blue-500/20'
+                    : 'bg-white border border-gray-200 text-gray-700 hover:border-blue-300 hover:shadow-md'
+                }`}
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 0.1 * index, type: 'spring', stiffness: 300 }}
+                whileHover={{ scale: 1.03 }}
+                whileTap={{ scale: 0.97 }}
               >
-                {option}
-              </button>
+                {option === 'No Preference' && <FaUtensils className="h-6 w-6 mb-2" />}
+                {option === 'Vegetarian' && <FaLeaf className="h-6 w-6 mb-2" />}
+                {option === 'Vegan' && <FaSeedling className="h-6 w-6 mb-2" />}
+                {option === 'Halal' && <FaMosque className="h-6 w-6 mb-2" />}
+                <span className="text-sm font-medium text-center">{option}</span>
+              </motion.button>
             ))}
           </div>
         );
@@ -544,7 +616,7 @@ export default function MultiStepForm({ onSubmit, isLoading }: Props) {
         delayChildren: 0.1,
       },
     },
-  };
+  } as const;
 
   const itemVariants = {
     hidden: { y: 10, opacity: 0 },
@@ -557,106 +629,189 @@ export default function MultiStepForm({ onSubmit, isLoading }: Props) {
         damping: 24,
       },
     },
-  };
+  } as const;
+
+  // Add a subtle background animation
+  const backgroundVariants = {
+    initial: { 
+      backgroundPosition: '0% 50%',
+      opacity: 0.9 
+    },
+    animate: { 
+      backgroundPosition: '100% 50%',
+      opacity: 1,
+      transition: {
+        backgroundPosition: {
+          duration: 15,
+          repeat: Infinity,
+          repeatType: 'reverse' as const,
+          ease: 'linear'
+        }
+      }
+    }
+  } as const;
 
   return (
-    <div className="w-full max-w-2xl mx-auto bg-white rounded-2xl shadow-xl overflow-hidden">
-      {/* Progress bar */}
-      <div className="h-1.5 bg-gray-100 w-full">
-        <motion.div 
-          className="h-full bg-gradient-to-r from-blue-500 to-indigo-600"
-          initial={{ width: '0%' }}
-          animate={{ width: `${(currentStep / steps.length) * 100}%` }}
-          transition={{ duration: 0.4, ease: 'easeInOut' }}
+    <div className="relative">
+      <motion.div 
+        className="relative w-full max-w-4xl mx-auto p-6 md:p-8 rounded-3xl shadow-2xl overflow-hidden"
+        initial="initial"
+        animate="animate"
+        variants={backgroundVariants}
+        style={{
+          background: 'linear-gradient(135deg, rgba(255,255,255,0.98) 0%, rgba(249,250,251,0.98) 100%)',
+          backgroundSize: '200% 200%',
+          border: '1px solid rgba(255,255,255,0.5)'
+        } as React.CSSProperties}
+      >
+      {/* Decorative elements */}
+      <div className="absolute -top-20 -right-20 w-40 h-40 bg-blue-100 rounded-full mix-blend-multiply filter blur-xl opacity-30 animate-blob"></div>
+      <div className="absolute -bottom-20 -left-20 w-40 h-40 bg-indigo-100 rounded-full mix-blend-multiply filter blur-xl opacity-30 animate-blob animation-delay-2000"></div>
+      <div className="absolute -top-10 left-1/4 w-40 h-40 bg-purple-100 rounded-full mix-blend-multiply filter blur-xl opacity-30 animate-blob animation-delay-4000"></div>
+      {/* Progress Bar */}
+      <div className="w-full bg-gray-100 rounded-full h-2.5 mb-10 overflow-hidden">
+        <motion.div
+          className="h-full bg-gradient-to-r from-blue-500 via-blue-400 to-indigo-600 rounded-full shadow-md shadow-blue-200"
+          initial={{ width: 0 }}
+          animate={{ 
+            width: `${(currentStep / steps.length) * 100}%`,
+            backgroundPosition: ['0% 50%', '100% 50%', '0% 50%']
+          }}
+          transition={{ 
+            width: { duration: 0.6, ease: [0.43, 0.13, 0.23, 0.96] },
+            backgroundPosition: { 
+              duration: 3, 
+              repeat: Infinity, 
+              repeatType: 'reverse',
+              ease: 'linear'
+            }
+          }}
         />
       </div>
-      
-      <div className="p-6 md:p-8">
-        {/* Step indicator */}
-        <div className="flex justify-between items-center mb-8">
-          {steps.map((step, index) => (
-            <div key={step.id} className="flex flex-col items-center relative">
+
+      {/* Step Indicators */}
+      <div className="flex justify-between mb-12 relative px-2">
+        {steps.map((step, index) => {
+          const isCompleted = currentStep > step.id;
+          const isActive = currentStep === step.id;
+          
+          return (
+            <div key={step.id} className="relative z-10 flex flex-col items-center flex-1 max-w-[120px]">
               <motion.div
-                className={`flex items-center justify-center w-10 h-10 rounded-full border-2 ${
-                  currentStep > step.id
-                    ? 'bg-green-500 border-green-500 text-white'
-                    : currentStep === step.id
-                    ? 'border-blue-500 bg-white text-blue-500'
-                    : 'border-gray-200 bg-white text-gray-400'
-                } font-medium text-sm relative z-10 transition-colors`}
-                variants={itemVariants}
-              >
-                {currentStep > step.id ? <FaCheck className="h-4 w-4" /> : step.id}
-              </motion.div>
-              <span 
-                className={`text-xs mt-2 font-medium ${
-                  currentStep >= step.id ? 'text-gray-900' : 'text-gray-400'
+                className={`w-12 h-12 rounded-full flex items-center justify-center text-sm font-semibold relative ${
+                  isActive 
+                    ? "text-white"
+                    : isCompleted 
+                      ? "text-white" 
+                      : "text-gray-400 bg-white border-2 border-gray-200"
                 }`}
+                initial={false}
+                animate={{
+                  scale: isActive ? 1.1 : 1,
+                  background: isActive 
+                    ? ["#3B82F6", "#2563EB", "#3B82F6"] 
+                    : isCompleted 
+                      ? ["#10B981", "#059669", "#10B981"]
+                      : "#FFFFFF"
+                }}
+                transition={{
+                  scale: { type: 'spring', stiffness: 500, damping: 30 },
+                  background: { 
+                    duration: 3, 
+                    repeat: isActive || isCompleted ? Infinity : 0,
+                    repeatType: 'reverse',
+                    ease: 'linear'
+                  }
+                }}
+              >
+                {isCompleted ? (
+                  <FaCheck className="h-5 w-5" />
+                ) : (
+                  <span className="relative z-10">{step.id}</span>
+                )}
+                
+                {/* Animated ring for active step */}
+                {isActive && (
+                  <motion.div 
+                    className="absolute inset-0 rounded-full border-2 border-blue-300"
+                    animate={{
+                      scale: [1, 1.2, 1],
+                      opacity: [0.7, 0]
+                    }}
+                    transition={{
+                      duration: 2,
+                      repeat: Infinity,
+                      ease: 'easeOut'
+                    }}
+                  />
+                )}
+              </motion.div>
+              
+              <motion.span 
+                className={`text-xs mt-3 text-center font-medium ${
+                  isActive 
+                    ? "text-blue-600 font-semibold" 
+                    : isCompleted 
+                      ? "text-gray-600" 
+                      : "text-gray-400"
+                }`}
+                initial={{ opacity: 0, y: 5 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.1 }}
               >
                 {step.title}
-              </span>
+              </motion.span>
               
               {index < steps.length - 1 && (
-                <div className="hidden md:block absolute top-5 left-full w-16 h-0.5 bg-gray-200 -ml-8">
+                <div className="hidden md:block absolute top-6 left-full w-12 h-1 bg-gray-200 -ml-6">
                   <motion.div 
-                    className="h-full bg-blue-500"
+                    className="h-full bg-gradient-to-r from-blue-400 to-blue-600 rounded-full"
                     initial={{ width: '0%' }}
                     animate={{ 
                       width: currentStep > step.id ? '100%' : '0%' 
                     }}
-                    transition={{ duration: 0.4, delay: 0.2 }}
+                    transition={{ duration: 0.6, delay: 0.1 }}
                   />
                 </div>
               )}
             </div>
           ))}
         </div>
-        
-        {/* Step content */}
-        <div className="mb-8">
-          <motion.div 
-            key={currentStep}
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            transition={{ duration: 0.3 }}
-            className="text-center mb-8"
-          >
-            <div className="w-16 h-16 mx-auto mb-4 flex items-center justify-center bg-blue-50 rounded-2xl text-blue-500">
-              {steps[currentStep - 1].icon}
-            </div>
-            <h2 className="text-2xl font-bold text-gray-900 mb-2">
-              {steps[currentStep - 1].title}
-            </h2>
-            <p className="text-gray-500">
-              {steps[currentStep - 1].description}
-            </p>
-          </motion.div>
 
+        <div className="px-4 pb-2 pt-4">
           <AnimatePresence mode="wait">
             <motion.div
               key={currentStep}
-              initial={{ opacity: 0, x: 20, position: 'absolute' }}
-              animate={{ opacity: 1, x: 0, position: 'relative' }}
-              exit={{ opacity: 0, x: -20, position: 'absolute' }}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ 
+                opacity: 1, 
+                y: 0,
+              }}
               transition={{ 
-                type: 'spring',
-                stiffness: 300,
-                damping: 30,
-                duration: 0.3 
+                duration: 0.4, 
+                ease: [0.25, 0.1, 0.25, 1],
+                staggerChildren: 0.1,
+                damping: 30
               }}
               className="w-full"
             >
-              <div className="min-h-[300px] flex items-center justify-center">
+              <motion.div 
+                className="min-h-[280px] flex items-center justify-center px-2"
+                initial={{ opacity: 0, scale: 0.98 }}
+                animate={{ 
+                  opacity: 1, 
+                  scale: 1,
+                  transition: { delay: 0.1 }
+                }}
+              >
                 {renderStepContent()}
-              </div>
+              </motion.div>
             </motion.div>
           </AnimatePresence>
-
         </div>
         
         <motion.div 
-          className="mt-8 flex justify-between border-t border-gray-100 pt-6"
+          className="mt-10 flex justify-between border-t border-gray-100 pt-6"
           variants={containerVariants}
           initial="hidden"
           animate="visible"
@@ -664,35 +819,39 @@ export default function MultiStepForm({ onSubmit, isLoading }: Props) {
           <motion.button
             onClick={handleBack}
             disabled={currentStep === 1}
-            className={`flex items-center px-5 py-2.5 rounded-xl font-medium ${
+            className={`flex items-center px-6 py-3 rounded-xl font-medium text-sm sm:text-base ${
               currentStep === 1
-                ? "text-gray-400 cursor-not-allowed"
-                : "text-gray-600 hover:bg-gray-50"
-            } transition-colors`}
-            variants={itemVariants}
-            whileHover={{ scale: currentStep === 1 ? 1 : 1.03 }}
-            whileTap={{ scale: currentStep === 1 ? 1 : 0.98 }}
+                ? "text-gray-300 cursor-not-allowed"
+                : "text-gray-600 hover:text-gray-800 hover:bg-gray-50"
+            } transition-all duration-200`}
+            whileHover={{ 
+              x: currentStep === 1 ? 0 : -3,
+              backgroundColor: currentStep === 1 ? 'transparent' : 'rgba(243, 244, 246, 0.5)'
+            }}
+            whileTap={{ scale: 0.97 }}
           >
             <FaChevronLeft className="mr-2" />
-            Back
+            <span className="hidden sm:inline">Back</span>
           </motion.button>
           
           <motion.button
             onClick={handleNext}
             disabled={!isStepValid() || isLoading}
-            className={`flex items-center px-6 py-2.5 rounded-xl font-medium text-white ${
+            className={`flex items-center px-6 py-3 rounded-xl font-medium text-sm sm:text-base ${
               !isStepValid() || isLoading
-                ? "bg-gray-300 cursor-not-allowed"
-                : "bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 shadow-lg shadow-blue-500/20"
-            } transition-all`}
-            variants={itemVariants}
-            whileHover={!isStepValid() || isLoading ? {} : { scale: 1.03, boxShadow: '0 5px 15px -3px rgba(59, 130, 246, 0.3)' }}
-            whileTap={!isStepValid() || isLoading ? {} : { scale: 0.98 }}
+                ? "bg-gray-200 text-gray-400 cursor-not-allowed"
+                : "text-white bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 shadow-lg shadow-blue-500/20"
+            } transition-all duration-300`}
+            whileHover={(!isStepValid() || isLoading) ? {} : { 
+              scale: 1.03, 
+              boxShadow: '0 8px 20px -5px rgba(59, 130, 246, 0.4)'
+            }}
+            whileTap={(!isStepValid() || isLoading) ? {} : { scale: 0.97 }}
           >
             {isLoading ? (
               <span className="flex items-center">
                 <svg
-                  className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
+                  className="animate-spin -ml-1 mr-2 h-4 w-4 text-white"
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
                   viewBox="0 0 24 24"
@@ -711,22 +870,27 @@ export default function MultiStepForm({ onSubmit, isLoading }: Props) {
                     d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                   ></path>
                 </svg>
-                Generating...
+                <span className="hidden sm:inline">Generating...</span>
+                <span className="sm:hidden">Loading...</span>
               </span>
             ) : currentStep === steps.length ? (
               <span className="flex items-center">
-                Generate Itinerary
-                <FaPlane className="ml-2 transform group-hover:translate-x-1 transition-transform" />
+                <span className="hidden sm:inline">Generate Itinerary</span>
+                <span className="sm:hidden">Generate</span>
+                <FaPlane className="ml-2 transform transition-transform group-hover:translate-x-1" />
               </span>
             ) : (
               <span className="flex items-center">
-                Next
+                <span className="hidden sm:inline">Continue</span>
+                <span className="sm:hidden">Next</span>
                 <FaChevronRight className="ml-2" />
               </span>
             )}
           </motion.button>
         </motion.div>
-      </div>
+      </motion.div>
     </div>
   );
-}
+};
+
+export default MultiStepForm;

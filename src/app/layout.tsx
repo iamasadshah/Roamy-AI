@@ -52,7 +52,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className="scroll-smooth selection:bg-gold selection:text-navy"
+      className="scroll-smooth"
     >
       <head>
         <meta name="apple-mobile-web-app-capable" content="yes" />
