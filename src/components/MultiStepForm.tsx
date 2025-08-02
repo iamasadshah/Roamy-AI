@@ -1,35 +1,35 @@
 "use client";
 
-import * as React from 'react';
-import { useState, useEffect, useMemo } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  FaChevronLeft, 
-  FaChevronRight, 
-  FaPlane, 
-  FaCalendarAlt, 
-  FaWallet, 
-  FaHotel, 
-  FaUsers, 
-  FaUtensils, 
+import * as React from "react";
+import { useState, useEffect, useMemo } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import {
+  FaChevronLeft,
+  FaChevronRight,
+  FaPlane,
+  FaCalendarAlt,
+  FaWallet,
+  FaHotel,
+  FaUsers,
+  FaUtensils,
   FaCheck,
-  FaHome, 
-  FaBed, 
-  FaUmbrellaBeach, 
-  FaUser, 
-  FaHeart, 
-  FaUserFriends, 
-  FaLeaf, 
-  FaSeedling, 
+  FaHome,
+  FaBed,
+  FaUmbrellaBeach,
+  FaUser,
+  FaHeart,
+  FaUserFriends,
+  FaLeaf,
+  FaSeedling,
   FaMosque,
   FaSearch,
-  FaChevronDown
-} from 'react-icons/fa';
-import DatePicker from 'react-datepicker';
-import 'react-datepicker/dist/react-datepicker.css';
-import { useRouter } from 'next/navigation';
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
-import toast from 'react-hot-toast';
+  FaChevronDown,
+} from "react-icons/fa";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+import { useRouter } from "next/navigation";
+import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
+import toast from "react-hot-toast";
 
 interface FormStep {
   id: number;
@@ -53,37 +53,37 @@ const steps: FormStep[] = [
     id: 1,
     title: "Destination",
     description: "Where would you like to go?",
-    icon: <FaPlane className="text-blue-500" />
+    icon: <FaPlane className="text-blue-500" />,
   },
   {
     id: 2,
     title: "Travel Dates",
     description: "When are you planning to travel?",
-    icon: <FaCalendarAlt className="text-blue-500" />
+    icon: <FaCalendarAlt className="text-blue-500" />,
   },
   {
     id: 3,
     title: "Budget",
     description: "What's your spending range?",
-    icon: <FaWallet className="text-blue-500" />
+    icon: <FaWallet className="text-blue-500" />,
   },
   {
     id: 4,
     title: "Accommodation",
     description: "Where would you like to stay?",
-    icon: <FaHotel className="text-blue-500" />
+    icon: <FaHotel className="text-blue-500" />,
   },
   {
     id: 5,
     title: "Travelers",
     description: "Who's coming along?",
-    icon: <FaUsers className="text-blue-500" />
+    icon: <FaUsers className="text-blue-500" />,
   },
   {
     id: 6,
     title: "Dietary Preferences",
     description: "Any food restrictions?",
-    icon: <FaUtensils className="text-blue-500" />
+    icon: <FaUtensils className="text-blue-500" />,
   },
 ];
 
@@ -416,15 +416,15 @@ const MultiStepForm: React.FC<Props> = ({ onSubmit, isLoading }) => {
   const isStepValid = (): boolean => {
     switch (currentStep) {
       case 1:
-        return formData.destination.trim() !== '';
+        return formData.destination.trim() !== "";
       case 2:
         return formData.startDate !== null && formData.endDate !== null;
       case 3:
-        return formData.budget !== '';
+        return formData.budget !== "";
       case 4:
-        return formData.accommodation !== '';
+        return formData.accommodation !== "";
       case 5:
-        return formData.travelers !== '';
+        return formData.travelers !== "";
       case 6:
         return true; // Dietary preferences are optional
       default:
@@ -435,9 +435,11 @@ const MultiStepForm: React.FC<Props> = ({ onSubmit, isLoading }) => {
   const renderStepContent = (): React.ReactNode => {
     const optionButtonClasses = (isSelected: boolean) => `
       w-full p-4 rounded-xl text-left transition-all duration-200
-      ${isSelected 
-        ? 'bg-gradient-to-r from-blue-500 to-indigo-600 text-white shadow-lg shadow-blue-500/20' 
-        : 'bg-white border border-gray-200 text-gray-700 hover:border-blue-300 hover:shadow-md'}
+      ${
+        isSelected
+          ? "bg-gradient-to-r from-blue-500 to-indigo-600 text-white shadow-lg shadow-blue-500/20"
+          : "bg-white border border-gray-200 text-gray-700 hover:border-blue-300 hover:shadow-md"
+      }
       hover:scale-[1.02] active:scale-[0.98]
     `;
 
@@ -445,25 +447,31 @@ const MultiStepForm: React.FC<Props> = ({ onSubmit, isLoading }) => {
       case 1:
         return (
           <div className="w-full max-w-md">
-            <DestinationInput 
-              value={formData.destination} 
-              onChange={(value) => setFormData({ ...formData, destination: value })} 
+            <DestinationInput
+              value={formData.destination}
+              onChange={(value) =>
+                setFormData({ ...formData, destination: value })
+              }
             />
           </div>
         );
       case 2:
         return (
           <div className="w-full max-w-md space-y-5">
-            <motion.div 
+            <motion.div
               className="space-y-1"
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1 }}
             >
-              <label className="block text-sm font-medium text-gray-600 mb-1.5">Start Date</label>
+              <label className="block text-sm font-medium text-gray-600 mb-1.5">
+                Start Date
+              </label>
               <DatePicker
                 selected={formData.startDate}
-                onChange={(date) => setFormData({ ...formData, startDate: date })}
+                onChange={(date) =>
+                  setFormData({ ...formData, startDate: date })
+                }
                 selectsStart
                 startDate={formData.startDate}
                 endDate={formData.endDate}
@@ -474,13 +482,15 @@ const MultiStepForm: React.FC<Props> = ({ onSubmit, isLoading }) => {
                 calendarClassName="rounded-xl shadow-xl border border-gray-100"
               />
             </motion.div>
-            <motion.div 
+            <motion.div
               className="space-y-1"
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 }}
             >
-              <label className="block text-sm font-medium text-gray-600 mb-1.5">End Date</label>
+              <label className="block text-sm font-medium text-gray-600 mb-1.5">
+                End Date
+              </label>
               <DatePicker
                 selected={formData.endDate}
                 onChange={(date) => setFormData({ ...formData, endDate: date })}
@@ -526,22 +536,30 @@ const MultiStepForm: React.FC<Props> = ({ onSubmit, isLoading }) => {
             {["Hotel", "Airbnb", "Hostel", "Resort"].map((option, index) => (
               <motion.button
                 key={option}
-                onClick={() => setFormData({ ...formData, accommodation: option })}
+                onClick={() =>
+                  setFormData({ ...formData, accommodation: option })
+                }
                 className={`h-24 rounded-xl p-4 flex flex-col items-center justify-center transition-all duration-200 ${
                   formData.accommodation === option
-                    ? 'bg-gradient-to-br from-blue-500 to-indigo-600 text-white shadow-lg shadow-blue-500/20'
-                    : 'bg-white border border-gray-200 text-gray-700 hover:border-blue-300 hover:shadow-md'
+                    ? "bg-gradient-to-br from-blue-500 to-indigo-600 text-white shadow-lg shadow-blue-500/20"
+                    : "bg-white border border-gray-200 text-gray-700 hover:border-blue-300 hover:shadow-md"
                 }`}
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: 0.1 * index, type: 'spring', stiffness: 300 }}
+                transition={{
+                  delay: 0.1 * index,
+                  type: "spring",
+                  stiffness: 300,
+                }}
                 whileHover={{ scale: 1.03 }}
                 whileTap={{ scale: 0.97 }}
               >
-                {option === 'Hotel' && <FaHotel className="h-6 w-6 mb-2" />}
-                {option === 'Airbnb' && <FaHome className="h-6 w-6 mb-2" />}
-                {option === 'Hostel' && <FaBed className="h-6 w-6 mb-2" />}
-                {option === 'Resort' && <FaUmbrellaBeach className="h-6 w-6 mb-2" />}
+                {option === "Hotel" && <FaHotel className="h-6 w-6 mb-2" />}
+                {option === "Airbnb" && <FaHome className="h-6 w-6 mb-2" />}
+                {option === "Hostel" && <FaBed className="h-6 w-6 mb-2" />}
+                {option === "Resort" && (
+                  <FaUmbrellaBeach className="h-6 w-6 mb-2" />
+                )}
                 <span className="text-sm font-medium">{option}</span>
               </motion.button>
             ))}
@@ -556,8 +574,8 @@ const MultiStepForm: React.FC<Props> = ({ onSubmit, isLoading }) => {
                 onClick={() => setFormData({ ...formData, travelers: option })}
                 className={`h-24 rounded-xl p-4 flex flex-col items-center justify-center transition-all duration-200 ${
                   formData.travelers === option
-                    ? 'bg-gradient-to-br from-blue-500 to-indigo-600 text-white shadow-lg shadow-blue-500/20'
-                    : 'bg-white border border-gray-200 text-gray-700 hover:border-blue-300 hover:shadow-md'
+                    ? "bg-gradient-to-br from-blue-500 to-indigo-600 text-white shadow-lg shadow-blue-500/20"
+                    : "bg-white border border-gray-200 text-gray-700 hover:border-blue-300 hover:shadow-md"
                 }`}
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -565,10 +583,12 @@ const MultiStepForm: React.FC<Props> = ({ onSubmit, isLoading }) => {
                 whileHover={{ scale: 1.03 }}
                 whileTap={{ scale: 0.97 }}
               >
-                {option === 'Solo' && <FaUser className="h-6 w-6 mb-2" />}
-                {option === 'Couple' && <FaHeart className="h-6 w-6 mb-2" />}
-                {option === 'Family' && <FaUsers className="h-6 w-6 mb-2" />}
-                {option === 'Group' && <FaUserFriends className="h-6 w-6 mb-2" />}
+                {option === "Solo" && <FaUser className="h-6 w-6 mb-2" />}
+                {option === "Couple" && <FaHeart className="h-6 w-6 mb-2" />}
+                {option === "Family" && <FaUsers className="h-6 w-6 mb-2" />}
+                {option === "Group" && (
+                  <FaUserFriends className="h-6 w-6 mb-2" />
+                )}
                 <span className="text-sm font-medium">{option}</span>
               </motion.button>
             ))}
@@ -577,28 +597,44 @@ const MultiStepForm: React.FC<Props> = ({ onSubmit, isLoading }) => {
       case 6:
         return (
           <div className="w-full max-w-md grid grid-cols-2 gap-3">
-            {["No Preference", "Vegetarian", "Vegan", "Halal"].map((option, index) => (
-              <motion.button
-                key={option}
-                onClick={() => setFormData({ ...formData, dietaryPlan: option })}
-                className={`h-24 rounded-xl p-4 flex flex-col items-center justify-center transition-all duration-200 ${
-                  formData.dietaryPlan === option
-                    ? 'bg-gradient-to-br from-blue-500 to-indigo-600 text-white shadow-lg shadow-blue-500/20'
-                    : 'bg-white border border-gray-200 text-gray-700 hover:border-blue-300 hover:shadow-md'
-                }`}
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: 0.1 * index, type: 'spring', stiffness: 300 }}
-                whileHover={{ scale: 1.03 }}
-                whileTap={{ scale: 0.97 }}
-              >
-                {option === 'No Preference' && <FaUtensils className="h-6 w-6 mb-2" />}
-                {option === 'Vegetarian' && <FaLeaf className="h-6 w-6 mb-2" />}
-                {option === 'Vegan' && <FaSeedling className="h-6 w-6 mb-2" />}
-                {option === 'Halal' && <FaMosque className="h-6 w-6 mb-2" />}
-                <span className="text-sm font-medium text-center">{option}</span>
-              </motion.button>
-            ))}
+            {["No Preference", "Vegetarian", "Vegan", "Halal"].map(
+              (option, index) => (
+                <motion.button
+                  key={option}
+                  onClick={() =>
+                    setFormData({ ...formData, dietaryPlan: option })
+                  }
+                  className={`h-24 rounded-xl p-4 flex flex-col items-center justify-center transition-all duration-200 ${
+                    formData.dietaryPlan === option
+                      ? "bg-gradient-to-br from-blue-500 to-indigo-600 text-white shadow-lg shadow-blue-500/20"
+                      : "bg-white border border-gray-200 text-gray-700 hover:border-blue-300 hover:shadow-md"
+                  }`}
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{
+                    delay: 0.1 * index,
+                    type: "spring",
+                    stiffness: 300,
+                  }}
+                  whileHover={{ scale: 1.03 }}
+                  whileTap={{ scale: 0.97 }}
+                >
+                  {option === "No Preference" && (
+                    <FaUtensils className="h-6 w-6 mb-2" />
+                  )}
+                  {option === "Vegetarian" && (
+                    <FaLeaf className="h-6 w-6 mb-2" />
+                  )}
+                  {option === "Vegan" && (
+                    <FaSeedling className="h-6 w-6 mb-2" />
+                  )}
+                  {option === "Halal" && <FaMosque className="h-6 w-6 mb-2" />}
+                  <span className="text-sm font-medium text-center">
+                    {option}
+                  </span>
+                </motion.button>
+              )
+            )}
           </div>
         );
       default:
@@ -624,7 +660,7 @@ const MultiStepForm: React.FC<Props> = ({ onSubmit, isLoading }) => {
       y: 0,
       opacity: 1,
       transition: {
-        type: 'spring',
+        type: "spring",
         stiffness: 300,
         damping: 24,
       },
@@ -633,149 +669,156 @@ const MultiStepForm: React.FC<Props> = ({ onSubmit, isLoading }) => {
 
   // Add a subtle background animation
   const backgroundVariants = {
-    initial: { 
-      backgroundPosition: '0% 50%',
-      opacity: 0.9 
+    initial: {
+      backgroundPosition: "0% 50%",
+      opacity: 0.9,
     },
-    animate: { 
-      backgroundPosition: '100% 50%',
+    animate: {
+      backgroundPosition: "100% 50%",
       opacity: 1,
       transition: {
         backgroundPosition: {
           duration: 15,
           repeat: Infinity,
-          repeatType: 'reverse' as const,
-          ease: 'linear'
-        }
-      }
-    }
+          repeatType: "reverse" as const,
+          ease: "linear",
+        },
+      },
+    },
   } as const;
 
   return (
     <div className="relative">
-      <motion.div 
+      <motion.div
         className="relative w-full max-w-4xl mx-auto p-6 md:p-8 rounded-3xl shadow-2xl overflow-hidden"
         initial="initial"
         animate="animate"
         variants={backgroundVariants}
-        style={{
-          background: 'linear-gradient(135deg, rgba(255,255,255,0.98) 0%, rgba(249,250,251,0.98) 100%)',
-          backgroundSize: '200% 200%',
-          border: '1px solid rgba(255,255,255,0.5)'
-        } as React.CSSProperties}
+        style={
+          {
+            background:
+              "linear-gradient(135deg, rgba(255,255,255,0.98) 0%, rgba(249,250,251,0.98) 100%)",
+            backgroundSize: "200% 200%",
+            border: "1px solid rgba(255,255,255,0.5)",
+          } as React.CSSProperties
+        }
       >
-      {/* Decorative elements */}
-      <div className="absolute -top-20 -right-20 w-40 h-40 bg-blue-100 rounded-full mix-blend-multiply filter blur-xl opacity-30 animate-blob"></div>
-      <div className="absolute -bottom-20 -left-20 w-40 h-40 bg-indigo-100 rounded-full mix-blend-multiply filter blur-xl opacity-30 animate-blob animation-delay-2000"></div>
-      <div className="absolute -top-10 left-1/4 w-40 h-40 bg-purple-100 rounded-full mix-blend-multiply filter blur-xl opacity-30 animate-blob animation-delay-4000"></div>
-      {/* Progress Bar */}
-      <div className="w-full bg-gray-100 rounded-full h-2.5 mb-10 overflow-hidden">
-        <motion.div
-          className="h-full bg-gradient-to-r from-blue-500 via-blue-400 to-indigo-600 rounded-full shadow-md shadow-blue-200"
-          initial={{ width: 0 }}
-          animate={{ 
-            width: `${(currentStep / steps.length) * 100}%`,
-            backgroundPosition: ['0% 50%', '100% 50%', '0% 50%']
-          }}
-          transition={{ 
-            width: { duration: 0.6, ease: [0.43, 0.13, 0.23, 0.96] },
-            backgroundPosition: { 
-              duration: 3, 
-              repeat: Infinity, 
-              repeatType: 'reverse',
-              ease: 'linear'
-            }
-          }}
-        />
-      </div>
+        {/* Decorative elements */}
+        <div className="absolute -top-20 -right-20 w-40 h-40 bg-blue-100 rounded-full mix-blend-multiply filter blur-xl opacity-30 animate-blob"></div>
+        <div className="absolute -bottom-20 -left-20 w-40 h-40 bg-indigo-100 rounded-full mix-blend-multiply filter blur-xl opacity-30 animate-blob animation-delay-2000"></div>
+        <div className="absolute -top-10 left-1/4 w-40 h-40 bg-purple-100 rounded-full mix-blend-multiply filter blur-xl opacity-30 animate-blob animation-delay-4000"></div>
+        {/* Progress Bar */}
+        <div className="w-full bg-gray-100 rounded-full h-2.5 mb-10 overflow-hidden">
+          <motion.div
+            className="h-full bg-gradient-to-r from-blue-500 via-blue-400 to-indigo-600 rounded-full shadow-md shadow-blue-200"
+            initial={{ width: 0 }}
+            animate={{
+              width: `${(currentStep / steps.length) * 100}%`,
+              backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"],
+            }}
+            transition={{
+              width: { duration: 0.6, ease: [0.43, 0.13, 0.23, 0.96] },
+              backgroundPosition: {
+                duration: 3,
+                repeat: Infinity,
+                repeatType: "reverse",
+                ease: "linear",
+              },
+            }}
+          />
+        </div>
 
-      {/* Step Indicators */}
-      <div className="flex justify-between mb-12 relative px-2">
-        {steps.map((step, index) => {
-          const isCompleted = currentStep > step.id;
-          const isActive = currentStep === step.id;
-          
-          return (
-            <div key={step.id} className="relative z-10 flex flex-col items-center flex-1 max-w-[120px]">
-              <motion.div
-                className={`w-12 h-12 rounded-full flex items-center justify-center text-sm font-semibold relative ${
-                  isActive 
-                    ? "text-white"
-                    : isCompleted 
-                      ? "text-white" 
+        {/* Step Indicators */}
+        <div className="flex justify-between mb-12 relative px-2">
+          {steps.map((step, index) => {
+            const isCompleted = currentStep > step.id;
+            const isActive = currentStep === step.id;
+
+            return (
+              <div
+                key={step.id}
+                className="relative z-10 flex flex-col items-center flex-1 max-w-[120px]"
+              >
+                <motion.div
+                  className={`w-12 h-12 rounded-full flex items-center justify-center text-sm font-semibold relative ${
+                    isActive
+                      ? "text-white"
+                      : isCompleted
+                      ? "text-white"
                       : "text-gray-400 bg-white border-2 border-gray-200"
-                }`}
-                initial={false}
-                animate={{
-                  scale: isActive ? 1.1 : 1,
-                  background: isActive 
-                    ? ["#3B82F6", "#2563EB", "#3B82F6"] 
-                    : isCompleted 
+                  }`}
+                  initial={false}
+                  animate={{
+                    scale: isActive ? 1.1 : 1,
+                    background: isActive
+                      ? ["#3B82F6", "#2563EB", "#3B82F6"]
+                      : isCompleted
                       ? ["#10B981", "#059669", "#10B981"]
-                      : "#FFFFFF"
-                }}
-                transition={{
-                  scale: { type: 'spring', stiffness: 500, damping: 30 },
-                  background: { 
-                    duration: 3, 
-                    repeat: isActive || isCompleted ? Infinity : 0,
-                    repeatType: 'reverse',
-                    ease: 'linear'
-                  }
-                }}
-              >
-                {isCompleted ? (
-                  <FaCheck className="h-5 w-5" />
-                ) : (
-                  <span className="relative z-10">{step.id}</span>
-                )}
-                
-                {/* Animated ring for active step */}
-                {isActive && (
-                  <motion.div 
-                    className="absolute inset-0 rounded-full border-2 border-blue-300"
-                    animate={{
-                      scale: [1, 1.2, 1],
-                      opacity: [0.7, 0]
-                    }}
-                    transition={{
-                      duration: 2,
-                      repeat: Infinity,
-                      ease: 'easeOut'
-                    }}
-                  />
-                )}
-              </motion.div>
-              
-              <motion.span 
-                className={`text-xs mt-3 text-center font-medium ${
-                  isActive 
-                    ? "text-blue-600 font-semibold" 
-                    : isCompleted 
-                      ? "text-gray-600" 
+                      : "#FFFFFF",
+                  }}
+                  transition={{
+                    scale: { type: "spring", stiffness: 500, damping: 30 },
+                    background: {
+                      duration: 3,
+                      repeat: isActive || isCompleted ? Infinity : 0,
+                      repeatType: "reverse",
+                      ease: "linear",
+                    },
+                  }}
+                >
+                  {isCompleted ? (
+                    <FaCheck className="h-5 w-5" />
+                  ) : (
+                    <span className="relative z-10">{step.id}</span>
+                  )}
+
+                  {/* Animated ring for active step */}
+                  {isActive && (
+                    <motion.div
+                      className="absolute inset-0 rounded-full border-2 border-blue-300"
+                      animate={{
+                        scale: [1, 1.2, 1],
+                        opacity: [0.7, 0],
+                      }}
+                      transition={{
+                        duration: 2,
+                        repeat: Infinity,
+                        ease: "easeOut",
+                      }}
+                    />
+                  )}
+                </motion.div>
+
+                <motion.span
+                  className={`text-xs mt-3 text-center font-medium ${
+                    isActive
+                      ? "text-blue-600 font-semibold"
+                      : isCompleted
+                      ? "text-gray-600"
                       : "text-gray-400"
-                }`}
-                initial={{ opacity: 0, y: 5 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.1 }}
-              >
-                {step.title}
-              </motion.span>
-              
-              {index < steps.length - 1 && (
-                <div className="hidden md:block absolute top-6 left-full w-12 h-1 bg-gray-200 -ml-6">
-                  <motion.div 
-                    className="h-full bg-gradient-to-r from-blue-400 to-blue-600 rounded-full"
-                    initial={{ width: '0%' }}
-                    animate={{ 
-                      width: currentStep > step.id ? '100%' : '0%' 
-                    }}
-                    transition={{ duration: 0.6, delay: 0.1 }}
-                  />
-                </div>
-              )}
-            </div>
-          ))}
+                  }`}
+                  initial={{ opacity: 0, y: 5 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.1 }}
+                >
+                  {step.title}
+                </motion.span>
+
+                {index < steps.length - 1 && (
+                  <div className="hidden md:block absolute top-6 left-full w-12 h-1 bg-gray-200 -ml-6">
+                    <motion.div
+                      className="h-full bg-gradient-to-r from-blue-400 to-blue-600 rounded-full"
+                      initial={{ width: "0%" }}
+                      animate={{
+                        width: currentStep > step.id ? "100%" : "0%",
+                      }}
+                      transition={{ duration: 0.6, delay: 0.1 }}
+                    />
+                  </div>
+                )}
+              </div>
+            );
+          })}
         </div>
 
         <div className="px-4 pb-2 pt-4">
@@ -783,25 +826,25 @@ const MultiStepForm: React.FC<Props> = ({ onSubmit, isLoading }) => {
             <motion.div
               key={currentStep}
               initial={{ opacity: 0, y: 10 }}
-              animate={{ 
-                opacity: 1, 
+              animate={{
+                opacity: 1,
                 y: 0,
               }}
-              transition={{ 
-                duration: 0.4, 
+              transition={{
+                duration: 0.4,
                 ease: [0.25, 0.1, 0.25, 1],
                 staggerChildren: 0.1,
-                damping: 30
+                damping: 30,
               }}
               className="w-full"
             >
-              <motion.div 
+              <motion.div
                 className="min-h-[280px] flex items-center justify-center px-2"
                 initial={{ opacity: 0, scale: 0.98 }}
-                animate={{ 
-                  opacity: 1, 
+                animate={{
+                  opacity: 1,
                   scale: 1,
-                  transition: { delay: 0.1 }
+                  transition: { delay: 0.1 },
                 }}
               >
                 {renderStepContent()}
@@ -809,8 +852,8 @@ const MultiStepForm: React.FC<Props> = ({ onSubmit, isLoading }) => {
             </motion.div>
           </AnimatePresence>
         </div>
-        
-        <motion.div 
+
+        <motion.div
           className="mt-10 flex justify-between border-t border-gray-100 pt-6"
           variants={containerVariants}
           initial="hidden"
@@ -824,16 +867,17 @@ const MultiStepForm: React.FC<Props> = ({ onSubmit, isLoading }) => {
                 ? "text-gray-300 cursor-not-allowed"
                 : "text-gray-600 hover:text-gray-800 hover:bg-gray-50"
             } transition-all duration-200`}
-            whileHover={{ 
+            whileHover={{
               x: currentStep === 1 ? 0 : -3,
-              backgroundColor: currentStep === 1 ? 'transparent' : 'rgba(243, 244, 246, 0.5)'
+              backgroundColor:
+                currentStep === 1 ? "transparent" : "rgba(243, 244, 246, 0.5)",
             }}
             whileTap={{ scale: 0.97 }}
           >
             <FaChevronLeft className="mr-2" />
             <span className="hidden sm:inline">Back</span>
           </motion.button>
-          
+
           <motion.button
             onClick={handleNext}
             disabled={!isStepValid() || isLoading}
@@ -842,11 +886,15 @@ const MultiStepForm: React.FC<Props> = ({ onSubmit, isLoading }) => {
                 ? "bg-gray-200 text-gray-400 cursor-not-allowed"
                 : "text-white bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 shadow-lg shadow-blue-500/20"
             } transition-all duration-300`}
-            whileHover={(!isStepValid() || isLoading) ? {} : { 
-              scale: 1.03, 
-              boxShadow: '0 8px 20px -5px rgba(59, 130, 246, 0.4)'
-            }}
-            whileTap={(!isStepValid() || isLoading) ? {} : { scale: 0.97 }}
+            whileHover={
+              !isStepValid() || isLoading
+                ? {}
+                : {
+                    scale: 1.03,
+                    boxShadow: "0 8px 20px -5px rgba(59, 130, 246, 0.4)",
+                  }
+            }
+            whileTap={!isStepValid() || isLoading ? {} : { scale: 0.97 }}
           >
             {isLoading ? (
               <span className="flex items-center">
