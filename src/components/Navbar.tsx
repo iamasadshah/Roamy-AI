@@ -176,7 +176,7 @@ export default function Navbar() {
                   className={`px-3 py-2 text-sm font-medium transition-colors duration-200 ${
                     isScrolled || !isHome
                       ? 'text-gray-700 hover:text-blue-600'
-                      : 'text-white hover:text-blue-100'
+                      : 'hover:text-blue-100'
                   }`}
                   onClick={() => setIsOpen(false)}
                 >

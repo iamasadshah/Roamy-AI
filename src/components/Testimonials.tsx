@@ -56,7 +56,7 @@ export default function Testimonials() {
           viewport={{ once: true }}
           className="text-3xl md:text-4xl font-bold text-center mb-16"
         >
-          <span className="gradient-text">What Our Users Say</span>
+          <span className="">What Our Users Say</span>
         </motion.h2>
 
         <motion.div
@@ -92,12 +92,12 @@ export default function Testimonials() {
                 </div>
               </div>
               <div className="text-center mb-4">
-                <h3 className="font-bold text-lg text-gold">
+                <h3 className="font-bold text-lg">
                   {testimonial.name}
                 </h3>
-                <p className="text-white/70 text-sm">{testimonial.role}</p>
+                <p className=" text-sm">{testimonial.role}</p>
               </div>
-              <p className="text-white/90 text-center italic flex-grow">
+              <p className=" text-center italic flex-grow">
                 &quot;{testimonial.text}&quot;
               </p>
             </motion.div>
