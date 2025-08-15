@@ -12,8 +12,7 @@ export async function middleware(req: NextRequest) {
 
   // Protect routes
   if (
-    (req.nextUrl.pathname.startsWith("/plan") ||
-      req.nextUrl.pathname === "/" && req.nextUrl.searchParams.has("generate")) &&
+    req.nextUrl.pathname.startsWith("/plan") &&
     !session
   ) {
     const redirectUrl = req.nextUrl.origin + "/auth";

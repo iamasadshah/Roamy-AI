@@ -71,22 +71,19 @@ export default function CallToAction() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.4, duration: 0.6 }}
             >
-              <motion.button
-                whileHover={{ scale: 1.03, boxShadow: '0 10px 25px -5px rgba(59, 130, 246, 0.3)' }}
-                whileTap={{ scale: 0.98 }}
-                onClick={() =>
-                  document
-                    .getElementById("plan-trip")
-                    ?.scrollIntoView({ behavior: "smooth" })
-                }
-                className="group relative flex items-center justify-center gap-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold rounded-xl px-8 py-4 text-lg transition-all duration-300 overflow-hidden"
-              >
-                <span className="relative z-10 flex items-center">
-                  Get My Free AI Itinerary
-                  <FaPaperPlane className="ml-2 group-hover:translate-x-1 transition-transform duration-300" />
-                </span>
-                <span className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-              </motion.button>
+              <Link href="/plan">
+                <motion.button
+                  whileHover={{ scale: 1.03, boxShadow: '0 10px 25px -5px rgba(59, 130, 246, 0.3)' }}
+                  whileTap={{ scale: 0.98 }}
+                  className="group relative flex items-center justify-center gap-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold rounded-xl px-8 py-4 text-lg transition-all duration-300 overflow-hidden"
+                >
+                  <span className="relative z-10 flex items-center">
+                    Get My Free AI Itinerary
+                    <FaPaperPlane className="ml-2 group-hover:translate-x-1 transition-transform duration-300" />
+                  </span>
+                  <span className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                </motion.button>
+              </Link>
 
               <Link
                 href="https://github.com/iamasadshah/RoamyAi-documentation.git"

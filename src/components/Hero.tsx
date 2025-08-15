@@ -243,7 +243,7 @@ export default function Hero() {
               custom={3}
               className="flex flex-col sm:flex-row justify-center gap-4 mb-16"
             >
-              <Link href="/auth/signup" className="group">
+              <Link href="/plan" className="group">
                 <Button 
                   size="lg"
                   className="group relative overflow-hidden px-8 py-6 text-lg font-semibold rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 text-white hover:from-blue-700 hover:to-indigo-700 transition-all duration-300 transform hover:-translate-y-1 hover:shadow-lg hover:shadow-blue-500/20"
