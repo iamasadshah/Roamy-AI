@@ -53,37 +53,37 @@ const steps: FormStep[] = [
     id: 1,
     title: "Destination",
     description: "Where would you like to go?",
-    icon: <FaPlane className="text-blue-500" />,
+    icon: <FaPlane className="text-blue-600 text-xl" />,
   },
   {
     id: 2,
     title: "Travel Dates",
     description: "When are you planning to travel?",
-    icon: <FaCalendarAlt className="text-blue-500" />,
+    icon: <FaCalendarAlt className="text-indigo-600 text-xl" />,
   },
   {
     id: 3,
     title: "Budget",
     description: "What's your spending range?",
-    icon: <FaWallet className="text-blue-500" />,
+    icon: <FaWallet className="text-green-600 text-xl" />,
   },
   {
     id: 4,
     title: "Accommodation",
     description: "Where would you like to stay?",
-    icon: <FaHotel className="text-blue-500" />,
+    icon: <FaHotel className="text-purple-600 text-xl" />,
   },
   {
     id: 5,
     title: "Travelers",
     description: "Who's coming along?",
-    icon: <FaUsers className="text-blue-500" />,
+    icon: <FaUsers className="text-orange-600 text-xl" />,
   },
   {
     id: 6,
     title: "Dietary Preferences",
     description: "Any food restrictions?",
-    icon: <FaUtensils className="text-blue-500" />,
+    icon: <FaUtensils className="text-red-600 text-xl" />,
   },
 ];
 
@@ -224,8 +224,8 @@ const DestinationInput = ({
       <div className="relative">
         <input
           type="text"
-          className="w-full p-3 rounded-lg bg-white/10 text-white placeholder-gray-400 backdrop-blur-sm border border-white/20 pr-10"
-          placeholder="Search country..."
+          className="w-full p-4 rounded-2xl bg-white/95 text-gray-800 placeholder-gray-500 backdrop-blur-sm border-2 border-gray-200 pr-12 text-lg font-medium focus:ring-4 focus:ring-blue-400/20 focus:border-blue-500 transition-all duration-300"
+          placeholder="Search for your destination..."
           value={value || searchTerm}
           onChange={(e) => {
             setSearchTerm(e.target.value);
@@ -235,11 +235,11 @@ const DestinationInput = ({
         />
         <button
           type="button"
-          className="absolute right-3 top-1/2 -translate-y-1/2 text-white/60 hover:text-white/90 transition-colors"
+          className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
           onClick={() => setIsOpen(!isOpen)}
         >
           <FaChevronDown
-            className={`transform transition-transform ${
+            className={`transform transition-transform text-xl ${
               isOpen ? "rotate-180" : ""
             }`}
           />
@@ -261,18 +261,18 @@ const DestinationInput = ({
                 animate={{ scale: 1, y: 0 }}
                 exit={{ scale: 0.95, y: 20 }}
                 onClick={(e) => e.stopPropagation()}
-                className="w-full h-[300px] max-w-lg bg-gradient-to-b from-navy/95 to-slate-900/95 border border-white/10 rounded-2xl shadow-2xl max-h-[80vh] flex flex-col"
+                className="w-full h-[400px] max-w-2xl bg-white border border-gray-200 rounded-3xl shadow-2xl max-h-[80vh] flex flex-col"
               >
                 {/* Header */}
-                <div className="p-6 border-b border-white/10">
-                  <h3 className="text-xl font-semibold text-white mb-4">
-                    Select Destination
+                <div className="p-8 border-b border-gray-100 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-t-3xl">
+                  <h3 className="text-2xl font-bold text-gray-800 mb-4">
+                    Select Your Destination
                   </h3>
                   <div className="relative">
-                    <FaSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-white/60 text-lg" />
+                    <FaSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 text-lg" />
                     <input
                       type="text"
-                      className="w-full pl-12 pr-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-white/60 focus:outline-none focus:border-blue-500/50 focus:ring-2 focus:ring-blue-500/25 transition-all"
+                      className="w-full pl-12 pr-4 py-4 bg-white border-2 border-gray-200 rounded-2xl text-gray-800 placeholder-gray-500 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-400/20 transition-all text-lg font-medium"
                       placeholder="Type to search countries..."
                       value={searchTerm}
                       onChange={(e) => setSearchTerm(e.target.value)}
@@ -282,13 +282,13 @@ const DestinationInput = ({
                 </div>
 
                 {/* Countries List */}
-                <div className="flex-1 overflow-y-auto custom-scrollbar p-4">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                <div className="flex-1 overflow-y-auto custom-scrollbar p-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                     {filteredCountries.length > 0 ? (
                       filteredCountries.map((country) => (
                         <motion.button
                           key={country}
-                          className="flex items-center p-4 text-left text-white hover:bg-white/10 rounded-xl transition-all group"
+                          className="flex items-center p-4 text-left text-gray-700 hover:bg-blue-50 hover:border-blue-200 border-2 border-transparent rounded-2xl transition-all group"
                           onClick={() => {
                             onChange(country);
                             setSearchTerm("");
@@ -297,7 +297,7 @@ const DestinationInput = ({
                           whileHover={{ scale: 1.02 }}
                           whileTap={{ scale: 0.98 }}
                         >
-                          <span className="flex-1 truncate">{country}</span>
+                          <span className="flex-1 truncate font-medium text-lg">{country}</span>
                           <motion.span
                             initial={{ opacity: 0, x: -10 }}
                             animate={{ opacity: 1, x: 0 }}
@@ -434,11 +434,11 @@ const MultiStepForm: React.FC<Props> = ({ onSubmit, isLoading }) => {
 
   const renderStepContent = (): React.ReactNode => {
     const optionButtonClasses = (isSelected: boolean) => `
-      w-full p-4 rounded-xl text-left transition-all duration-200
+      w-full p-6 rounded-2xl text-left transition-all duration-300 font-medium
       ${
         isSelected
-          ? "bg-gradient-to-r from-blue-500 to-indigo-600 text-white shadow-lg shadow-blue-500/20"
-          : "bg-white border border-gray-200 text-gray-700 hover:border-blue-300 hover:shadow-md"
+          ? "bg-gradient-to-r from-blue-500 to-indigo-600 text-white shadow-xl shadow-blue-500/25 border-2 border-blue-400"
+          : "bg-white border-2 border-gray-200 text-gray-700 hover:border-blue-300 hover:shadow-lg hover:bg-blue-50/50"
       }
       hover:scale-[1.02] active:scale-[0.98]
     `;
@@ -446,7 +446,20 @@ const MultiStepForm: React.FC<Props> = ({ onSubmit, isLoading }) => {
     switch (currentStep) {
       case 1:
         return (
-          <div className="w-full max-w-md">
+          <div className="w-full max-w-lg">
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.1 }}
+              className="text-center mb-8"
+            >
+              <h3 className="text-2xl font-bold text-gray-800 mb-2">
+                Where would you like to go?
+              </h3>
+              <p className="text-gray-600 text-lg">
+                Choose your dream destination and we'll create the perfect itinerary
+              </p>
+            </motion.div>
             <DestinationInput
               value={formData.destination}
               onChange={(value) =>
@@ -459,12 +472,12 @@ const MultiStepForm: React.FC<Props> = ({ onSubmit, isLoading }) => {
         return (
           <div className="w-full max-w-md space-y-5">
             <motion.div
-              className="space-y-1"
+              className="space-y-2"
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1 }}
             >
-              <label className="block text-sm font-medium text-gray-600 mb-1.5">
+              <label className="block text-base font-semibold text-gray-700 mb-2">
                 Start Date
               </label>
               <DatePicker
@@ -476,19 +489,19 @@ const MultiStepForm: React.FC<Props> = ({ onSubmit, isLoading }) => {
                 startDate={formData.startDate}
                 endDate={formData.endDate}
                 minDate={new Date()}
-                className="w-full p-3.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all duration-200"
+                className="w-full p-4 border-2 border-gray-200 rounded-2xl focus:ring-4 focus:ring-blue-400/20 focus:border-blue-500 transition-all duration-300 text-lg font-medium"
                 placeholderText="Select start date"
                 dateFormat="MMMM d, yyyy"
-                calendarClassName="rounded-xl shadow-xl border border-gray-100"
+                calendarClassName="rounded-2xl shadow-2xl border border-gray-100"
               />
             </motion.div>
             <motion.div
-              className="space-y-1"
+              className="space-y-2"
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 }}
             >
-              <label className="block text-sm font-medium text-gray-600 mb-1.5">
+              <label className="block text-base font-semibold text-gray-700 mb-2">
                 End Date
               </label>
               <DatePicker
@@ -690,7 +703,7 @@ const MultiStepForm: React.FC<Props> = ({ onSubmit, isLoading }) => {
   return (
     <div className="relative">
       <motion.div
-        className="relative w-full max-w-4xl mx-auto p-6 md:p-8 rounded-3xl shadow-2xl overflow-hidden"
+        className="relative w-full max-w-5xl mx-auto p-8 md:p-12 rounded-3xl shadow-2xl overflow-hidden bg-white/95 backdrop-blur-sm border border-white/20"
         initial="initial"
         animate="animate"
         variants={backgroundVariants}
@@ -737,19 +750,19 @@ const MultiStepForm: React.FC<Props> = ({ onSubmit, isLoading }) => {
             return (
               <div
                 key={step.id}
-                className="relative z-10 flex flex-col items-center flex-1 max-w-[120px]"
+                className="relative z-10 flex flex-col items-center flex-1 max-w-[140px]"
               >
                 <motion.div
-                  className={`w-12 h-12 rounded-full flex items-center justify-center text-sm font-semibold relative ${
+                  className={`w-14 h-14 rounded-full flex items-center justify-center text-sm font-bold relative shadow-lg ${
                     isActive
-                      ? "text-white"
+                      ? "text-white shadow-blue-500/30"
                       : isCompleted
-                      ? "text-white"
-                      : "text-gray-400 bg-white border-2 border-gray-200"
+                      ? "text-white shadow-green-500/30"
+                      : "text-gray-500 bg-white border-2 border-gray-200 shadow-gray-200/50"
                   }`}
                   initial={false}
                   animate={{
-                    scale: isActive ? 1.1 : 1,
+                    scale: isActive ? 1.15 : 1,
                     background: isActive
                       ? ["#3B82F6", "#2563EB", "#3B82F6"]
                       : isCompleted
@@ -767,18 +780,18 @@ const MultiStepForm: React.FC<Props> = ({ onSubmit, isLoading }) => {
                   }}
                 >
                   {isCompleted ? (
-                    <FaCheck className="h-5 w-5" />
+                    <FaCheck className="h-6 w-6" />
                   ) : (
-                    <span className="relative z-10">{step.id}</span>
+                    <span className="relative z-10 text-lg">{step.id}</span>
                   )}
 
                   {/* Animated ring for active step */}
                   {isActive && (
                     <motion.div
-                      className="absolute inset-0 rounded-full border-2 border-blue-300"
+                      className="absolute inset-0 rounded-full border-3 border-blue-300"
                       animate={{
-                        scale: [1, 1.2, 1],
-                        opacity: [0.7, 0],
+                        scale: [1, 1.3, 1],
+                        opacity: [0.8, 0],
                       }}
                       transition={{
                         duration: 2,
@@ -789,20 +802,31 @@ const MultiStepForm: React.FC<Props> = ({ onSubmit, isLoading }) => {
                   )}
                 </motion.div>
 
-                <motion.span
-                  className={`text-xs mt-3 text-center font-medium ${
-                    isActive
-                      ? "text-blue-600 font-semibold"
-                      : isCompleted
-                      ? "text-gray-600"
-                      : "text-gray-400"
-                  }`}
+                <motion.div
+                  className="mt-4 text-center"
                   initial={{ opacity: 0, y: 5 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.1 }}
                 >
-                  {step.title}
-                </motion.span>
+                  <div className={`text-sm font-semibold mb-1 ${
+                    isActive
+                      ? "text-blue-600"
+                      : isCompleted
+                      ? "text-gray-700"
+                      : "text-gray-400"
+                  }`}>
+                    {step.title}
+                  </div>
+                  <div className={`text-xs ${
+                    isActive
+                      ? "text-blue-500"
+                      : isCompleted
+                      ? "text-gray-500"
+                      : "text-gray-400"
+                  }`}>
+                    {step.description}
+                  </div>
+                </motion.div>
 
                 {index < steps.length - 1 && (
                   <div className="hidden md:block absolute top-6 left-full w-12 h-1 bg-gray-200 -ml-6">
@@ -821,7 +845,7 @@ const MultiStepForm: React.FC<Props> = ({ onSubmit, isLoading }) => {
           })}
         </div>
 
-        <div className="px-4 pb-2 pt-4">
+        <div className="px-6 pb-4 pt-8">
           <AnimatePresence mode="wait">
             <motion.div
               key={currentStep}
@@ -839,7 +863,7 @@ const MultiStepForm: React.FC<Props> = ({ onSubmit, isLoading }) => {
               className="w-full"
             >
               <motion.div
-                className="min-h-[280px] flex items-center justify-center px-2"
+                className="min-h-[320px] flex items-center justify-center px-4"
                 initial={{ opacity: 0, scale: 0.98 }}
                 animate={{
                   opacity: 1,
@@ -854,7 +878,7 @@ const MultiStepForm: React.FC<Props> = ({ onSubmit, isLoading }) => {
         </div>
 
         <motion.div
-          className="mt-10 flex justify-between border-t border-gray-100 pt-6"
+          className="mt-12 flex justify-between border-t border-gray-100 pt-8"
           variants={containerVariants}
           initial="hidden"
           animate="visible"
@@ -862,11 +886,11 @@ const MultiStepForm: React.FC<Props> = ({ onSubmit, isLoading }) => {
           <motion.button
             onClick={handleBack}
             disabled={currentStep === 1}
-            className={`flex items-center px-6 py-3 rounded-xl font-medium text-sm sm:text-base ${
+            className={`flex items-center px-8 py-4 rounded-2xl font-semibold text-base ${
               currentStep === 1
                 ? "text-gray-300 cursor-not-allowed"
-                : "text-gray-600 hover:text-gray-800 hover:bg-gray-50"
-            } transition-all duration-200`}
+                : "text-gray-600 hover:text-gray-800 hover:bg-gray-50 border-2 border-gray-200"
+            } transition-all duration-300`}
             whileHover={{
               x: currentStep === 1 ? 0 : -3,
               backgroundColor:
@@ -874,24 +898,24 @@ const MultiStepForm: React.FC<Props> = ({ onSubmit, isLoading }) => {
             }}
             whileTap={{ scale: 0.97 }}
           >
-            <FaChevronLeft className="mr-2" />
+            <FaChevronLeft className="mr-3 text-lg" />
             <span className="hidden sm:inline">Back</span>
           </motion.button>
 
           <motion.button
             onClick={handleNext}
             disabled={!isStepValid() || isLoading}
-            className={`flex items-center px-6 py-3 rounded-xl font-medium text-sm sm:text-base ${
+            className={`flex items-center px-8 py-4 rounded-2xl font-semibold text-base ${
               !isStepValid() || isLoading
                 ? "bg-gray-200 text-gray-400 cursor-not-allowed"
-                : "text-white bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 shadow-lg shadow-blue-500/20"
+                : "text-white bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 shadow-xl shadow-blue-500/25 border-2 border-blue-400"
             } transition-all duration-300`}
             whileHover={
               !isStepValid() || isLoading
                 ? {}
                 : {
-                    scale: 1.03,
-                    boxShadow: "0 8px 20px -5px rgba(59, 130, 246, 0.4)",
+                    scale: 1.05,
+                    boxShadow: "0 10px 25px -5px rgba(59, 130, 246, 0.5)",
                   }
             }
             whileTap={!isStepValid() || isLoading ? {} : { scale: 0.97 }}
@@ -899,7 +923,7 @@ const MultiStepForm: React.FC<Props> = ({ onSubmit, isLoading }) => {
             {isLoading ? (
               <span className="flex items-center">
                 <svg
-                  className="animate-spin -ml-1 mr-2 h-4 w-4 text-white"
+                  className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
                   viewBox="0 0 24 24"
@@ -918,20 +942,20 @@ const MultiStepForm: React.FC<Props> = ({ onSubmit, isLoading }) => {
                     d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                   ></path>
                 </svg>
-                <span className="hidden sm:inline">Generating...</span>
-                <span className="sm:hidden">Loading...</span>
+                <span className="hidden sm:inline">Generating Your Itinerary...</span>
+                <span className="sm:hidden">Generating...</span>
               </span>
             ) : currentStep === steps.length ? (
               <span className="flex items-center">
-                <span className="hidden sm:inline">Generate Itinerary</span>
+                <span className="hidden sm:inline">Generate My Itinerary</span>
                 <span className="sm:hidden">Generate</span>
-                <FaPlane className="ml-2 transform transition-transform group-hover:translate-x-1" />
+                <FaPlane className="ml-3 text-lg transform transition-transform group-hover:translate-x-1" />
               </span>
             ) : (
               <span className="flex items-center">
                 <span className="hidden sm:inline">Continue</span>
                 <span className="sm:hidden">Next</span>
-                <FaChevronRight className="ml-2" />
+                <FaChevronRight className="ml-3 text-lg" />
               </span>
             )}
           </motion.button>
