@@ -312,26 +312,6 @@ export default function TripPlan({
             <RefreshCw className="h-5 w-5" />
             Generate New
           </motion.button>
-          
-          <motion.button
-            variants={itemVariants}
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            className="flex items-center gap-3 px-8 py-4 bg-white/90 backdrop-blur-sm text-gray-700 rounded-2xl font-semibold text-lg hover:bg-white hover:shadow-lg transition-all duration-300 border-2 border-gray-200 hover:border-gray-300"
-          >
-            <Download className="h-5 w-5" />
-            Download PDF
-          </motion.button>
-          
-          <motion.button
-            variants={itemVariants}
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            className="flex items-center gap-3 px-8 py-4 bg-white/90 backdrop-blur-sm text-gray-700 rounded-2xl font-semibold text-lg hover:bg-white hover:shadow-lg transition-all duration-300 border-2 border-gray-200 hover:border-gray-300"
-          >
-            <Share2 className="h-5 w-5" />
-            Share
-          </motion.button>
         </motion.div>
 
         {/* Success Message */}
