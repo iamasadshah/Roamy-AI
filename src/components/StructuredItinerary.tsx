@@ -14,7 +14,6 @@ import {
   Sun,
   Moon,
   Coffee,
-  Camera,
   Heart,
   BookOpen,
   Globe,
@@ -24,10 +23,7 @@ import {
   Languages,
   TrendingUp,
   Shield,
-  Wifi,
-  Car,
-  Train,
-  Plane
+  Car
 } from "lucide-react";
 import { TravelItinerary, Activity, Meal } from "@/types/itinerary";
 
@@ -62,7 +58,7 @@ const itemVariants = {
       ease: "easeOut"
     }
   }
-};
+}
 
 const cardHoverVariants = {
   initial: { scale: 1, y: 0 },

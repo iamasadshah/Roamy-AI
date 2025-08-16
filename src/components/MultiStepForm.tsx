@@ -28,12 +28,12 @@ import {
   FaClock,
   FaStar,
 } from "react-icons/fa";
-import { Loader2 } from "lucide-react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { useRouter } from "next/navigation";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import toast from "react-hot-toast";
+import { Loader2, Calendar, MapPin, Users, Bed, Utensils } from "lucide-react";
 
 interface FormStep {
   id: number;
@@ -52,11 +52,27 @@ interface FormData {
   dietaryPlan: string;
 }
 
-// Performance optimized animation variants
+// Enhanced animation variants for smoother transitions
 const stepVariants = {
-  initial: { opacity: 0, x: 20 },
-  animate: { opacity: 1, x: 0 },
-  exit: { opacity: 0, x: -20 }
+  initial: { opacity: 0, x: 30, scale: 0.95 },
+  animate: { 
+    opacity: 1, 
+    x: 0, 
+    scale: 1,
+    transition: {
+      duration: 0.5,
+      ease: "easeOut"
+    }
+  },
+  exit: { 
+    opacity: 0, 
+    x: -30, 
+    scale: 0.95,
+    transition: {
+      duration: 0.3,
+      ease: "easeIn"
+    }
+  }
 };
 
 const staggerContainer = {
@@ -69,8 +85,29 @@ const staggerContainer = {
 };
 
 const itemVariants = {
-  initial: { opacity: 0, y: 20 },
-  animate: { opacity: 1, y: 0 }
+  initial: { opacity: 0, y: 20, scale: 0.95 },
+  animate: { 
+    opacity: 1, 
+    y: 0, 
+    scale: 1,
+    transition: {
+      duration: 0.4,
+      ease: "easeOut"
+    }
+  }
+};
+
+const cardHoverVariants = {
+  initial: { scale: 1, y: 0 },
+  hover: { 
+    scale: 1.03, 
+    y: -8,
+    transition: {
+      duration: 0.3,
+      ease: "easeOut"
+    }
+  },
+  tap: { scale: 0.98 }
 };
 
 const steps: FormStep[] = [
@@ -102,13 +139,13 @@ const steps: FormStep[] = [
     id: 5,
     title: "Travelers",
     description: "Who's coming along?",
-    icon: <FaUsers className="text-orange-600 text-xl" />,
+    icon: <FaUsers className="text-pink-600 text-xl" />,
   },
   {
     id: 6,
     title: "Dietary Preferences",
     description: "Any food restrictions?",
-    icon: <FaUtensils className="text-red-600 text-xl" />,
+    icon: <FaUtensils className="text-orange-600 text-xl" />,
   },
 ];
 
@@ -118,6 +155,7 @@ const countries = [
   "Algeria",
   "Andorra",
   "Angola",
+  "Antigua and Barbuda",
   "Argentina",
   "Armenia",
   "Australia",
@@ -130,33 +168,62 @@ const countries = [
   "Belarus",
   "Belgium",
   "Belize",
+  "Benin",
   "Bhutan",
   "Bolivia",
+  "Bosnia and Herzegovina",
+  "Botswana",
   "Brazil",
   "Brunei",
   "Bulgaria",
+  "Burkina Faso",
+  "Burundi",
+  "Cabo Verde",
   "Cambodia",
   "Cameroon",
   "Canada",
+  "Central African Republic",
+  "Chad",
   "Chile",
   "China",
   "Colombia",
+  "Comoros",
+  "Congo",
   "Costa Rica",
   "Croatia",
   "Cuba",
   "Cyprus",
   "Czech Republic",
+  "Democratic Republic of the Congo",
   "Denmark",
+  "Djibouti",
+  "Dominica",
+  "Dominican Republic",
+  "East Timor",
   "Ecuador",
   "Egypt",
+  "El Salvador",
+  "Equatorial Guinea",
+  "Eritrea",
   "Estonia",
+  "Eswatini",
   "Ethiopia",
+  "Fiji",
   "Finland",
   "France",
+  "Gabon",
+  "Gambia",
   "Georgia",
   "Germany",
   "Ghana",
   "Greece",
+  "Grenada",
+  "Guatemala",
+  "Guinea",
+  "Guinea-Bissau",
+  "Guyana",
+  "Haiti",
+  "Honduras",
   "Hungary",
   "Iceland",
   "India",
@@ -165,32 +232,59 @@ const countries = [
   "Iraq",
   "Ireland",
   "Italy",
+  "Ivory Coast",
   "Jamaica",
   "Japan",
   "Jordan",
   "Kazakhstan",
   "Kenya",
+  "Kiribati",
   "Kuwait",
+  "Kyrgyzstan",
+  "Laos",
   "Latvia",
   "Lebanon",
+  "Lesotho",
+  "Liberia",
+  "Libya",
+  "Liechtenstein",
   "Lithuania",
   "Luxembourg",
+  "Madagascar",
+  "Malawi",
   "Malaysia",
   "Maldives",
+  "Mali",
   "Malta",
+  "Marshall Islands",
+  "Mauritania",
+  "Mauritius",
   "Mexico",
+  "Micronesia",
+  "Moldova",
   "Monaco",
   "Mongolia",
   "Montenegro",
   "Morocco",
+  "Mozambique",
+  "Myanmar",
+  "Namibia",
+  "Nauru",
   "Nepal",
   "Netherlands",
   "New Zealand",
+  "Nicaragua",
+  "Niger",
   "Nigeria",
+  "North Korea",
+  "North Macedonia",
   "Norway",
   "Oman",
   "Pakistan",
+  "Palau",
   "Panama",
+  "Papua New Guinea",
+  "Paraguay",
   "Peru",
   "Philippines",
   "Poland",
@@ -227,6 +321,7 @@ interface Props {
   isLoading: boolean;
 }
 
+// Enhanced Destination Input with better UX
 const DestinationInput = ({
   value,
   onChange,
@@ -255,8 +350,8 @@ const DestinationInput = ({
       <div className="relative">
         <input
           type="text"
-          className="w-full p-5 rounded-2xl bg-white/95 text-gray-800 placeholder-gray-500 backdrop-blur-sm border-2 border-gray-200 pr-12 text-lg font-medium focus:ring-4 focus:ring-blue-400/20 focus:border-blue-500 transition-all duration-300 shadow-lg hover:shadow-xl"
-          placeholder="Search for your destination..."
+          className="w-full p-6 rounded-3xl bg-white/95 text-gray-800 placeholder-gray-500 backdrop-blur-sm border-2 border-gray-200 pr-16 text-xl font-medium focus:ring-4 focus:ring-blue-400/20 focus:border-blue-500 transition-all duration-300 shadow-lg hover:shadow-xl"
+          placeholder="Search for your dream destination..."
           value={value || searchTerm}
           onChange={(e) => {
             setSearchTerm(e.target.value);
@@ -266,11 +361,11 @@ const DestinationInput = ({
         />
         <button
           type="button"
-          className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+          className="absolute right-5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
           onClick={() => setIsOpen(!isOpen)}
         >
           <FaChevronDown
-            className={`transform transition-transform text-xl ${
+            className={`transform transition-transform text-2xl ${
               isOpen ? "rotate-180" : ""
             }`}
           />
@@ -292,7 +387,7 @@ const DestinationInput = ({
                 animate={{ scale: 1, y: 0 }}
                 exit={{ scale: 0.95, y: 20 }}
                 onClick={(e) => e.stopPropagation()}
-                className="w-full h-[500px] max-w-3xl bg-white border border-gray-200 rounded-3xl shadow-2xl max-h-[80vh] flex flex-col"
+                className="w-full h-[600px] max-w-4xl bg-white border border-gray-200 rounded-3xl shadow-2xl max-h-[85vh] flex flex-col"
               >
                 {/* Enhanced Header */}
                 <div className="p-8 border-b border-gray-100 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-t-3xl">
@@ -300,13 +395,13 @@ const DestinationInput = ({
                     Select Your Destination
                   </h3>
                   <p className="text-gray-600 mb-6 text-lg">
-                    Choose from our curated list of amazing destinations
+                    Choose from our curated list of amazing destinations worldwide
                   </p>
                   <div className="relative">
-                    <FaSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 text-xl" />
+                    <FaSearch className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-400 text-xl" />
                     <input
                       type="text"
-                      className="w-full pl-12 pr-4 py-5 bg-white border-2 border-gray-200 rounded-2xl text-gray-800 placeholder-gray-500 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-400/20 transition-all text-lg font-medium shadow-lg"
+                      className="w-full pl-14 pr-5 py-5 bg-white border-2 border-gray-200 rounded-2xl text-gray-800 placeholder-gray-500 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-400/20 transition-all text-lg font-medium shadow-lg"
                       placeholder="Type to search countries..."
                       value={searchTerm}
                       onChange={(e) => setSearchTerm(e.target.value)}
@@ -322,12 +417,12 @@ const DestinationInput = ({
                       filteredCountries.map((country) => (
                         <motion.button
                           key={country}
-                          className="flex items-center p-5 text-left text-gray-700 hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50 hover:border-blue-300 border-2 border-transparent rounded-2xl transition-all group shadow-sm hover:shadow-lg"
+                          className="flex items-center p-6 text-left text-gray-700 hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50 hover:border-blue-300 border-2 border-transparent rounded-2xl transition-all group shadow-sm hover:shadow-lg"
                           onClick={() => handleSelect(country)}
                           whileHover={{ scale: 1.02 }}
                           whileTap={{ scale: 0.98 }}
                         >
-                          <FaGlobe className="text-blue-500 mr-4 text-lg" />
+                          <FaGlobe className="text-blue-500 mr-4 text-xl" />
                           <span className="flex-1 truncate font-semibold text-lg">{country}</span>
                           <motion.span
                             initial={{ opacity: 0, x: -10 }}
@@ -352,6 +447,84 @@ const DestinationInput = ({
         )}
       </AnimatePresence>
     </div>
+  );
+};
+
+// Enhanced Date Picker Component
+const EnhancedDatePicker = ({ 
+  selected, 
+  onChange, 
+  placeholder, 
+  minDate, 
+  maxDate,
+  selectsStart,
+  selectsEnd,
+  startDate,
+  endDate,
+  label
+}: {
+  selected: Date | null;
+  onChange: (date: Date | null) => void;
+  placeholder: string;
+  minDate?: Date;
+  maxDate?: Date;
+  selectsStart?: boolean;
+  selectsEnd?: boolean;
+  startDate?: Date | null;
+  endDate?: Date | null;
+  label: string;
+}) => {
+  const [isOpen, setIsOpen] = useState(false);
+
+  return (
+    <motion.div
+      variants={itemVariants}
+      className="space-y-4"
+    >
+      <label className="block text-xl font-bold text-gray-700 mb-4 flex items-center gap-3">
+        <div className="w-8 h-8 bg-gradient-to-br from-indigo-100 to-purple-200 rounded-lg flex items-center justify-center">
+          <Calendar className="h-5 w-5 text-indigo-600" />
+        </div>
+        {label}
+      </label>
+      
+      <div className="relative">
+        <DatePicker
+          selected={selected}
+          onChange={(date) => {
+            onChange(date);
+            setIsOpen(false);
+          }}
+          selectsStart={selectsStart}
+          selectsEnd={selectsEnd}
+          startDate={startDate}
+          endDate={endDate}
+          minDate={minDate}
+          maxDate={maxDate}
+          open={isOpen}
+          onInputClick={() => setIsOpen(true)}
+          onClickOutside={() => setIsOpen(false)}
+          className="w-full p-6 border-2 border-gray-200 rounded-3xl focus:ring-4 focus:ring-blue-400/20 focus:border-blue-500 transition-all duration-300 text-xl font-medium shadow-lg hover:shadow-xl bg-white/95 backdrop-blur-sm cursor-pointer"
+          placeholderText={placeholder}
+          dateFormat="MMMM d, yyyy"
+          calendarClassName="!rounded-3xl !shadow-2xl !border !border-gray-100 !bg-white !p-4"
+          dayClassName={(date) => {
+            if (startDate && endDate && date >= startDate && date <= endDate) {
+              return "!bg-blue-500 !text-white !rounded-full";
+            }
+            if (date.getTime() === selected?.getTime()) {
+              return "!bg-indigo-600 !text-white !rounded-full";
+            }
+            return "";
+          }}
+          popperClassName="!z-50"
+          popperPlacement="bottom-start"
+        />
+        <div className="absolute right-5 top-1/2 -translate-y-1/2 pointer-events-none">
+          <Calendar className="h-6 w-6 text-gray-400" />
+        </div>
+      </div>
+    </motion.div>
   );
 };
 
@@ -406,8 +579,7 @@ const MultiStepForm: React.FC<Props> = ({ onSubmit, isLoading }) => {
                       Sign In Required
                     </p>
                     <p className="mt-1 text-sm text-gray-500">
-                      Please sign in to generate your personalized travel
-                      itinerary.
+                      Please sign in to save your trip.
                     </p>
                   </div>
                 </div>
@@ -427,7 +599,6 @@ const MultiStepForm: React.FC<Props> = ({ onSubmit, isLoading }) => {
           ),
           {
             duration: 5000,
-            position: "bottom-right",
           }
         );
         return;
@@ -439,11 +610,9 @@ const MultiStepForm: React.FC<Props> = ({ onSubmit, isLoading }) => {
     }
   }, [currentStep, formData, onSubmit, router, supabase.auth]);
 
-  const handleBack = useCallback((): void => {
-    if (currentStep > 1) {
-      setCurrentStep((prev) => prev - 1);
-    }
-  }, [currentStep]);
+  const handleBack = useCallback(() => {
+    setCurrentStep((prev) => Math.max(1, prev - 1));
+  }, []);
 
   const isStepValid = useCallback((): boolean => {
     switch (currentStep) {
@@ -458,183 +627,194 @@ const MultiStepForm: React.FC<Props> = ({ onSubmit, isLoading }) => {
       case 5:
         return formData.travelers !== "";
       case 6:
-        return true; // Dietary preferences are optional
+        return formData.dietaryPlan !== "";
       default:
         return false;
     }
   }, [currentStep, formData]);
 
-  const renderStepContent = useCallback((): React.ReactNode => {
-    const optionButtonClasses = (isSelected: boolean) => `
-      w-full p-6 rounded-2xl text-left transition-all duration-300 font-semibold text-lg
-      ${
-        isSelected
-          ? "bg-gradient-to-r from-blue-500 to-indigo-600 text-white shadow-xl shadow-blue-500/25 border-2 border-blue-400 transform scale-105"
-          : "bg-white border-2 border-gray-200 text-gray-700 hover:border-blue-300 hover:shadow-lg hover:bg-blue-50/50"
-      }
-      hover:scale-[1.02] active:scale-[0.98]
-    `;
+  const optionButtonClasses = useCallback((isSelected: boolean) => {
+    return `relative p-6 sm:p-8 rounded-3xl border-2 transition-all duration-300 text-center group ${
+      isSelected
+        ? "bg-gradient-to-br from-blue-500 to-indigo-600 border-blue-500 text-white shadow-xl scale-105"
+        : "bg-white/90 backdrop-blur-sm border-gray-200 text-gray-700 hover:bg-gradient-to-br hover:from-blue-50 hover:to-indigo-50 hover:border-blue-300 hover:shadow-lg"
+    }`;
+  }, []);
 
+  const renderStepContent = useCallback((): React.ReactNode => {
     switch (currentStep) {
       case 1:
         return (
-          <div className="w-full max-w-2xl">
+          <div className="w-full max-w-2xl mx-auto">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1 }}
-              className="text-center mb-10"
+              className="text-center mb-8 sm:mb-12"
             >
-              <h3 className="text-3xl font-bold text-gray-800 mb-4">
+              <h3 className="text-3xl sm:text-4xl font-bold text-gray-800 mb-4 sm:mb-6">
                 Where would you like to go?
               </h3>
-              <p className="text-gray-600 text-xl leading-relaxed">
-                Choose your dream destination and we'll create the perfect itinerary for you
-              </p>
-            </motion.div>
-            <DestinationInput
-              value={formData.destination}
-              onChange={(value) =>
-                setFormData({ ...formData, destination: value })
-              }
-            />
-          </div>
-        );
-      case 2:
-        return (
-          <div className="w-full max-w-lg space-y-8">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.1 }}
-              className="text-center mb-8"
-            >
-              <h3 className="text-3xl font-bold text-gray-800 mb-4">
-                When are you planning to travel?
-              </h3>
-              <p className="text-gray-600 text-xl leading-relaxed">
-                Select your travel dates to optimize your itinerary
+              <p className="text-gray-600 text-lg sm:text-xl leading-relaxed max-w-2xl mx-auto">
+                Tell us your dream destination and we'll create the perfect itinerary for you
               </p>
             </motion.div>
             
             <motion.div
-              className="space-y-6"
               variants={staggerContainer}
               initial="initial"
               animate="animate"
             >
-              <motion.div
-                className="space-y-3"
-                variants={itemVariants}
-              >
-                <label className="block text-lg font-semibold text-gray-700 mb-3">
-                Start Date
-              </label>
-              <DatePicker
-                selected={formData.startDate}
-                onChange={(date) =>
-                  setFormData({ ...formData, startDate: date })
-                }
-                selectsStart
-                startDate={formData.startDate}
-                endDate={formData.endDate}
-                minDate={new Date()}
-                  className="w-full p-5 border-2 border-gray-200 rounded-2xl focus:ring-4 focus:ring-blue-400/20 focus:border-blue-500 transition-all duration-300 text-lg font-medium shadow-lg hover:shadow-xl"
-                placeholderText="Select start date"
-                dateFormat="MMMM d, yyyy"
-                  calendarClassName="rounded-2xl shadow-2xl border border-gray-100"
-              />
-            </motion.div>
-              
-            <motion.div
-                className="space-y-3"
-                variants={itemVariants}
-              >
-                <label className="block text-lg font-semibold text-gray-700 mb-3">
-                End Date
-              </label>
-              <DatePicker
-                selected={formData.endDate}
-                  onChange={(date) =>
-                    setFormData({ ...formData, endDate: date })
-                  }
-                selectsEnd
-                startDate={formData.startDate}
-                endDate={formData.endDate}
-                minDate={formData.startDate || new Date()}
-                  className="w-full p-5 border-2 border-gray-200 rounded-2xl focus:ring-4 focus:ring-blue-400/20 focus:border-blue-500 transition-all duration-300 text-lg font-medium shadow-lg hover:shadow-xl"
-                placeholderText="Select end date"
-                dateFormat="MMMM d, yyyy"
-                  calendarClassName="rounded-2xl shadow-2xl border border-gray-100"
-              />
+              <motion.div variants={itemVariants}>
+                <DestinationInput
+                  value={formData.destination}
+                  onChange={(value) => setFormData({ ...formData, destination: value })}
+                />
               </motion.div>
             </motion.div>
           </div>
         );
-      case 3:
+      case 2:
         return (
-          <div className="w-full max-w-4xl">
+          <div className="w-full max-w-4xl mx-auto">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
+              animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1 }}
-              className="text-center mb-10"
+              className="text-center mb-8 sm:mb-12"
             >
-              <h3 className="text-3xl font-bold text-gray-800 mb-4">
-                What's your budget range?
+              <h3 className="text-3xl sm:text-4xl font-bold text-gray-800 mb-4 sm:mb-6">
+                When are you planning to travel?
               </h3>
-              <p className="text-gray-600 text-xl leading-relaxed">
-                Choose your spending range to get the best recommendations
+              <p className="text-gray-600 text-lg sm:text-xl leading-relaxed max-w-3xl mx-auto">
+                Select your travel dates to optimize your itinerary and get the best recommendations
               </p>
             </motion.div>
             
             <motion.div
-              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"
+              className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8"
+              variants={staggerContainer}
+              initial="initial"
+              animate="animate"
+            >
+              <EnhancedDatePicker
+                selected={formData.startDate}
+                onChange={(date) => setFormData({ ...formData, startDate: date })}
+                placeholder="Select start date"
+                minDate={new Date()}
+                selectsStart
+                startDate={formData.startDate}
+                endDate={formData.endDate}
+                label="Start Date"
+              />
+              
+              <EnhancedDatePicker
+                selected={formData.endDate}
+                onChange={(date) => setFormData({ ...formData, endDate: date })}
+                placeholder="Select end date"
+                minDate={formData.startDate || new Date()}
+                selectsEnd
+                startDate={formData.startDate}
+                endDate={formData.endDate}
+                label="End Date"
+              />
+            </motion.div>
+
+            {/* Date Range Display */}
+            {formData.startDate && formData.endDate && (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="mt-8 p-6 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-3xl border border-blue-200"
+              >
+                <div className="flex items-center justify-center gap-4 text-lg font-semibold text-blue-800">
+                  <Calendar className="h-6 w-6" />
+                  <span>
+                    {formData.startDate.toLocaleDateString('en-US', { 
+                      month: 'long', 
+                      day: 'numeric', 
+                      year: 'numeric' 
+                    })} - {formData.endDate.toLocaleDateString('en-US', { 
+                      month: 'long', 
+                      day: 'numeric', 
+                      year: 'numeric' 
+                    })}
+                  </span>
+                </div>
+                <div className="text-center mt-2 text-blue-600">
+                  {Math.ceil((formData.endDate.getTime() - formData.startDate.getTime()) / (1000 * 60 * 60 * 24))} days
+                </div>
+              </motion.div>
+            )}
+          </div>
+        );
+      case 3:
+        return (
+          <div className="w-full max-w-6xl mx-auto">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.1 }}
+              className="text-center mb-8 sm:mb-12"
+            >
+              <h3 className="text-3xl sm:text-4xl font-bold text-gray-800 mb-4 sm:mb-6">
+                What's your budget range?
+              </h3>
+              <p className="text-gray-600 text-lg sm:text-xl leading-relaxed max-w-3xl mx-auto">
+                Choose your spending range to get the best recommendations tailored to your budget
+              </p>
+            </motion.div>
+            
+            <motion.div
+              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6"
               variants={staggerContainer}
               initial="initial"
               animate="animate"
             >
               {[
-                { value: "budget", label: "Budget", icon: "💰", desc: "Affordable options" },
-                { value: "moderate", label: "Moderate", icon: "💳", desc: "Balanced comfort" },
-                { value: "luxury", label: "Luxury", icon: "👑", desc: "Premium experience" },
-                { value: "ultra-luxury", label: "Ultra Luxury", icon: "⭐", desc: "Exclusive & lavish" }
+                { value: "budget", label: "Budget", icon: "💰", desc: "Affordable options", price: "$50-150/day" },
+                { value: "moderate", label: "Moderate", icon: "💳", desc: "Balanced comfort", price: "$150-300/day" },
+                { value: "luxury", label: "Luxury", icon: "👑", desc: "Premium experience", price: "$300-600/day" },
+                { value: "ultra-luxury", label: "Ultra Luxury", icon: "⭐", desc: "Exclusive & lavish", price: "$600+/day" }
               ].map((option) => (
                 <motion.button
                   key={option.value}
                   variants={itemVariants}
                   className={optionButtonClasses(formData.budget === option.value)}
                   onClick={() => setFormData({ ...formData, budget: option.value })}
+                  whileHover="hover"
+                  whileTap="tap"
                 >
                   <div className="flex flex-col items-center text-center">
-                    <span className="text-3xl mb-3">{option.icon}</span>
-                    <h4 className="font-bold text-xl mb-2">{option.label}</h4>
-                    <p className="text-sm opacity-80">{option.desc}</p>
-                </div>
-              </motion.button>
-            ))}
+                    <span className="text-3xl sm:text-4xl mb-3 sm:mb-4">{option.icon}</span>
+                    <h4 className="font-bold text-xl sm:text-2xl mb-2">{option.label}</h4>
+                    <p className="text-xs sm:text-sm opacity-80 mb-2 sm:mb-3">{option.desc}</p>
+                    <div className="text-xs sm:text-sm font-semibold opacity-90">{option.price}</div>
+                  </div>
+                </motion.button>
+              ))}
             </motion.div>
           </div>
         );
       case 4:
         return (
-          <div className="w-full max-w-4xl">
+          <div className="w-full max-w-6xl mx-auto">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1 }}
-              className="text-center mb-10"
+              className="text-center mb-8 sm:mb-12"
             >
-              <h3 className="text-3xl font-bold text-gray-800 mb-4">
+              <h3 className="text-3xl sm:text-4xl font-bold text-gray-800 mb-4 sm:mb-6">
                 Where would you like to stay?
               </h3>
-              <p className="text-gray-600 text-xl leading-relaxed">
-                Choose your preferred accommodation type
+              <p className="text-gray-600 text-lg sm:text-xl leading-relaxed max-w-3xl mx-auto">
+                Choose your preferred accommodation type for the perfect stay
               </p>
             </motion.div>
             
             <motion.div
-              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6"
               variants={staggerContainer}
               initial="initial"
               animate="animate"
@@ -647,36 +827,38 @@ const MultiStepForm: React.FC<Props> = ({ onSubmit, isLoading }) => {
                 { value: "guesthouse", label: "Guesthouse", icon: <FaUser />, desc: "Local charm" },
                 { value: "camping", label: "Camping", icon: <FaLeaf />, desc: "Nature adventure" }
               ].map((option) => (
-              <motion.button
+                <motion.button
                   key={option.value}
                   variants={itemVariants}
                   className={optionButtonClasses(formData.accommodation === option.value)}
                   onClick={() => setFormData({ ...formData, accommodation: option.value })}
+                  whileHover="hover"
+                  whileTap="tap"
                 >
                   <div className="flex flex-col items-center text-center">
-                    <div className="text-3xl mb-3">{option.icon}</div>
-                    <h4 className="font-bold text-xl mb-2">{option.label}</h4>
-                    <p className="text-sm opacity-80">{option.desc}</p>
+                    <div className="text-3xl sm:text-4xl mb-3 sm:mb-4">{option.icon}</div>
+                    <h4 className="font-bold text-xl sm:text-2xl mb-2">{option.label}</h4>
+                    <p className="text-xs sm:text-sm opacity-80">{option.desc}</p>
                   </div>
-              </motion.button>
-            ))}
+                </motion.button>
+              ))}
             </motion.div>
           </div>
         );
       case 5:
         return (
-          <div className="w-full max-w-4xl">
+          <div className="w-full max-w-6xl mx-auto">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
+              animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1 }}
-              className="text-center mb-10"
+              className="text-center mb-8 sm:mb-12"
             >
-              <h3 className="text-3xl font-bold text-gray-800 mb-4">
+              <h3 className="text-3xl sm:text-4xl font-bold text-gray-800 mb-4 sm:mb-6">
                 Who's coming along?
               </h3>
-              <p className="text-gray-600 text-xl leading-relaxed">
-                Select your travel group to personalize the experience
+              <p className="text-gray-600 text-lg sm:text-xl leading-relaxed max-w-3xl mx-auto">
+                Select your travel group to personalize the experience for everyone
               </p>
             </motion.div>
             
@@ -697,31 +879,33 @@ const MultiStepForm: React.FC<Props> = ({ onSubmit, isLoading }) => {
                   variants={itemVariants}
                   className={optionButtonClasses(formData.travelers === option.value)}
                   onClick={() => setFormData({ ...formData, travelers: option.value })}
+                  whileHover="hover"
+                  whileTap="tap"
                 >
                   <div className="flex flex-col items-center text-center">
-                    <div className="text-3xl mb-3">{option.icon}</div>
-                    <h4 className="font-bold text-xl mb-2">{option.label}</h4>
+                    <div className="text-4xl mb-4">{option.icon}</div>
+                    <h4 className="font-bold text-2xl mb-2">{option.label}</h4>
                     <p className="text-sm opacity-80">{option.desc}</p>
                   </div>
-              </motion.button>
-            ))}
+                </motion.button>
+              ))}
             </motion.div>
           </div>
         );
       case 6:
         return (
-          <div className="w-full max-w-4xl">
+          <div className="w-full max-w-6xl mx-auto">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1 }}
-              className="text-center mb-10"
+              className="text-center mb-8 sm:mb-12"
             >
-              <h3 className="text-3xl font-bold text-gray-800 mb-4">
+              <h3 className="text-3xl sm:text-4xl font-bold text-gray-800 mb-4 sm:mb-6">
                 Any dietary preferences?
               </h3>
-              <p className="text-gray-600 text-xl leading-relaxed">
-                Help us recommend the best dining options for you
+              <p className="text-gray-600 text-lg sm:text-xl leading-relaxed max-w-3xl mx-auto">
+                Help us recommend the best dining options that match your preferences
               </p>
             </motion.div>
             
@@ -743,10 +927,12 @@ const MultiStepForm: React.FC<Props> = ({ onSubmit, isLoading }) => {
                   variants={itemVariants}
                   className={optionButtonClasses(formData.dietaryPlan === option.value)}
                   onClick={() => setFormData({ ...formData, dietaryPlan: option.value })}
+                  whileHover="hover"
+                  whileTap="tap"
                 >
                   <div className="flex flex-col items-center text-center">
-                    <div className="text-3xl mb-3">{option.icon}</div>
-                    <h4 className="font-bold text-xl mb-2">{option.label}</h4>
+                    <div className="text-4xl mb-4">{option.icon}</div>
+                    <h4 className="font-bold text-2xl mb-2">{option.label}</h4>
                     <p className="text-sm opacity-80">{option.desc}</p>
                   </div>
                 </motion.button>
@@ -757,48 +943,90 @@ const MultiStepForm: React.FC<Props> = ({ onSubmit, isLoading }) => {
       default:
         return null;
     }
-  }, [currentStep, formData]);
+  }, [currentStep, formData, optionButtonClasses]);
 
   return (
     <LazyMotion features={domAnimation}>
       <div className="w-full">
         {/* Enhanced Progress Steps */}
-        <div className="mb-12">
-          <div className="flex items-center justify-between max-w-4xl mx-auto">
-            {steps.map((step, index) => (
-              <div key={step.id} className="flex items-center">
-      <motion.div
+        <div className="mb-16">
+          <div className="flex items-center justify-between max-w-6xl mx-auto px-4">
+            {/* Desktop Progress Steps */}
+            <div className="hidden md:flex items-center w-full">
+              {steps.map((step, index) => (
+                <div key={step.id} className="flex items-center flex-1">
+                  <motion.div
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    transition={{ delay: index * 0.1 }}
+                    className={`flex items-center justify-center w-16 h-16 rounded-full border-2 transition-all duration-300 ${
+                      currentStep >= step.id
+                        ? "bg-gradient-to-r from-blue-500 to-indigo-600 border-blue-500 text-white shadow-xl"
+                        : "bg-white border-gray-300 text-gray-400"
+                    }`}
+                  >
+                    {currentStep > step.id ? (
+                      <FaCheck className="text-lg" />
+                    ) : (
+                      <div className="text-xl">{step.icon}</div>
+                    )}
+                  </motion.div>
+                  {index < steps.length - 1 && (
+                    <div
+                      className={`flex-1 h-1 mx-6 transition-all duration-300 rounded-full ${
+                        currentStep > step.id
+                          ? "bg-gradient-to-r from-blue-500 to-indigo-600"
+                          : "bg-gray-300"
+                      }`}
+                    />
+                  )}
+                </div>
+              ))}
+            </div>
+            
+            {/* Mobile Progress Steps */}
+            <div className="md:hidden flex items-center justify-center w-full">
+              <div className="flex items-center gap-4">
+                <motion.div
                   initial={{ scale: 0 }}
                   animate={{ scale: 1 }}
-                  transition={{ delay: index * 0.1 }}
                   className={`flex items-center justify-center w-12 h-12 rounded-full border-2 transition-all duration-300 ${
-                    currentStep >= step.id
-                      ? "bg-gradient-to-r from-blue-500 to-indigo-600 border-blue-500 text-white shadow-lg"
+                    currentStep >= 1
+                      ? "bg-gradient-to-r from-blue-500 to-indigo-600 border-blue-500 text-white shadow-xl"
                       : "bg-white border-gray-300 text-gray-400"
                   }`}
                 >
-                  {currentStep > step.id ? (
+                  {currentStep > 1 ? (
                     <FaCheck className="text-sm" />
                   ) : (
-                    step.icon
+                    <div className="text-lg">{steps[0].icon}</div>
                   )}
                 </motion.div>
-                {index < steps.length - 1 && (
-                  <div
-                    className={`w-16 h-1 mx-4 transition-all duration-300 ${
-                      currentStep > step.id
-                        ? "bg-gradient-to-r from-blue-500 to-indigo-600"
-                        : "bg-gray-300"
-                    }`}
-                  />
-                )}
+                <div className="text-sm font-semibold text-gray-600">
+                  Step {currentStep} of {steps.length}
+                </div>
+                <motion.div
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  className={`flex items-center justify-center w-12 h-12 rounded-full border-2 transition-all duration-300 ${
+                    currentStep >= steps.length
+                      ? "bg-gradient-to-r from-blue-500 to-indigo-600 border-blue-500 text-white shadow-xl"
+                      : "bg-white border-gray-300 text-gray-400"
+                  }`}
+                >
+                  {currentStep >= steps.length ? (
+                    <FaCheck className="text-sm" />
+                  ) : (
+                    <div className="text-lg">{steps[steps.length - 1].icon}</div>
+                  )}
+                </motion.div>
               </div>
-            ))}
+            </div>
           </div>
         </div>
 
         {/* Step Content */}
-        <div className="flex justify-center">
+        <div className="flex justify-center px-4">
           <AnimatePresence mode="wait">
             <motion.div
               key={currentStep}
@@ -806,60 +1034,59 @@ const MultiStepForm: React.FC<Props> = ({ onSubmit, isLoading }) => {
               initial="initial"
               animate="animate"
               exit="exit"
-              transition={{ duration: 0.3 }}
               className="w-full"
-              >
-                {renderStepContent()}
+            >
+              {renderStepContent()}
             </motion.div>
           </AnimatePresence>
         </div>
 
         {/* Enhanced Navigation Buttons */}
-        <div className="flex justify-between items-center mt-12 max-w-4xl mx-auto">
+        <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mt-16 max-w-6xl mx-auto px-4">
           <motion.button
             onClick={handleBack}
             disabled={currentStep === 1}
-            className={`flex items-center gap-3 px-8 py-4 rounded-2xl font-semibold text-lg transition-all duration-300 ${
+            className={`flex items-center gap-3 px-8 py-4 sm:px-10 sm:py-5 rounded-3xl font-bold text-lg sm:text-xl transition-all duration-300 w-full sm:w-auto justify-center ${
               currentStep === 1
                 ? "bg-gray-100 text-gray-400 cursor-not-allowed"
-                : "bg-white text-gray-700 hover:bg-gray-50 hover:shadow-lg border-2 border-gray-200 hover:border-gray-300"
+                : "bg-white text-gray-700 hover:bg-gray-50 hover:shadow-xl border-2 border-gray-200 hover:border-gray-300"
             }`}
             whileHover={currentStep !== 1 ? { scale: 1.02 } : {}}
             whileTap={currentStep !== 1 ? { scale: 0.98 } : {}}
           >
-            <FaChevronLeft className="text-xl" />
+            <FaChevronLeft className="text-xl sm:text-2xl" />
             Back
           </motion.button>
 
           <motion.button
             onClick={handleNext}
             disabled={!isStepValid() || isLoading}
-            className={`flex items-center gap-3 px-10 py-4 rounded-2xl font-semibold text-lg transition-all duration-300 ${
+            className={`flex items-center gap-3 px-10 py-4 sm:px-12 sm:py-5 rounded-3xl font-bold text-lg sm:text-xl transition-all duration-300 w-full sm:w-auto justify-center ${
               !isStepValid() || isLoading
                 ? "bg-gray-100 text-gray-400 cursor-not-allowed"
-                : "bg-gradient-to-r from-blue-600 to-indigo-600 text-white hover:from-blue-700 hover:to-indigo-700 shadow-lg hover:shadow-xl"
+                : "bg-gradient-to-r from-blue-600 to-indigo-600 text-white hover:from-blue-700 hover:to-indigo-700 shadow-xl hover:shadow-2xl"
             }`}
             whileHover={isStepValid() && !isLoading ? { scale: 1.02 } : {}}
             whileTap={isStepValid() && !isLoading ? { scale: 0.98 } : {}}
           >
             {isLoading ? (
               <>
-                <Loader2 className="animate-spin text-xl" />
+                <Loader2 className="animate-spin text-xl sm:text-2xl" />
                 Generating...
               </>
             ) : currentStep === steps.length ? (
               <>
                 Generate Itinerary
-                <FaChevronRight className="text-xl" />
+                <FaChevronRight className="text-xl sm:text-2xl" />
               </>
             ) : (
               <>
                 Next
-                <FaChevronRight className="text-xl" />
+                <FaChevronRight className="text-xl sm:text-2xl" />
               </>
             )}
           </motion.button>
-    </div>
+        </div>
       </div>
     </LazyMotion>
   );
