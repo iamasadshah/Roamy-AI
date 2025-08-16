@@ -3,6 +3,7 @@
 import { motion, Variants } from "framer-motion";
 import { FaRobot, FaBolt, FaWallet, FaShare, FaGlobe, FaMapMarkedAlt, FaStar, FaSync, FaArrowRight } from "react-icons/fa";
 import { Card, CardContent } from "@/components/ui/card";
+import Link from "next/link";
 
 const features = [
   {
@@ -169,8 +170,11 @@ export default function Features() {
           transition={{ delay: 0.3 }}
         >
           <div className="inline-flex items-center px-6 py-3 rounded-full bg-blue-50 text-blue-700 text-sm font-medium">
-            <span>And many more features to discover</span>
-            <FaArrowRight className="ml-2 h-3 w-3" />
+            <Link href="/plan" className="flex items-center">
+              <span>And many more features to discover</span>
+              <FaArrowRight className="ml-2 h-3 w-3" />
+            </Link>
+            
           </div>
         </motion.div>
       </div>
