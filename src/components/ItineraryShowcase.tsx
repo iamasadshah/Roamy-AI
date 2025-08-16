@@ -61,12 +61,12 @@ const sampleItineraries = [
 ];
 
 const fadeInUp = {
-  hidden: { opacity: 0, y: 30 },
+  hidden: { opacity: 0, y: 40 },
   visible: {
     opacity: 1,
     y: 0,
     transition: {
-      duration: 0.6,
+      duration: 0.8,
       ease: [0.25, 0.1, 0.25, 1.0]
     },
   },
@@ -77,45 +77,110 @@ const staggerContainer = {
   visible: {
     opacity: 1,
     transition: {
-      staggerChildren: 0.1,
-      delayChildren: 0.2,
+      staggerChildren: 0.15,
+      delayChildren: 0.3,
     },
   },
 };
 
-const slideIn = {
+// Enhanced slide animations with better easing and smoother transitions
+const slideVariants = {
   enter: (direction: number) => ({
     x: direction > 0 ? 1000 : -1000,
-    opacity: 0
+    opacity: 0,
+    scale: 0.8,
+    rotateY: direction > 0 ? 15 : -15,
   }),
   center: {
+    zIndex: 1,
     x: 0,
-    opacity: 1
+    opacity: 1,
+    scale: 1,
+    rotateY: 0,
+    transition: {
+      duration: 0.8,
+      ease: [0.25, 0.1, 0.25, 1.0],
+      opacity: { duration: 0.6 },
+      scale: { duration: 0.8, ease: "easeOut" },
+      rotateY: { duration: 0.8, ease: "easeOut" }
+    }
   },
   exit: (direction: number) => ({
+    zIndex: 0,
     x: direction < 0 ? 1000 : -1000,
     opacity: 0,
-    transition: { duration: 0.3 }
+    scale: 0.8,
+    rotateY: direction < 0 ? 15 : -15,
+    transition: {
+      duration: 0.6,
+      ease: [0.25, 0.1, 0.25, 1.0],
+      opacity: { duration: 0.4 },
+      scale: { duration: 0.6, ease: "easeIn" },
+      rotateY: { duration: 0.6, ease: "easeIn" }
+    }
   })
+};
+
+const cardHoverVariants = {
+  hover: {
+    y: -5,
+    scale: 1.02,
+    transition: {
+      duration: 0.3,
+      ease: "easeOut"
+    }
+  }
+};
+
+// Enhanced button animations
+const buttonVariants = {
+  hover: {
+    scale: 1.1,
+    backgroundColor: "#3b82f6",
+    transition: {
+      duration: 0.2,
+      ease: "easeOut"
+    }
+  },
+  tap: {
+    scale: 0.95,
+    transition: {
+      duration: 0.1
+    }
+  }
 };
 
 export default function ItineraryShowcase() {
   const [[currentIndex, direction], setCurrentIndex] = useState([0, 0]);
   const [isHovered, setIsHovered] = useState(false);
+  const [isTransitioning, setIsTransitioning] = useState(false);
   const currentItinerary = sampleItineraries[currentIndex];
 
   const navigate = (newDirection: number) => {
+    if (isTransitioning) return; // Prevent rapid clicking
+    
+    setIsTransitioning(true);
     setCurrentIndex(([prevIndex, _]) => {
       const newIndex = (prevIndex + newDirection + sampleItineraries.length) % sampleItineraries.length;
       return [newIndex, newDirection];
     });
+    
+    // Reset transition flag after animation completes
+    setTimeout(() => setIsTransitioning(false), 800);
   };
 
   const nextItinerary = () => navigate(1);
   const prevItinerary = () => navigate(-1);
 
   return (
-    <section className="py-20 bg-gradient-to-b from-white to-blue-50 relative overflow-hidden">
+    <section className="py-16 md:py-24 lg:py-32 bg-gradient-to-b from-white to-blue-50 relative overflow-hidden">
+      {/* Enhanced Background Elements */}
+      <div className="absolute inset-0">
+        <div className="absolute top-0 right-0 w-96 h-96 bg-blue-100 rounded-full mix-blend-multiply filter blur-3xl opacity-10 animate-blob"></div>
+        <div className="absolute bottom-0 left-0 w-96 h-96 bg-indigo-100 rounded-full mix-blend-multiply filter blur-3xl opacity-10 animate-blob animation-delay-2000"></div>
+      </div>
+      
+      {/* Subtle World Map Background */}
       <div className="absolute inset-0 opacity-5">
         <div className="absolute inset-0 bg-[url('/images/world-map.png')] bg-center bg-no-repeat bg-contain"></div>
       </div>
@@ -125,162 +190,224 @@ export default function ItineraryShowcase() {
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, margin: "-100px 0px" }}
-          className="text-center max-w-3xl mx-auto mb-16"
+          className="text-center max-w-4xl mx-auto mb-16 md:mb-20"
         >
           <motion.span 
             variants={fadeInUp}
-            className="inline-block px-4 py-2 rounded-full bg-blue-100 text-blue-800 text-sm font-medium mb-4"
+            className="inline-block px-6 py-3 rounded-full bg-gradient-to-r from-blue-100 to-indigo-100 text-blue-800 text-sm font-semibold mb-6 shadow-sm border border-blue-200/50"
           >
             Travel Inspiration
           </motion.span>
           <motion.h2 
             variants={fadeInUp}
-            className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 mb-6"
+            className="text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold text-gray-900 mb-6 leading-tight"
           >
-            Discover Your Perfect Getaway
+            Discover Your Perfect{" "}
+            <span className="bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 bg-clip-text text-transparent">
+              Getaway
+            </span>
           </motion.h2>
           <motion.p 
             variants={fadeInUp}
-            className="text-lg text-gray-600"
+            className="text-lg md:text-xl text-gray-600 leading-relaxed max-w-3xl mx-auto"
           >
             Explore our handpicked collection of AI-generated itineraries for your next adventure.
           </motion.p>
         </motion.div>
 
         <div 
-          className="relative max-w-5xl mx-auto"
+          className="relative max-w-6xl mx-auto"
           onMouseEnter={() => setIsHovered(true)}
           onMouseLeave={() => setIsHovered(false)}
         >
-          <AnimatePresence custom={direction} initial={false}>
-            <motion.div
-              key={currentItinerary.id}
-              custom={direction}
-              variants={slideIn}
-              initial="enter"
-              animate="center"
-              exit="exit"
-              transition={{
-                x: { type: "spring", stiffness: 300, damping: 30 },
-                opacity: { duration: 0.2 }
-              }}
-              className="w-full"
-            >
-              <Card className="overflow-hidden shadow-xl border-0 bg-white">
-                <div className="grid md:grid-cols-2 gap-0">
-                  <div className="relative h-80 md:h-auto">
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent z-10" />
-                    <Image
-                      src={currentItinerary.image}
-                      alt={currentItinerary.destination}
-                      fill
-                      className="object-cover"
-                      sizes="(max-width: 768px) 100vw, 50vw"
-                      priority
-                    />
-                    <div className="absolute bottom-0 left-0 right-0 p-6 z-20 text-white">
-                      <div className="flex items-center gap-2 mb-2">
-                        <FaMapMarkerAlt className="text-blue-300" />
-                        <span className="text-sm font-medium">{currentItinerary.destination.split(',')[0]}</span>
-                      </div>
-                      <h3 className="text-2xl md:text-3xl font-bold mb-2">
-                        {currentItinerary.destination}
-                      </h3>
-                      <div className="flex items-center gap-4 text-sm opacity-90">
-                        <span className="flex items-center gap-1">
-                          <FaCalendarAlt className="text-blue-300" />
-                          {currentItinerary.duration}
-                        </span>
-                        <span className="flex items-center gap-1">
-                          <FaStar className="text-yellow-400" />
-                          {currentItinerary.rating}
-                        </span>
-                        <span className="bg-white/20 px-2 py-0.5 rounded-full text-xs">
-                          {currentItinerary.season}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                  
-                  <div className="p-6 md:p-8">
-                    <div className="flex justify-between items-start mb-6">
-                      <div>
-                        <h4 className="text-xl font-bold text-gray-900 mb-1">Highlights</h4>
-                        <p className="text-sm text-gray-500">Your personalized adventure includes:</p>
-                      </div>
-                      <div className="bg-blue-50 text-blue-800 px-3 py-1 rounded-full text-sm font-medium">
-                        {currentItinerary.price}
-                      </div>
-                    </div>
-                    
-                    <motion.ul 
-                      className="space-y-3 mb-8"
-                      variants={staggerContainer}
-                      initial="hidden"
-                      animate="visible"
-                    >
-                      {currentItinerary.highlights.map((highlight, i) => (
-                        <motion.li 
-                          key={i} 
-                          variants={fadeInUp}
-                          className="flex items-start gap-3"
-                        >
-                          <div className="bg-blue-50 p-1.5 rounded-full mt-0.5">
-                            {highlight.icon}
+          {/* Enhanced Carousel Container with 3D perspective */}
+          <div className="relative perspective-1000">
+            <AnimatePresence custom={direction} initial={false} mode="wait">
+              <motion.div
+                key={currentItinerary.id}
+                custom={direction}
+                variants={slideVariants}
+                initial="enter"
+                animate="center"
+                exit="exit"
+                className="w-full"
+                style={{
+                  transformStyle: "preserve-3d",
+                  backfaceVisibility: "hidden"
+                }}
+              >
+                <motion.div
+                  variants={cardHoverVariants}
+                  whileHover="hover"
+                  className="w-full"
+                >
+                  <Card className="overflow-hidden shadow-2xl border-0 bg-white/90 backdrop-blur-sm">
+                    <div className="grid lg:grid-cols-2 gap-0">
+                      <div className="relative h-80 lg:h-auto min-h-[400px]">
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent z-10" />
+                        <Image
+                          src={currentItinerary.image}
+                          alt={currentItinerary.destination}
+                          fill
+                          className="object-cover"
+                          sizes="(max-width: 768px) 100vw, 50vw"
+                          priority
+                        />
+                        <div className="absolute bottom-0 left-0 right-0 p-6 md:p-8 z-20 text-white">
+                          <div className="flex items-center gap-2 mb-3">
+                            <FaMapMarkerAlt className="text-blue-300 h-5 w-5" />
+                            <span className="text-sm md:text-base font-medium">{currentItinerary.destination.split(',')[0]}</span>
                           </div>
-                          <span className="text-gray-700">{highlight.text}</span>
-                        </motion.li>
-                      ))}
-                    </motion.ul>
-                    
-                    <div className="flex flex-wrap gap-2 mb-6">
-                      {currentItinerary.tags.map((tag, i) => (
-                        <span 
-                          key={i} 
-                          className="bg-gray-100 text-gray-600 text-xs px-3 py-1 rounded-full"
+                          <h3 className="text-2xl md:text-3xl lg:text-4xl font-bold mb-3 leading-tight">
+                            {currentItinerary.destination}
+                          </h3>
+                          <div className="flex items-center gap-4 md:gap-6 text-sm md:text-base opacity-90">
+                            <span className="flex items-center gap-2">
+                              <FaCalendarAlt className="text-blue-300 h-4 w-4" />
+                              {currentItinerary.duration}
+                            </span>
+                            <span className="flex items-center gap-2">
+                              <FaStar className="text-yellow-400 h-4 w-4" />
+                              {currentItinerary.rating}
+                            </span>
+                            <span className="bg-white/20 px-3 py-1 rounded-full text-xs md:text-sm backdrop-blur-sm">
+                              {currentItinerary.season}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                      
+                      <div className="p-6 md:p-8 lg:p-10">
+                        <div className="flex justify-between items-start mb-6 md:mb-8">
+                          <div>
+                            <h4 className="text-xl md:text-2xl font-bold text-gray-900 mb-2">Highlights</h4>
+                            <p className="text-sm md:text-base text-gray-500">Your personalized adventure includes:</p>
+                          </div>
+                          <div className="bg-gradient-to-r from-blue-50 to-indigo-50 text-blue-800 px-4 py-2 rounded-full text-sm md:text-base font-semibold border border-blue-200/50">
+                            {currentItinerary.price}
+                          </div>
+                        </div>
+                        
+                        <motion.ul 
+                          className="space-y-4 mb-8"
+                          variants={staggerContainer}
+                          initial="hidden"
+                          animate="visible"
                         >
-                          {tag}
-                        </span>
-                      ))}
+                          {currentItinerary.highlights.map((highlight, i) => (
+                            <motion.li 
+                              key={i} 
+                              variants={fadeInUp}
+                              className="flex items-start gap-4 group"
+                            >
+                              <div className="bg-gradient-to-r from-blue-50 to-indigo-50 p-2 rounded-full mt-1 group-hover:scale-110 transition-transform duration-300">
+                                {highlight.icon}
+                              </div>
+                              <span className="text-gray-700 text-sm md:text-base leading-relaxed group-hover:text-gray-900 transition-colors duration-300">
+                                {highlight.text}
+                              </span>
+                            </motion.li>
+                          ))}
+                        </motion.ul>
+                        
+                        <div className="flex flex-wrap gap-2 mb-8">
+                          {currentItinerary.tags.map((tag, i) => (
+                            <motion.span 
+                              key={i} 
+                              className="bg-gray-100 text-gray-600 text-xs md:text-sm px-3 py-2 rounded-full border border-gray-200 hover:bg-blue-50 hover:border-blue-200 transition-all duration-300"
+                              whileHover={{ scale: 1.05 }}
+                            >
+                              {tag}
+                            </motion.span>
+                          ))}
+                        </div>
+                        
+                        <motion.button 
+                          className="w-full bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 hover:from-blue-700 hover:via-indigo-700 hover:to-purple-700 text-white font-semibold py-4 px-6 rounded-xl transition-all duration-300 transform hover:scale-[1.02] shadow-lg hover:shadow-xl active:scale-95"
+                          whileHover={{ y: -2 }}
+                          whileTap={{ scale: 0.98 }}
+                        >
+                          Customize This Itinerary
+                        </motion.button>
+                      </div>
                     </div>
-                    
-                    <button className="w-full bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 text-white font-medium py-3 px-6 rounded-lg transition-all duration-300 transform hover:scale-[1.02] shadow-md hover:shadow-lg">
-                      Customize This Itinerary
-                    </button>
-                  </div>
-                </div>
-              </Card>
-            </motion.div>
-          </AnimatePresence>
+                  </Card>
+                </motion.div>
+              </motion.div>
+            </AnimatePresence>
+          </div>
 
-          <button
+          {/* Enhanced Navigation Buttons */}
+          <motion.button
             onClick={prevItinerary}
-            className={`absolute left-4 top-1/2 -translate-y-1/2 z-20 bg-white/90 text-gray-800 p-3 rounded-full shadow-lg hover:bg-white transition-all duration-300 transform hover:scale-110 ${isHovered ? 'opacity-100' : 'opacity-0 md:opacity-100 md:-translate-x-4'}`}
+            disabled={isTransitioning}
+            className={`absolute left-4 top-1/2 -translate-y-1/2 z-20 bg-white/90 backdrop-blur-sm text-gray-800 p-4 rounded-full shadow-xl hover:bg-white transition-all duration-300 transform hover:scale-110 border border-gray-200/50 disabled:opacity-50 disabled:cursor-not-allowed ${isHovered ? 'opacity-100' : 'opacity-0 lg:opacity-100 lg:-translate-x-4'}`}
             aria-label="Previous itinerary"
+            variants={buttonVariants}
+            whileHover="hover"
+            whileTap="tap"
           >
-            <FaChevronLeft className="w-4 h-4" />
-          </button>
+            <FaChevronLeft className="w-5 h-5" />
+          </motion.button>
           
-          <button
+          <motion.button
             onClick={nextItinerary}
-            className={`absolute right-4 top-1/2 -translate-y-1/2 z-20 bg-white/90 text-gray-800 p-3 rounded-full shadow-lg hover:bg-white transition-all duration-300 transform hover:scale-110 ${isHovered ? 'opacity-100' : 'opacity-0 md:opacity-100 md:translate-x-4'}`}
+            disabled={isTransitioning}
+            className={`absolute right-4 top-1/2 -translate-y-1/2 z-20 bg-white/90 backdrop-blur-sm text-gray-800 p-4 rounded-full shadow-xl hover:bg-white transition-all duration-300 transform hover:scale-110 border border-gray-200/50 disabled:opacity-50 disabled:cursor-not-allowed ${isHovered ? 'opacity-100' : 'opacity-0 lg:opacity-100 lg:translate-x-4'}`}
             aria-label="Next itinerary"
+            variants={buttonVariants}
+            whileHover="hover"
+            whileTap="tap"
           >
-            <FaChevronRight className="w-4 h-4" />
-          </button>
+            <FaChevronRight className="w-5 h-5" />
+          </motion.button>
           
-          <div className="flex justify-center mt-6 space-x-2">
+          {/* Enhanced Dots Indicator */}
+          <div className="flex justify-center mt-8 space-x-3">
             {sampleItineraries.map((_, i) => (
-              <button
+              <motion.button
                 key={i}
-                onClick={() => setCurrentIndex([i, i > currentIndex ? 1 : -1])}
-                className={`w-2.5 h-2.5 rounded-full transition-all ${i === currentIndex ? 'bg-blue-600 w-8' : 'bg-gray-300'}`}
+                onClick={() => {
+                  if (!isTransitioning) {
+                    setCurrentIndex([i, i > currentIndex ? 1 : -1]);
+                  }
+                }}
+                disabled={isTransitioning}
+                className={`w-3 h-3 rounded-full transition-all duration-300 disabled:cursor-not-allowed ${i === currentIndex ? 'bg-gradient-to-r from-blue-600 to-indigo-600 w-8 shadow-lg' : 'bg-gray-300 hover:bg-gray-400'}`}
                 aria-label={`Go to slide ${i + 1}`}
+                whileHover={{ scale: 1.2 }}
+                whileTap={{ scale: 0.9 }}
               />
             ))}
           </div>
         </div>
       </div>
+
+      <style jsx>{`
+        @keyframes blob {
+          0% {
+            transform: translate(0px, 0px) scale(1);
+          }
+          33% {
+            transform: translate(30px, -50px) scale(1.1);
+          }
+          66% {
+            transform: translate(-20px, 20px) scale(0.9);
+          }
+          100% {
+            transform: translate(0px, 0px) scale(1);
+          }
+        }
+        .animate-blob {
+          animation: blob 7s infinite;
+        }
+        .animation-delay-2000 {
+          animation-delay: 2s;
+        }
+        .perspective-1000 {
+          perspective: 1000px;
+        }
+      `}</style>
     </section>
   );
 }

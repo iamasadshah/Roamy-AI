@@ -65,6 +65,27 @@ const mobileItemVariants = {
   }
 };
 
+const dropdownVariants = {
+  open: {
+    opacity: 1,
+    y: 0,
+    scale: 1,
+    transition: {
+      duration: 0.2,
+      ease: "easeOut"
+    }
+  },
+  closed: {
+    opacity: 0,
+    y: -10,
+    scale: 0.95,
+    transition: {
+      duration: 0.15,
+      ease: "easeIn"
+    }
+  }
+};
+
 const DEFAULT_AVATAR =
   "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23ffffff'%3E%3Cpath d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z'/%3E%3C/svg%3E";
 
@@ -81,6 +102,7 @@ export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState<User | null>(null);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const router = useRouter();
   const supabase = createClientComponentClient();
 
@@ -119,7 +141,13 @@ export default function Navbar() {
   const handleLogout = async () => {
     await supabase.auth.signOut();
     setIsOpen(false);
+    setIsDropdownOpen(false);
     router.refresh();
+  };
+
+  const handleProfileClick = () => {
+    router.push("/profile");
+    setIsDropdownOpen(false);
   };
 
   const pathname = usePathname();
@@ -132,7 +160,7 @@ export default function Navbar() {
       transition={{ duration: 0.5, ease: [0.25, 0.1, 0.25, 1.0] }}
       className={`fixed w-full z-50 transition-all duration-300 ${
         isScrolled || !isHome 
-          ? "bg-white/90 backdrop-blur-md shadow-md" 
+          ? "bg-white/90 backdrop-blur-md shadow-lg border-b border-gray-200/50" 
           : "bg-transparent"
       }`}
     >
@@ -177,7 +205,7 @@ export default function Navbar() {
                   className={`px-3 py-2 text-sm font-medium transition-colors duration-200 ${
                     isScrolled || !isHome
                       ? 'text-gray-700 hover:text-blue-600'
-                      : 'hover:text-blue-600'
+                      : 'text-white hover:text-blue-200'
                   }`}
                   onClick={() => setIsOpen(false)}
                 >
@@ -198,8 +226,11 @@ export default function Navbar() {
                 <div className="w-24 h-9 bg-gray-200 rounded-lg animate-pulse"></div>
               ) : user ? (
                 <div className="relative group">
-                  <button className="flex items-center space-x-2 focus:outline-none group">
-                    <div className="w-9 h-9 rounded-full overflow-hidden border-2 border-white shadow-md group-hover:ring-2 group-hover:ring-blue-500 transition-all duration-200">
+                  <button 
+                    className="flex items-center space-x-2 focus:outline-none group"
+                    onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                  >
+                    <div className="w-9 h-9 rounded-full overflow-hidden border-2 border-white shadow-md group-hover:ring-2 group-hover:ring-blue-500 transition-all duration-200 cursor-pointer">
                       <Image
                         src={user.user_metadata?.avatar_url || DEFAULT_AVATAR}
                         alt="User Avatar"
@@ -209,31 +240,43 @@ export default function Navbar() {
                       />
                     </div>
                     <span className={`font-medium ${isScrolled || !isHome ? 'text-gray-700' : 'text-white'}`}>
-                      {user.email?.split('@')[0]}
+                      {user.user_metadata?.full_name || user.email?.split('@')[0]}
                     </span>
-                    <FaChevronDown className={`text-xs transition-transform duration-200 ${isScrolled || !isHome ? 'text-gray-500' : 'text-white/80'}`} />
+                    <motion.div
+                      animate={{ rotate: isDropdownOpen ? 180 : 0 }}
+                      transition={{ duration: 0.2 }}
+                    >
+                      <FaChevronDown className={`text-xs transition-colors duration-200 ${isScrolled || !isHome ? 'text-gray-500' : 'text-white/80'}`} />
+                    </motion.div>
                   </button>
-                  <motion.div 
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 0, y: 10, pointerEvents: 'none' }}
-                    whileHover={{ opacity: 1, y: 0, pointerEvents: 'auto' }}
-                    className="absolute right-0 mt-2 w-48 rounded-lg shadow-xl bg-white/95 backdrop-blur-sm border border-gray-100 py-1 z-50 overflow-hidden"
-                  >
-                    <Link
-                      href="/dashboard"
-                      className="flex items-center px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 transition-colors duration-200"
-                    >
-                      <FaUser className="mr-3 text-gray-500" />
-                      Dashboard
-                    </Link>
-                    <button
-                      onClick={handleLogout}
-                      className="w-full text-left px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 flex items-center transition-colors duration-200"
-                    >
-                      <FaSignOutAlt className="mr-3 text-gray-500" />
-                      Sign out
-                    </button>
-                  </motion.div>
+                  
+                  <AnimatePresence>
+                    {isDropdownOpen && (
+                      <motion.div 
+                        variants={dropdownVariants}
+                        initial="closed"
+                        animate="open"
+                        exit="closed"
+                        className="absolute right-0 mt-2 w-48 rounded-xl shadow-2xl bg-white/95 backdrop-blur-sm border border-gray-200/50 py-2 z-50 overflow-hidden"
+                      >
+                        <button
+                          onClick={handleProfileClick}
+                          className="w-full text-left px-4 py-3 text-sm text-gray-700 hover:bg-blue-50 flex items-center transition-colors duration-200"
+                        >
+                          <FaUser className="mr-3 text-blue-500" />
+                          Profile
+                        </button>
+                        <div className="border-t border-gray-100 my-1"></div>
+                        <button
+                          onClick={handleLogout}
+                          className="w-full text-left px-4 py-3 text-sm text-gray-700 hover:bg-red-50 flex items-center transition-colors duration-200"
+                        >
+                          <FaSignOutAlt className="mr-3 text-red-500" />
+                          Sign out
+                        </button>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
                 </div>
               ) : (
                 <motion.button
@@ -256,7 +299,12 @@ export default function Navbar() {
             transition={{ delay: 0.2 }}
           >
             {!loading && user && (
-              <div className="relative">
+              <motion.button
+                onClick={handleProfileClick}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className="relative"
+              >
                 <div className="w-9 h-9 rounded-full overflow-hidden border-2 border-white shadow-md">
                   <Image
                     src={user.user_metadata?.avatar_url || DEFAULT_AVATAR}
@@ -266,7 +314,7 @@ export default function Navbar() {
                     className="object-cover w-full h-full"
                   />
                 </div>
-              </div>
+              </motion.button>
             )}
             <motion.button
               onClick={() => setIsOpen(!isOpen)}
@@ -286,7 +334,7 @@ export default function Navbar() {
         </div>
       </div>
 
-      {/* Mobile Menu */}
+      {/* Enhanced Mobile Menu */}
       <AnimatePresence>
         {isOpen && (
           <motion.div
@@ -294,28 +342,29 @@ export default function Navbar() {
             animate={{
               opacity: 1,
               height: "100vh",
-              transition: { duration: 0.3 },
+              transition: { duration: 0.4, ease: "easeOut" },
             }}
             exit={{
               opacity: 0,
               height: 0,
-              transition: { duration: 0.3 },
+              transition: { duration: 0.3, ease: "easeIn" },
             }}
-            className="fixed inset-0 bg-navy/98 backdrop-blur-xl lg:hidden pt-20"
+            className="fixed inset-0 bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 backdrop-blur-xl lg:hidden pt-20"
           >
-            <div className="flex flex-col items-center justify-start h-full p-6 space-y-8 bg-[#0148A9]">
+            <div className="flex flex-col items-center justify-start h-full p-6 space-y-8">
               {menuItems.map((item, index) => (
                 <motion.div
                   key={item.href}
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: 20 }}
-                  transition={{ duration: 0.3, delay: index * 0.1 }}
+                  transition={{ duration: 0.4, delay: index * 0.1 }}
+                  className="w-full"
                 >
                   <Link
                     href={item.href}
                     onClick={() => setIsOpen(false)}
-                    className="text-lg text-white hover:text-gold transition-colors font-medium tracking-wide"
+                    className="block text-lg text-gray-800 hover:text-blue-600 transition-colors font-medium tracking-wide text-center py-3 px-6 rounded-xl hover:bg-white/50 backdrop-blur-sm"
                   >
                     {item.label}
                   </Link>
@@ -327,47 +376,81 @@ export default function Navbar() {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: 20 }}
-                  transition={{ duration: 0.3, delay: 0.3 }}
-                  className="pt-4 border-t border-white/10 w-full flex flex-col items-center"
+                  transition={{ duration: 0.4, delay: 0.5 }}
+                  className="pt-6 border-t border-gray-200/50 w-full flex flex-col items-center"
                 >
-                  {/* Mobile menu button */}
                   {user ? (
-                    <div className="flex flex-col items-center space-y-6">
-                      <div className="relative w-20 h-20 rounded-full overflow-hidden border-2 border-white shadow-md">
-                        <Image
-                          src={user.user_metadata?.avatar_url || DEFAULT_AVATAR}
-                          alt="User Avatar"
-                          width={80}
-                          height={80}
-                          className="object-cover w-full h-full"
-                        />
+                    <div className="flex flex-col items-center space-y-6 w-full">
+                      <motion.button
+                        onClick={() => {
+                          handleProfileClick();
+                          setIsOpen(false);
+                        }}
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                        className="relative"
+                      >
+                        <div className="relative w-20 h-20 rounded-full overflow-hidden border-4 border-white shadow-xl">
+                          <Image
+                            src={user.user_metadata?.avatar_url || DEFAULT_AVATAR}
+                            alt="User Avatar"
+                            width={80}
+                            height={80}
+                            className="object-cover w-full h-full"
+                          />
+                          <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent rounded-full"></div>
+                        </div>
+                      </motion.button>
+                      
+                      <div className="text-center">
+                        <h3 className="text-gray-800 text-lg font-semibold">
+                          {user.user_metadata?.full_name || "Welcome"}
+                        </h3>
+                        <p className="text-gray-600 text-sm">
+                          {user.email}
+                        </p>
                       </div>
-                      <span className="text-white text-lg font-medium">
-                        {user.user_metadata?.full_name || "Profile"}
-                      </span>
-                      <div className="flex flex-col space-y-3 w-full">
-                        <Link
-                          href="/dashboard"
-                          onClick={() => setIsOpen(false)}
-                          className="luxury-button text-sm px-6 py-2.5 text-center"
+                      
+                      <div className="flex flex-col space-y-3 w-full max-w-xs">
+                        <motion.button
+                          onClick={() => {
+                            handleProfileClick();
+                            setIsOpen(false);
+                          }}
+                          whileHover={{ scale: 1.02 }}
+                          whileTap={{ scale: 0.98 }}
+                          className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-6 py-3 rounded-xl text-sm font-medium hover:shadow-lg hover:shadow-blue-500/20 transition-all duration-300 flex items-center justify-center gap-2"
                         >
-                          Dashboard
-                        </Link>
-                        <button
-                          onClick={handleLogout}
-                          className="text-white hover:text-gold transition-colors text-sm font-medium"
+                          <FaUser className="h-4 w-4" />
+                          View Profile
+                        </motion.button>
+                        
+                        <motion.button
+                          onClick={() => {
+                            handleLogout();
+                            setIsOpen(false);
+                          }}
+                          whileHover={{ scale: 1.02 }}
+                          whileTap={{ scale: 0.98 }}
+                          className="w-full bg-white/80 backdrop-blur-sm text-gray-700 px-6 py-3 rounded-xl text-sm font-medium hover:bg-white hover:shadow-lg transition-all duration-300 flex items-center justify-center gap-2 border border-gray-200"
                         >
-                          Logout
-                        </button>
+                          <FaSignOutAlt className="h-4 w-4" />
+                          Sign Out
+                        </motion.button>
                       </div>
                     </div>
                   ) : (
-                    <button
-                      onClick={handleLogin}
-                      className="luxury-button text-sm px-4 py-1"
+                    <motion.button
+                      onClick={() => {
+                        handleLogin();
+                        setIsOpen(false);
+                      }}
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
+                      className="w-full max-w-xs bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-6 py-3 rounded-xl text-sm font-medium hover:shadow-lg hover:shadow-blue-500/20 transition-all duration-300"
                     >
                       Sign In
-                    </button>
+                    </motion.button>
                   )}
                 </motion.div>
               )}
