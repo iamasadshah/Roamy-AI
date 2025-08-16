@@ -228,15 +228,15 @@ const TripPDF = ({ trip }: TripPDFProps) => {
 
               return (
                 <View key={index} style={styles.day}>
-                  <Text style={styles.dayTitle}>Day {day.day}</Text>
+                  <Text style={styles.dayTitle}>{day.day_title || `Day ${day.day}`}</Text>
 
                   {/* Morning */}
                   {Array.isArray(day.morning) && day.morning.length > 0 && (
                     <View style={styles.timeBlock}>
                       <Text style={styles.timeTitle}>Morning</Text>
-                      {day.morning.map((activity, i) => (
+                      {day.morning.map((activity: string | { title?: string; description?: string }, i) => (
                         <Text key={i} style={styles.activity}>
-                          • {activity}
+                          • {typeof activity === 'string' ? activity : activity.title || activity.description || 'Activity'}
                         </Text>
                       ))}
                     </View>
@@ -246,9 +246,9 @@ const TripPDF = ({ trip }: TripPDFProps) => {
                   {Array.isArray(day.afternoon) && day.afternoon.length > 0 && (
                     <View style={styles.timeBlock}>
                       <Text style={styles.timeTitle}>Afternoon</Text>
-                      {day.afternoon.map((activity, i) => (
+                      {day.afternoon.map((activity: string | { title?: string; description?: string }, i) => (
                         <Text key={i} style={styles.activity}>
-                          • {activity}
+                          • {typeof activity === 'string' ? activity : activity.title || activity.description || 'Activity'}
                         </Text>
                       ))}
                     </View>
@@ -258,9 +258,9 @@ const TripPDF = ({ trip }: TripPDFProps) => {
                   {Array.isArray(day.evening) && day.evening.length > 0 && (
                     <View style={styles.timeBlock}>
                       <Text style={styles.timeTitle}>Evening</Text>
-                      {day.evening.map((activity, i) => (
+                      {day.evening.map((activity: string | { title?: string; description?: string }, i) => (
                         <Text key={i} style={styles.activity}>
-                          • {activity}
+                          • {typeof activity === 'string' ? activity : activity.title || activity.description || 'Activity'}
                         </Text>
                       ))}
                     </View>

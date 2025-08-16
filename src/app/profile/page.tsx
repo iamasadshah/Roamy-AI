@@ -4,7 +4,7 @@ import {
   createClientComponentClient,
   User,
 } from "@supabase/auth-helpers-nextjs";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import {
   FaUser,
   FaHistory,
@@ -57,9 +57,54 @@ interface Trip {
     };
     itinerary: Array<{
       day: number;
-      morning: string[];
-      afternoon: string[];
-      evening: string[];
+      day_title: string;
+      day_description: string;
+      highlights: string[];
+      total_estimated_cost: string;
+      morning: Array<{
+        time: string;
+        title: string;
+        description: string;
+        location: string;
+        cost?: string;
+        duration: string;
+        special_features?: string[];
+        tips?: string;
+        booking_info?: string;
+      }>;
+      afternoon: Array<{
+        time: string;
+        title: string;
+        description: string;
+        location: string;
+        cost?: string;
+        duration: string;
+        special_features?: string[];
+        tips?: string;
+        booking_info?: string;
+      }>;
+      evening: Array<{
+        time: string;
+        title: string;
+        description: string;
+        location: string;
+        cost?: string;
+        duration: string;
+        special_features?: string[];
+        tips?: string;
+        booking_info?: string;
+      }>;
+      meals: Array<{
+        time: string;
+        restaurant_name: string;
+        cuisine_type: string;
+        location: string;
+        cost_range: string;
+        must_try_dishes: string[];
+        reservation_required: boolean;
+        special_features?: string[];
+        tips?: string;
+      }>;
     }>;
     additional_info: {
       weather_forecast: string;
@@ -74,6 +119,12 @@ interface Trip {
         ambulance: string;
         touristPolice?: string;
       };
+      local_customs?: string[];
+      best_times_to_visit?: string[];
+      money_saving_tips?: string[];
+      cultural_etiquette?: string[];
+      local_phrases?: string[];
+      must_know_facts?: string[];
     };
   };
 }
@@ -694,7 +745,7 @@ function TripsContent({ trips: initialTrips }: { trips: Trip[] }) {
     if (!hasItinerary) {
       return (
         <div className="text-center py-8">
-          <p className="text-white/60">No itinerary details available</p>
+          <p className="text-gray-600">No itinerary details available</p>
         </div>
       );
     }
@@ -716,13 +767,33 @@ function TripsContent({ trips: initialTrips }: { trips: Trip[] }) {
                 <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center">
                   <span className="text-white font-bold text-lg">{day.day}</span>
                 </div>
-                <h4 className="text-2xl font-bold text-gray-800">
-                Day {day.day}
-              </h4>
+                <div>
+                  <h4 className="text-2xl font-bold text-gray-800">
+                    {day.day_title || `Day ${day.day}`}
+                  </h4>
+                  {day.day_description && (
+                    <p className="text-gray-600 mt-1">{day.day_description}</p>
+                  )}
+                </div>
               </div>
+              
+              {/* Highlights */}
+              {day.highlights && day.highlights.length > 0 && (
+                <div className="mb-6">
+                  <h5 className="text-lg font-semibold text-gray-800 mb-3">Highlights</h5>
+                  <div className="flex flex-wrap gap-2">
+                    {day.highlights.map((highlight, i) => (
+                      <span key={i} className="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-sm font-medium">
+                        {highlight}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 {["morning", "afternoon", "evening"].map((time) => {
-                  const activities = day[time as keyof typeof day] as string[];
+                  const activities = day[time as keyof typeof day] as Array<string | { title?: string; description?: string }>;
                   if (!Array.isArray(activities) || activities.length === 0)
                     return null;
 
@@ -736,12 +807,12 @@ function TripsContent({ trips: initialTrips }: { trips: Trip[] }) {
                         <h5 className="text-lg font-semibold text-gray-800 capitalize">{time}</h5>
                       </div>
                       <ul className="space-y-3">
-                        {activities.map((activity: string, i: number) => (
+                        {activities.map((activity: string | { title?: string; description?: string }, i: number) => (
                           <li
                             key={i}
                             className="text-gray-700 pl-4 border-l-2 border-gray-200 hover:border-blue-300 transition-colors duration-300 py-1"
                           >
-                            {activity}
+                            {typeof activity === 'string' ? activity : activity.title || activity.description || 'Activity'}
                           </li>
                         ))}
                       </ul>
@@ -749,6 +820,25 @@ function TripsContent({ trips: initialTrips }: { trips: Trip[] }) {
                   );
                 })}
               </div>
+
+              {/* Meals */}
+              {day.meals && day.meals.length > 0 && (
+                <div className="mt-6">
+                  <h5 className="text-lg font-semibold text-gray-800 mb-3">Dining</h5>
+                  <div className="space-y-3">
+                    {day.meals.map((meal, i) => (
+                      <div key={i} className="bg-gray-50 rounded-xl p-4">
+                        <div className="flex items-center gap-3 mb-2">
+                          <span className="text-lg">🍽️</span>
+                          <h6 className="font-semibold text-gray-800">{meal.restaurant_name}</h6>
+                          <span className="text-sm text-gray-500">{meal.time}</span>
+                        </div>
+                        <p className="text-gray-600 text-sm">{meal.cuisine_type}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
             </motion.div>
           );
         })}

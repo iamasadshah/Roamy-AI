@@ -4,7 +4,7 @@ import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { useRouter } from "next/navigation";
 import { toast } from "react-hot-toast";
 import { motion, LazyMotion, domAnimation } from "framer-motion";
-import { Save, RefreshCw, Download, Share2, Heart, Calendar, MapPin, Users, DollarSign } from "lucide-react";
+import { Save, RefreshCw, Heart, Calendar, MapPin, Users, DollarSign } from "lucide-react";
 
 interface TripPlanProps {
   plan: TravelItinerary | null;
@@ -245,7 +245,7 @@ export default function TripPlan({
               value: plan.trip_overview.budget_level,
               color: "purple"
             }
-          ].map((item, index) => (
+          ].map((item) => (
             <motion.div
               key={item.label}
               variants={itemVariants}

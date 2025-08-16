@@ -1,13 +1,11 @@
 "use client";
 
 import * as React from "react";
-import { useState, useEffect, useMemo, useCallback } from "react";
+import { useState, useMemo, useCallback } from "react";
 import { motion, AnimatePresence, LazyMotion, domAnimation } from "framer-motion";
 import {
   FaChevronLeft,
   FaChevronRight,
-  FaPlane,
-  FaCalendarAlt,
   FaWallet,
   FaHotel,
   FaUsers,
@@ -20,20 +18,18 @@ import {
   FaHeart,
   FaUserFriends,
   FaLeaf,
-  FaSeedling,
   FaMosque,
   FaSearch,
   FaChevronDown,
   FaGlobe,
   FaClock,
-  FaStar,
 } from "react-icons/fa";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { useRouter } from "next/navigation";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import toast from "react-hot-toast";
-import { Loader2, Calendar, MapPin, Users, Bed, Utensils } from "lucide-react";
+import { Loader2, Calendar } from "lucide-react";
 
 interface FormStep {
   id: number;
@@ -97,18 +93,7 @@ const itemVariants = {
   }
 };
 
-const cardHoverVariants = {
-  initial: { scale: 1, y: 0 },
-  hover: { 
-    scale: 1.03, 
-    y: -8,
-    transition: {
-      duration: 0.3,
-      ease: "easeOut"
-    }
-  },
-  tap: { scale: 0.98 }
-};
+
 
 const steps: FormStep[] = [
   {
@@ -656,7 +641,7 @@ const MultiStepForm: React.FC<Props> = ({ onSubmit, isLoading }) => {
                 Where would you like to go?
               </h3>
               <p className="text-gray-600 text-lg sm:text-xl leading-relaxed max-w-2xl mx-auto">
-                Tell us your dream destination and we'll create the perfect itinerary for you
+                Tell us your dream destination and we&apos;ll create the perfect itinerary for you
               </p>
             </motion.div>
             
@@ -787,7 +772,7 @@ const MultiStepForm: React.FC<Props> = ({ onSubmit, isLoading }) => {
               className="text-center mb-8 sm:mb-12"
             >
               <h3 className="text-3xl sm:text-4xl font-bold text-gray-800 mb-4 sm:mb-6">
-                What's your budget range?
+                What&apos;s your budget range?
               </h3>
               <p className="text-gray-600 text-lg sm:text-xl leading-relaxed max-w-3xl mx-auto">
                 Choose your spending range to get the best recommendations tailored to your budget
@@ -884,7 +869,7 @@ const MultiStepForm: React.FC<Props> = ({ onSubmit, isLoading }) => {
               className="text-center mb-8 sm:mb-12"
             >
               <h3 className="text-3xl sm:text-4xl font-bold text-gray-800 mb-4 sm:mb-6">
-                Who's coming along?
+                Who&apos;s coming along?
               </h3>
               <p className="text-gray-600 text-lg sm:text-xl leading-relaxed max-w-3xl mx-auto">
                 Select your travel group to personalize the experience for everyone

@@ -119,7 +119,7 @@ export default function Testimonials() {
           viewport={{ once: true, margin: "-100px 0px" }}
           className="grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-12"
         >
-          {testimonials.map((testimonial, index) => (
+                        {testimonials.map((testimonial) => (
             <motion.div
               key={testimonial.name}
               variants={itemVariants}
@@ -172,13 +172,13 @@ export default function Testimonials() {
                     </p>
                     <div className="relative">
                       <div className="absolute -top-4 left-1/2 -translate-x-1/2 text-4xl text-blue-200 opacity-50">
-                        "
+                        &ldquo;
                       </div>
                       <p className="text-gray-700 text-sm md:text-base leading-relaxed italic relative z-10">
                         {testimonial.text}
                       </p>
                       <div className="absolute -bottom-4 right-0 text-4xl text-blue-200 opacity-50">
-                        "
+                        &rdquo;
                       </div>
                     </div>
                   </div>

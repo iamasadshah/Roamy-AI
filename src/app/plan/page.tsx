@@ -7,7 +7,7 @@ import MultiStepForm from "@/components/MultiStepForm";
 import TripPlan from "@/components/TripPlan";
 import { generateTripPlan } from "@/utils/gemini";
 import { FormData, TravelItinerary } from "@/types/itinerary";
-import { Loader2, ArrowLeft, Sparkles, MapPin, Calendar, Users, Globe, Clock, Star } from "lucide-react";
+import { Loader2, ArrowLeft, Sparkles, Globe, Clock, Star } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 
@@ -244,7 +244,7 @@ export default function PlanPage() {
                   { icon: Globe, title: "Smart Destinations", desc: "AI-curated locations", color: "blue" },
                   { icon: Clock, title: "Perfect Timing", desc: "Optimized schedules", color: "indigo" },
                   { icon: Star, title: "Personalized Plans", desc: "Tailored experiences", color: "purple" }
-                ].map((feature, index) => (
+                ].map((feature) => (
                   <motion.div
                     key={feature.title}
                     variants={fadeInUp}

@@ -25,7 +25,7 @@ import {
   Shield,
   Car
 } from "lucide-react";
-import { TravelItinerary, Activity, Meal } from "@/types/itinerary";
+import { TravelItinerary, Activity, Meal, DayItinerary } from "@/types/itinerary";
 
 // Performance optimized animation variants
 const containerVariants = {
@@ -60,17 +60,7 @@ const itemVariants = {
   }
 }
 
-const cardHoverVariants = {
-  initial: { scale: 1, y: 0 },
-  hover: { 
-    scale: 1.02, 
-    y: -5,
-    transition: {
-      duration: 0.3,
-      ease: "easeOut"
-    }
-  }
-};
+
 
 interface Props {
   itinerary: TravelItinerary;
@@ -252,7 +242,7 @@ const StructuredItinerary: React.FC<Props> = ({ itinerary }) => {
     </motion.div>
   );
 
-  const renderDayItinerary = (day: any, dayIndex: number) => (
+  const renderDayItinerary = (day: DayItinerary, dayIndex: number) => (
     <motion.div
       key={dayIndex}
       variants={itemVariants}

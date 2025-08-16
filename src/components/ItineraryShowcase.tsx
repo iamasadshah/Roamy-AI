@@ -3,8 +3,8 @@
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
 import { useState } from "react";
-import { FaChevronLeft, FaChevronRight, FaMapMarkerAlt, FaCalendarAlt, FaStar, FaRegClock } from "react-icons/fa";
-import { Card, CardContent } from "@/components/ui/card";
+import { FaChevronLeft, FaChevronRight, FaMapMarkerAlt, FaCalendarAlt, FaStar } from "react-icons/fa";
+import { Card } from "@/components/ui/card";
 
 const sampleItineraries = [
   {
@@ -160,7 +160,7 @@ export default function ItineraryShowcase() {
     if (isTransitioning) return; // Prevent rapid clicking
     
     setIsTransitioning(true);
-    setCurrentIndex(([prevIndex, _]) => {
+    setCurrentIndex(([prevIndex]) => {
       const newIndex = (prevIndex + newDirection + sampleItineraries.length) % sampleItineraries.length;
       return [newIndex, newDirection];
     });

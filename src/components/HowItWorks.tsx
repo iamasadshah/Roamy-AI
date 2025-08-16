@@ -130,7 +130,7 @@ export default function HowItWorks() {
             className="text-lg md:text-xl text-gray-600 mb-10 leading-relaxed max-w-3xl mx-auto"
           >
             Our AI-powered platform transforms how you plan travel. Get a personalized, 
-            detailed itinerary in minutes, not hours. Here's how simple it is:
+            detailed itinerary in minutes, not hours. Here&apos;s how simple it is:
           </motion.p>
         </motion.div>
 

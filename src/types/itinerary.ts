@@ -60,12 +60,12 @@ export interface AdditionalInfo {
     ambulance: string;
     touristPolice?: string;
   };
-  local_customs: string[];
-  best_times_to_visit: string[];
-  money_saving_tips: string[];
-  cultural_etiquette: string[];
-  local_phrases: string[];
-  must_know_facts: string[];
+      local_customs?: string[];
+    best_times_to_visit?: string[];
+    money_saving_tips?: string[];
+    cultural_etiquette?: string[];
+    local_phrases?: string[];
+    must_know_facts?: string[];
 }
 
 export interface TravelItinerary {

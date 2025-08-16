@@ -2,7 +2,7 @@
 
 import { motion, useAnimation, Variants } from "framer-motion";
 import { useEffect, useState } from "react";
-import { FaPlane, FaSearch, FaMapMarkedAlt, FaGlobeAmericas, FaArrowRight, FaCompass, FaRoute, FaClock } from "react-icons/fa";
+import { FaPlane, FaSearch, FaArrowRight, FaCompass, FaRoute, FaClock } from "react-icons/fa";
 import { TypeAnimation } from 'react-type-animation';
 import Link from "next/link";
 import { Button } from "./ui/button";
@@ -32,16 +32,7 @@ const item: Variants = {
   }),
 };
 
-const fadeIn: Variants = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: {
-      duration: 1,
-      ease: [0.65, 0, 0.35, 1],
-    },
-  },
-};
+
 
 const floating = (delay: number = 0) => ({
   y: [0, 15, 0],

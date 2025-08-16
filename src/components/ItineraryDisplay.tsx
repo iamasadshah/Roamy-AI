@@ -72,24 +72,24 @@ export default function ItineraryDisplay({ itinerary }: Props) {
                   <div>
                     <h4 className="text-blue-400 font-medium mb-2">Morning ☀️</h4>
                     <ul className="list-disc list-inside text-gray-300 space-y-1">
-                      {Array.isArray(day.morning) && day.morning.map((activity, index) => (
-                        <li key={index}>{activity}</li>
+                      {Array.isArray(day.morning) && day.morning.map((activity: string | { title?: string; description?: string }, index) => (
+                        <li key={index}>{typeof activity === 'string' ? activity : activity.title || activity.description || 'Activity'}</li>
                       ))}
                     </ul>
                   </div>
                   <div>
                     <h4 className="text-yellow-400 font-medium mb-2">Afternoon 🌤️</h4>
                     <ul className="list-disc list-inside text-gray-300 space-y-1">
-                      {Array.isArray(day.afternoon) && day.afternoon.map((activity, index) => (
-                        <li key={index}>{activity}</li>
+                      {Array.isArray(day.afternoon) && day.afternoon.map((activity: string | { title?: string; description?: string }, index) => (
+                        <li key={index}>{typeof activity === 'string' ? activity : activity.title || activity.description || 'Activity'}</li>
                       ))}
                     </ul>
                   </div>
                   <div>
                     <h4 className="text-purple-400 font-medium mb-2">Evening 🌙</h4>
                     <ul className="list-disc list-inside text-gray-300 space-y-1">
-                      {Array.isArray(day.evening) && day.evening.map((activity, index) => (
-                        <li key={index}>{activity}</li>
+                      {Array.isArray(day.evening) && day.evening.map((activity: string | { title?: string; description?: string }, index) => (
+                        <li key={index}>{typeof activity === 'string' ? activity : activity.title || activity.description || 'Activity'}</li>
                       ))}
                     </ul>
                   </div>
