@@ -481,11 +481,11 @@ const EnhancedDatePicker = ({
       variants={itemVariants}
       className="space-y-4"
     >
-      <label className="block text-xl font-bold text-gray-700 mb-4 flex items-center gap-3">
-        <div className="w-8 h-8 bg-gradient-to-br from-indigo-100 to-purple-200 rounded-lg flex items-center justify-center">
-          <Calendar className="h-5 w-5 text-indigo-600" />
+      <label className="block text-xl font-bold text-gray-800 mb-4 flex items-center gap-3">
+        <div className="w-10 h-10 bg-gradient-to-br from-blue-100 to-indigo-200 rounded-xl flex items-center justify-center shadow-sm">
+          <Calendar className="h-6 w-6 text-blue-600" />
         </div>
-        {label}
+        <span className="text-gray-800">{label}</span>
       </label>
       
       <div className="relative">
@@ -504,24 +504,24 @@ const EnhancedDatePicker = ({
           open={isOpen}
           onInputClick={() => setIsOpen(true)}
           onClickOutside={() => setIsOpen(false)}
-          className="w-full p-6 border-2 border-gray-200 rounded-3xl focus:ring-4 focus:ring-blue-400/20 focus:border-blue-500 transition-all duration-300 text-xl font-medium shadow-lg hover:shadow-xl bg-white/95 backdrop-blur-sm cursor-pointer"
+          className="w-full p-6 border-3 border-gray-200 rounded-3xl focus:ring-4 focus:ring-blue-400/20 focus:border-blue-500 transition-all duration-300 text-xl font-semibold shadow-lg hover:shadow-xl bg-white cursor-pointer text-gray-800"
           placeholderText={placeholder}
           dateFormat="MMMM d, yyyy"
-          calendarClassName="!rounded-3xl !shadow-2xl !border !border-gray-100 !bg-white !p-4"
+          calendarClassName="!rounded-3xl !shadow-2xl !border !border-gray-200 !bg-white !p-6"
           dayClassName={(date) => {
             if (startDate && endDate && date >= startDate && date <= endDate) {
-              return "!bg-blue-500 !text-white !rounded-full";
+              return "!bg-gradient-to-br !from-blue-500 !to-indigo-600 !text-white !rounded-full !border-blue-500 !shadow-lg";
             }
             if (date.getTime() === selected?.getTime()) {
-              return "!bg-indigo-600 !text-white !rounded-full";
+              return "!bg-gradient-to-br !from-indigo-600 !to-purple-600 !text-white !rounded-full !border-indigo-600 !shadow-lg";
             }
             return "";
           }}
           popperClassName="!z-50"
           popperPlacement="bottom-start"
         />
-        <div className="absolute right-5 top-1/2 -translate-y-1/2 pointer-events-none">
-          <Calendar className="h-6 w-6 text-gray-400" />
+        <div className="absolute right-6 top-1/2 -translate-y-1/2 pointer-events-none">
+          <Calendar className="h-7 w-7 text-blue-500" />
         </div>
       </div>
     </motion.div>
@@ -683,11 +683,16 @@ const MultiStepForm: React.FC<Props> = ({ onSubmit, isLoading }) => {
               transition={{ delay: 0.1 }}
               className="text-center mb-8 sm:mb-12"
             >
-              <h3 className="text-3xl sm:text-4xl font-bold text-gray-800 mb-4 sm:mb-6">
-                When are you planning to travel?
-              </h3>
+              <div className="flex items-center justify-center gap-4 mb-6">
+                <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl flex items-center justify-center shadow-lg">
+                  <Calendar className="h-8 w-8 text-white" />
+                </div>
+                <h3 className="text-3xl sm:text-4xl font-bold text-gray-800">
+                  When are you planning to travel?
+                </h3>
+              </div>
               <p className="text-gray-600 text-lg sm:text-xl leading-relaxed max-w-3xl mx-auto">
-                Select your travel dates to optimize your itinerary and get the best recommendations
+                Select your arrival and departure dates to create the perfect itinerary for your trip
               </p>
             </motion.div>
             
@@ -700,7 +705,7 @@ const MultiStepForm: React.FC<Props> = ({ onSubmit, isLoading }) => {
               <EnhancedDatePicker
                 selected={formData.startDate}
                 onChange={(date) => setFormData({ ...formData, startDate: date })}
-                placeholder="Select start date"
+                placeholder="📅 Click to select your arrival date"
                 minDate={new Date()}
                 selectsStart
                 startDate={formData.startDate}
@@ -711,7 +716,7 @@ const MultiStepForm: React.FC<Props> = ({ onSubmit, isLoading }) => {
               <EnhancedDatePicker
                 selected={formData.endDate}
                 onChange={(date) => setFormData({ ...formData, endDate: date })}
-                placeholder="Select end date"
+                placeholder="📅 Click to select your departure date"
                 minDate={formData.startDate || new Date()}
                 selectsEnd
                 startDate={formData.startDate}
@@ -725,24 +730,48 @@ const MultiStepForm: React.FC<Props> = ({ onSubmit, isLoading }) => {
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="mt-8 p-6 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-3xl border border-blue-200"
+                className="mt-8 p-8 bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 rounded-3xl border-2 border-blue-200 shadow-lg"
               >
-                <div className="flex items-center justify-center gap-4 text-lg font-semibold text-blue-800">
-                  <Calendar className="h-6 w-6" />
-                  <span>
-                    {formData.startDate.toLocaleDateString('en-US', { 
-                      month: 'long', 
-                      day: 'numeric', 
-                      year: 'numeric' 
-                    })} - {formData.endDate.toLocaleDateString('en-US', { 
-                      month: 'long', 
-                      day: 'numeric', 
-                      year: 'numeric' 
-                    })}
-                  </span>
-                </div>
-                <div className="text-center mt-2 text-blue-600">
-                  {Math.ceil((formData.endDate.getTime() - formData.startDate.getTime()) / (1000 * 60 * 60 * 24))} days
+                <div className="text-center">
+                  <div className="flex items-center justify-center gap-3 mb-4">
+                    <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center shadow-lg">
+                      <Calendar className="h-6 w-6 text-white" />
+                    </div>
+                    <h4 className="text-2xl font-bold text-gray-800">Your Travel Dates</h4>
+                  </div>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                    <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-4 border border-blue-200">
+                      <div className="text-sm font-semibold text-blue-600 mb-1">Arrival</div>
+                      <div className="text-lg font-bold text-gray-800">
+                        {formData.startDate.toLocaleDateString('en-US', { 
+                          weekday: 'long',
+                          month: 'long', 
+                          day: 'numeric', 
+                          year: 'numeric' 
+                        })}
+                      </div>
+                    </div>
+                    
+                    <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-4 border border-blue-200">
+                      <div className="text-sm font-semibold text-blue-600 mb-1">Departure</div>
+                      <div className="text-lg font-bold text-gray-800">
+                        {formData.endDate.toLocaleDateString('en-US', { 
+                          weekday: 'long',
+                          month: 'long', 
+                          day: 'numeric', 
+                          year: 'numeric' 
+                        })}
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-2xl p-4 shadow-lg">
+                    <div className="text-sm font-semibold mb-1">Total Trip Duration</div>
+                    <div className="text-2xl font-bold">
+                      {Math.ceil((formData.endDate.getTime() - formData.startDate.getTime()) / (1000 * 60 * 60 * 24))} days
+                    </div>
+                  </div>
                 </div>
               </motion.div>
             )}
