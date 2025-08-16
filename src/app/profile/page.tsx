@@ -201,16 +201,16 @@ export default function ProfilePage() {
                 <div className="relative w-32 h-32 mx-auto mb-6">
                   <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-full p-1">
                     <div className="w-full h-full rounded-full overflow-hidden bg-white p-1">
-                      <Image
-                        src={
-                          user?.user_metadata?.avatar_url ||
-                          "/images/default-avatar.png"
-                        }
-                        alt="Profile"
-                        fill
-                        className="rounded-full object-cover"
-                      />
-                    </div>
+                  <Image
+                    src={
+                      user?.user_metadata?.avatar_url ||
+                      "/images/default-avatar.png"
+                    }
+                    alt="Profile"
+                    fill
+                    className="rounded-full object-cover"
+                  />
+                </div>
                   </div>
                   <div className="absolute -bottom-2 -right-2 w-8 h-8 bg-green-500 rounded-full border-4 border-white flex items-center justify-center">
                     <div className="w-2 h-2 bg-white rounded-full"></div>
@@ -261,7 +261,7 @@ export default function ProfilePage() {
                   <div className="flex justify-between items-center">
                     <span className="text-sm text-gray-600">Total Trips</span>
                     <span className="text-lg font-bold text-gray-800">{savedTrips.length}</span>
-                  </div>
+            </div>
                   <div className="flex justify-between items-center">
                     <span className="text-sm text-gray-600">Member Since</span>
                     <span className="text-sm font-medium text-gray-800">
@@ -439,8 +439,8 @@ function ProfileContent({ user }: { user: User | null }) {
         </div>
         <div className="text-center">
           <p className="text-sm text-gray-600 mb-2">
-            Click the camera icon to update your profile picture
-          </p>
+          Click the camera icon to update your profile picture
+        </p>
           <p className="text-xs text-gray-500">
             Supported formats: JPG, PNG, GIF (Max 5MB)
           </p>
@@ -458,34 +458,34 @@ function ProfileContent({ user }: { user: User | null }) {
             className="space-y-4"
           >
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
+            <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-3">
-                  Full Name
-                </label>
-                <input
-                  type="text"
-                  value={profileData.full_name}
-                  onChange={(e) =>
-                    setProfileData({ ...profileData, full_name: e.target.value })
-                  }
+                Full Name
+              </label>
+              <input
+                type="text"
+                value={profileData.full_name}
+                onChange={(e) =>
+                  setProfileData({ ...profileData, full_name: e.target.value })
+                }
                   className="w-full px-4 py-3 bg-white border-2 border-gray-200 rounded-xl text-gray-800 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all duration-300"
-                  placeholder="Enter your full name"
-                />
-              </div>
+                placeholder="Enter your full name"
+              />
+            </div>
 
-              <div>
+            <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-3">
                   Phone Number
-                </label>
+              </label>
                 <input
                   type="tel"
                   value={profileData.phone}
-                  onChange={(e) =>
+                onChange={(e) =>
                     setProfileData({ ...profileData, phone: e.target.value })
-                  }
+                }
                   className="w-full px-4 py-3 bg-white border-2 border-gray-200 rounded-xl text-gray-800 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all duration-300"
                   placeholder="Enter your phone number"
-                />
+              />
               </div>
             </div>
 
@@ -520,15 +520,15 @@ function ProfileContent({ user }: { user: User | null }) {
             </div>
 
             <div className="flex gap-4 pt-4">
-              <motion.button
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                type="submit"
+            <motion.button
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              type="submit"
                 className="flex-1 py-3 px-6 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-xl hover:from-blue-600 hover:to-blue-700 transition-all duration-300 flex items-center justify-center gap-3 font-semibold shadow-lg shadow-blue-500/25"
-              >
+            >
                 <FaSave className="h-5 w-5" />
-                Save Changes
-              </motion.button>
+              Save Changes
+            </motion.button>
               <motion.button
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
@@ -546,22 +546,22 @@ function ProfileContent({ user }: { user: User | null }) {
               <div className="bg-gray-50 rounded-2xl p-6">
                 <h4 className="text-sm font-semibold text-gray-600 mb-2 uppercase tracking-wide">Full Name</h4>
                 <p className="text-gray-900 text-lg font-medium">
-                  {profileData.full_name || "Not set"}
-                </p>
-              </div>
+                {profileData.full_name || "Not set"}
+              </p>
+            </div>
               <div className="bg-gray-50 rounded-2xl p-6">
                 <h4 className="text-sm font-semibold text-gray-600 mb-2 uppercase tracking-wide">Location</h4>
                 <p className="text-gray-900 text-lg font-medium">
-                  {profileData.location || "Not specified"}
-                </p>
-              </div>
+                {profileData.location || "Not specified"}
+              </p>
+            </div>
             </div>
             <div className="space-y-6">
               <div className="bg-gray-50 rounded-2xl p-6">
                 <h4 className="text-sm font-semibold text-gray-600 mb-2 uppercase tracking-wide">Phone Number</h4>
                 <p className="text-gray-900 text-lg font-medium">
-                  {profileData.phone || "Not provided"}
-                </p>
+                {profileData.phone || "Not provided"}
+              </p>
               </div>
               <div className="bg-gray-50 rounded-2xl p-6">
                 <h4 className="text-sm font-semibold text-gray-600 mb-2 uppercase tracking-wide">Bio</h4>
@@ -604,9 +604,9 @@ function DeleteConfirmationModal({
           </div>
           <h3 className="text-2xl font-bold text-gray-800 mb-2">Delete Trip</h3>
           <p className="text-gray-600">
-            Are you sure you want to delete &quot;{tripName}&quot;? This action
-            cannot be undone.
-          </p>
+          Are you sure you want to delete &quot;{tripName}&quot;? This action
+          cannot be undone.
+        </p>
         </div>
         <div className="flex gap-4">
           <motion.button
@@ -717,8 +717,8 @@ function TripsContent({ trips: initialTrips }: { trips: Trip[] }) {
                   <span className="text-white font-bold text-lg">{day.day}</span>
                 </div>
                 <h4 className="text-2xl font-bold text-gray-800">
-                  Day {day.day}
-                </h4>
+                Day {day.day}
+              </h4>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 {["morning", "afternoon", "evening"].map((time) => {
@@ -815,12 +815,12 @@ function TripsContent({ trips: initialTrips }: { trips: Trip[] }) {
                   </div>
                   <div>
                     <h3 className="text-2xl font-bold text-gray-800">
-                      {trip.destination}
-                    </h3>
+                    {trip.destination}
+                  </h3>
                     <p className="text-gray-600 text-sm">
                       Created {format(new Date(trip.created_at), "MMM d, yyyy")}
                     </p>
-                  </div>
+                </div>
                 </div>
 
                 {/* Trip Details */}
@@ -831,16 +831,16 @@ function TripsContent({ trips: initialTrips }: { trips: Trip[] }) {
                       <p className="text-sm text-gray-600">Duration</p>
                       <p className="text-gray-800 font-medium">
                         {format(new Date(trip.start_date), "MMM d")} - {format(new Date(trip.end_date), "MMM d, yyyy")}
-                      </p>
-                    </div>
-                  </div>
+                  </p>
+                </div>
+                </div>
                   <div className="flex items-center gap-3 p-4 bg-gray-50 rounded-xl">
                     <FaUsers className="text-green-500 h-5 w-5" />
                     <div>
                       <p className="text-sm text-gray-600">Travelers</p>
                       <p className="text-gray-800 font-medium">{trip.travelers}</p>
-                    </div>
-                  </div>
+                </div>
+                </div>
                   <div className="flex items-center gap-3 p-4 bg-gray-50 rounded-xl">
                     <FaHotel className="text-purple-500 h-5 w-5" />
                     <div>
@@ -911,8 +911,8 @@ function TripsContent({ trips: initialTrips }: { trips: Trip[] }) {
             <div className="flex justify-between items-center mb-8">
               <div>
                 <h3 className="text-3xl font-bold text-gray-800 mb-2">
-                  {selectedTrip.destination}
-                </h3>
+                {selectedTrip.destination}
+              </h3>
                 <p className="text-gray-600">
                   {format(new Date(selectedTrip.start_date), "MMM d, yyyy")} - {format(new Date(selectedTrip.end_date), "MMM d, yyyy")}
                 </p>
@@ -927,7 +927,7 @@ function TripsContent({ trips: initialTrips }: { trips: Trip[] }) {
               </motion.button>
             </div>
             <div className="bg-gray-50 rounded-2xl p-6">
-              {renderItineraryDetails(selectedTrip)}
+            {renderItineraryDetails(selectedTrip)}
             </div>
           </motion.div>
         </div>
