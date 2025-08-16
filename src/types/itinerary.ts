@@ -8,14 +8,43 @@ export interface TripOverview {
   dietary_plan: string;
 }
 
+export interface Activity {
+  time: string;
+  title: string;
+  description: string;
+  location: string;
+  cost?: string;
+  duration: string;
+  special_features?: string[];
+  tips?: string;
+  booking_info?: string;
+}
+
+export interface Meal {
+  time: string;
+  restaurant_name: string;
+  cuisine_type: string;
+  location: string;
+  cost_range: string;
+  must_try_dishes: string[];
+  reservation_required: boolean;
+  special_features?: string[];
+  tips?: string;
+}
+
 export interface DayActivity {
-  morning: string[];
-  afternoon: string[];
-  evening: string[];
+  morning: Activity[];
+  afternoon: Activity[];
+  evening: Activity[];
+  meals: Meal[];
 }
 
 export interface DayItinerary extends DayActivity {
   day: number;
+  day_title: string;
+  day_description: string;
+  highlights: string[];
+  total_estimated_cost: string;
 }
 
 export interface AdditionalInfo {
@@ -31,6 +60,12 @@ export interface AdditionalInfo {
     ambulance: string;
     touristPolice?: string;
   };
+  local_customs: string[];
+  best_times_to_visit: string[];
+  money_saving_tips: string[];
+  cultural_etiquette: string[];
+  local_phrases: string[];
+  must_know_facts: string[];
 }
 
 export interface TravelItinerary {

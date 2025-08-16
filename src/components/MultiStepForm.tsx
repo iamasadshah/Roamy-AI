@@ -28,6 +28,7 @@ import {
   FaClock,
   FaStar,
 } from "react-icons/fa";
+import { Loader2 } from "lucide-react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { useRouter } from "next/navigation";
@@ -499,8 +500,6 @@ const MultiStepForm: React.FC<Props> = ({ onSubmit, isLoading }) => {
             />
           </div>
         );
-        // change the placeholder text color to gray-500
-        // change the placeholder text color to gray-500
       case 2:
         return (
           <div className="w-full max-w-lg space-y-8">
@@ -540,8 +539,8 @@ const MultiStepForm: React.FC<Props> = ({ onSubmit, isLoading }) => {
                 startDate={formData.startDate}
                 endDate={formData.endDate}
                 minDate={new Date()}
-                  className="w-full text-gray-500 p-5 border-2 border-gray-200 rounded-2xl focus:ring-4 focus:ring-blue-400/20 focus:border-blue-500 transition-all duration-300 text-lg font-medium shadow-lg hover:shadow-xl"
-                placeholderText="Select Start Date"
+                  className="w-full p-5 border-2 border-gray-200 rounded-2xl focus:ring-4 focus:ring-blue-400/20 focus:border-blue-500 transition-all duration-300 text-lg font-medium shadow-lg hover:shadow-xl"
+                placeholderText="Select start date"
                 dateFormat="MMMM d, yyyy"
                   calendarClassName="rounded-2xl shadow-2xl border border-gray-100"
               />
@@ -564,9 +563,9 @@ const MultiStepForm: React.FC<Props> = ({ onSubmit, isLoading }) => {
                 endDate={formData.endDate}
                 minDate={formData.startDate || new Date()}
                   className="w-full p-5 border-2 border-gray-200 rounded-2xl focus:ring-4 focus:ring-blue-400/20 focus:border-blue-500 transition-all duration-300 text-lg font-medium shadow-lg hover:shadow-xl"
-                placeholderText="Select End Date"
+                placeholderText="Select end date"
                 dateFormat="MMMM d, yyyy"
-                  calendarClassName="rounded-2xl shadow-2xl border border-gray-600"
+                  calendarClassName="rounded-2xl shadow-2xl border border-gray-100"
               />
               </motion.div>
             </motion.div>

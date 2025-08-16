@@ -22,11 +22,12 @@ export async function generateTripPlan(formData: FormData): Promise<TravelItiner
 
     const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash' });
 
-    const prompt = `You are a travel planning assistant. Your task is to generate a detailed travel itinerary in valid JSON format.
+    const prompt = `You are an expert travel planning assistant with deep knowledge of destinations worldwide. Your task is to generate a comprehensive, detailed travel itinerary in valid JSON format that provides travelers with everything they need for an unforgettable experience.
+
 Please follow these requirements exactly:
 
 1. Return ONLY the JSON object, no additional text or explanations
-2. The JSON must exactly match this structure:
+2. The JSON must exactly match this enhanced structure:
 {
   "trip_overview": {
     "destination": "string",
@@ -40,24 +41,83 @@ Please follow these requirements exactly:
   "itinerary": [
     {
       "day": number,
-      "morning": ["string"],
-      "afternoon": ["string"],
-      "evening": ["string"]
+      "day_title": "string (e.g., 'Arrival & City Introduction')",
+      "day_description": "string (brief overview of the day)",
+      "highlights": ["string array of day's key highlights"],
+      "total_estimated_cost": "string (e.g., '$150-200')",
+      "morning": [
+        {
+          "time": "string (e.g., '09:00 AM')",
+          "title": "string (activity name)",
+          "description": "string (detailed description with what to expect)",
+          "location": "string (specific address or area)",
+          "cost": "string (e.g., '$25 per person')",
+          "duration": "string (e.g., '2 hours')",
+          "special_features": ["string array of unique features"],
+          "tips": "string (practical tips for this activity)",
+          "booking_info": "string (if advance booking needed)"
+        }
+      ],
+      "afternoon": [
+        {
+          "time": "string",
+          "title": "string",
+          "description": "string",
+          "location": "string",
+          "cost": "string",
+          "duration": "string",
+          "special_features": ["string array"],
+          "tips": "string",
+          "booking_info": "string"
+        }
+      ],
+      "evening": [
+        {
+          "time": "string",
+          "title": "string",
+          "description": "string",
+          "location": "string",
+          "cost": "string",
+          "duration": "string",
+          "special_features": ["string array"],
+          "tips": "string",
+          "booking_info": "string"
+        }
+      ],
+      "meals": [
+        {
+          "time": "string (e.g., '12:30 PM')",
+          "restaurant_name": "string",
+          "cuisine_type": "string (e.g., 'Local Italian')",
+          "location": "string (restaurant address)",
+          "cost_range": "string (e.g., '$15-25 per person')",
+          "must_try_dishes": ["string array of signature dishes"],
+          "reservation_required": boolean,
+          "special_features": ["string array of restaurant highlights"],
+          "tips": "string (dining tips)"
+        }
+      ]
     }
   ],
   "additional_info": {
     "weather_forecast": "string",
-    "packing_tips": ["string"],
+    "packing_tips": ["string array"],
     "local_currency": {
       "code": "string",
       "exchangeRate": "string"
     },
-    "transportation": ["string"],
+    "transportation": ["string array"],
     "emergency": {
       "police": "string",
       "ambulance": "string",
       "touristPolice": "string"
-    }
+    },
+    "local_customs": ["string array of cultural customs"],
+    "best_times_to_visit": ["string array of optimal times"],
+    "money_saving_tips": ["string array of budget tips"],
+    "cultural_etiquette": ["string array of etiquette tips"],
+    "local_phrases": ["string array of useful phrases"],
+    "must_know_facts": ["string array of important facts"]
   }
 }
 
@@ -69,12 +129,24 @@ Trip details to use:
 - Number of Travelers: ${formData.travelers}
 - Dietary Preferences: ${formData.dietaryPlan}
 
-Requirements:
-- All activities should match the budget level and number of travelers
-- Include emoji icons for better readability
-- Dining recommendations should match dietary preferences
-- Include a mix of activities
-- Ensure all required fields are present and properly formatted`;
+CRITICAL REQUIREMENTS:
+1. Create a detailed, day-by-day itinerary with specific times, locations, and activities
+2. Include 2-3 activities per time slot (morning, afternoon, evening) with realistic timing
+3. Add 2-3 meal recommendations per day with specific restaurants and must-try dishes
+4. Provide detailed descriptions for each activity including what to expect, costs, and duration
+5. Include special features and unique aspects of each location/activity
+6. Add practical tips for each activity and meal
+7. Ensure all dining recommendations match the dietary preferences (${formData.dietaryPlan})
+8. Include booking information where advance reservations are recommended
+9. Provide realistic cost estimates that match the budget level (${formData.budget})
+10. Include cultural insights, local customs, and etiquette tips
+11. Add money-saving tips and local phrases
+12. Make activities suitable for the number of travelers (${formData.travelers})
+13. Include a mix of popular attractions, hidden gems, and local experiences
+14. Provide specific addresses or clear location descriptions
+15. Include seasonal considerations and weather-appropriate activities
+
+IMPORTANT: Make the itinerary comprehensive, practical, and engaging with real-world details that travelers can actually use.`;
 
     try {
       const result = await model.generateContent(prompt);
