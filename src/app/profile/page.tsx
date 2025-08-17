@@ -275,13 +275,13 @@ export default function ProfilePage() {
                 <div className="relative w-32 h-32 mx-auto mb-6">
                   <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-full p-1">
                     <div className="w-full h-full rounded-full overflow-hidden bg-white p-1">
-                      <Image
+                  <Image
                         src={profileData.avatar_url || "/images/default-avatar.png"}
-                        alt="Profile"
-                        fill
-                        className="rounded-full object-cover"
-                      />
-                    </div>
+                    alt="Profile"
+                    fill
+                    className="rounded-full object-cover"
+                  />
+                </div>
                   </div>
                   <div className="absolute -bottom-2 -right-2 w-8 h-8 bg-green-500 rounded-full border-4 border-white flex items-center justify-center">
                     <div className="w-2 h-2 bg-white rounded-full"></div>
@@ -302,11 +302,12 @@ export default function ProfilePage() {
                 {[
                   { id: "profile", label: "Profile", icon: FaUser, color: "blue" },
                   { id: "trips", label: "My Trips", icon: FaHistory, color: "green" },
+                  { id: "settings", label: "Settings", icon: FaCog, color: "purple" },
                 ].map((item) => {
                   const Icon = item.icon;
                   const isActive = activeTab === item.id;
                   return (
-                    <button
+                <button
                       key={item.id}
                       onClick={() => setActiveTab(item.id)}
                       className={`w-full flex items-center gap-4 px-6 py-4 rounded-2xl transition-all duration-150 font-medium ${
@@ -317,7 +318,7 @@ export default function ProfilePage() {
                     >
                       <Icon className={`h-5 w-5 ${isActive ? 'text-white' : 'text-gray-500'}`} />
                       {item.label}
-                    </button>
+                </button>
                   );
                 })}
               </nav>
@@ -328,7 +329,7 @@ export default function ProfilePage() {
           <div className="lg:col-span-3">
             {/* Profile Tab */}
             {activeTab === "profile" && (
-              <div className="space-y-8">
+    <div className="space-y-8">
                 <div className="bg-white/90 backdrop-blur-lg rounded-3xl p-8 shadow-xl border border-white/30">
                   <div className="flex items-center justify-between mb-6">
                     <h3 className="text-2xl font-bold text-gray-800">Profile Information</h3>
@@ -356,52 +357,52 @@ export default function ProfilePage() {
                           <FaTimes className="h-4 w-4" />
                           Cancel
                         </button>
-                      </div>
-                    )}
-                  </div>
+              </div>
+            )}
+      </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
+            <div>
                       <label className="block text-sm font-medium text-gray-700 mb-2">Full Name</label>
                       {editingProfile ? (
-                        <input
-                          type="text"
-                          value={profileData.full_name}
+              <input
+                type="text"
+                value={profileData.full_name}
                           onChange={(e) => setProfileData({...profileData, full_name: e.target.value})}
                           className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                         />
                       ) : (
                         <p className="text-gray-900 font-medium">{profileData.full_name || "Not set"}</p>
                       )}
-                    </div>
+            </div>
 
-                    <div>
+            <div>
                       <label className="block text-sm font-medium text-gray-700 mb-2">Location</label>
                       {editingProfile ? (
-                        <input
-                          type="text"
-                          value={profileData.location}
+              <input
+                type="text"
+                value={profileData.location}
                           onChange={(e) => setProfileData({...profileData, location: e.target.value})}
                           className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                         />
                       ) : (
                         <p className="text-gray-900 font-medium">{profileData.location || "Not set"}</p>
                       )}
-                    </div>
+            </div>
 
-                    <div>
+            <div>
                       <label className="block text-sm font-medium text-gray-700 mb-2">Phone</label>
                       {editingProfile ? (
-                        <input
-                          type="tel"
-                          value={profileData.phone}
+              <input
+                type="tel"
+                value={profileData.phone}
                           onChange={(e) => setProfileData({...profileData, phone: e.target.value})}
                           className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                         />
                       ) : (
                         <p className="text-gray-900 font-medium">{profileData.phone || "Not set"}</p>
                       )}
-                    </div>
+            </div>
 
                     <div className="md:col-span-2">
                       <label className="block text-sm font-medium text-gray-700 mb-2">Bio</label>
@@ -415,11 +416,11 @@ export default function ProfilePage() {
                       ) : (
                         <p className="text-gray-900">{profileData.bio || "No bio added yet"}</p>
                       )}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            )}
+            </div>
+            </div>
+            </div>
+          </div>
+        )}
 
             {/* Trips Tab */}
             {activeTab === "trips" && (
@@ -450,18 +451,18 @@ export default function ProfilePage() {
                                   <FaCalendar className="h-4 w-4" />
                                   <span>{format(new Date(trip.start_date), 'MMM dd')} - {format(new Date(trip.end_date), 'MMM dd, yyyy')}</span>
                                 </div>
-                              </div>
-                            </div>
+      </div>
+    </div>
                             <div className="flex gap-2">
-                              <button
+          <button
                                 onClick={() => deleteTrip(trip.id)}
                                 className="p-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors duration-150"
                                 title="Delete trip"
                               >
                                 <FaTrash className="h-4 w-4" />
-                              </button>
-                            </div>
-                          </div>
+          </button>
+        </div>
+    </div>
 
                           <div className="grid grid-cols-2 gap-4 text-sm mb-4">
                             <div className="flex items-center gap-2">
@@ -471,16 +472,16 @@ export default function ProfilePage() {
                             <div className="flex items-center gap-2">
                               <FaHotel className="h-4 w-4 text-green-500" />
                               <span>{trip.accommodation}</span>
-                            </div>
+        </div>
                             <div className="flex items-center gap-2">
                               <FaWallet className="h-4 w-4 text-purple-500" />
                               <span>{trip.budget}</span>
-                            </div>
+                    </div>
                             <div className="flex items-center gap-2">
                               <FaMapMarkerAlt className="h-4 w-4 text-red-500" />
                               <span>{trip.destination}</span>
-                            </div>
-                          </div>
+              </div>
+            </div>
 
                           <div className="flex gap-2">
                             <Link
@@ -490,25 +491,123 @@ export default function ProfilePage() {
                               <FaEye className="h-4 w-4" />
                               View Details
                             </Link>
-                            <PDFDownloadLink
-                              document={<TripPDF trip={trip} />}
+                  <PDFDownloadLink
+                    document={<TripPDF trip={trip} />}
                               fileName={`${trip.destination}-trip-plan.pdf`}
                               className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors duration-150 text-sm font-medium"
                             >
                               <FaDownload className="h-4 w-4" />
                               PDF
-                            </PDFDownloadLink>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  )}
+                  </PDFDownloadLink>
+                </div>
+              </div>
+          ))}
+        </div>
+      )}
                 </div>
               </div>
             )}
 
-            
-          </div>
+            {/* Settings Tab */}
+            {activeTab === "settings" && (
+              <div className="space-y-8">
+                {/* Account Security */}
+                <div className="bg-white/90 backdrop-blur-lg rounded-3xl p-8 shadow-xl border border-white/30">
+                  <div className="flex items-center gap-4 mb-6">
+                    <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center">
+                      <FaShieldAlt className="text-white h-6 w-6" />
+                    </div>
+                    <div>
+                      <h4 className="text-xl font-bold text-gray-800">Account Security</h4>
+                      <p className="text-gray-600 text-sm">Manage your account security settings</p>
+                    </div>
+                  </div>
+                  
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between p-4 bg-gray-50 rounded-xl">
+                      <div>
+                        <p className="text-sm text-gray-600">Two-Factor Authentication</p>
+                        <p className="text-gray-800 font-medium">Not enabled</p>
+                      </div>
+                      <button className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors duration-150 text-sm font-medium">
+                        Enable
+                      </button>
+                    </div>
+                    
+                    <div className="flex items-center justify-between p-4 bg-gray-50 rounded-xl">
+                      <div>
+                        <p className="text-sm text-gray-600">Password</p>
+                        <p className="text-gray-800 font-medium">Last changed recently</p>
+                      </div>
+                      <button className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors duration-150 text-sm font-medium">
+                        Change
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Preferences */}
+                <div className="bg-white/90 backdrop-blur-lg rounded-3xl p-8 shadow-xl border border-white/30">
+                  <div className="flex items-center gap-4 mb-6">
+                    <div className="w-12 h-12 bg-gradient-to-r from-purple-500 to-pink-600 rounded-xl flex items-center justify-center">
+                      <FaPalette className="text-white h-6 w-6" />
+                    </div>
+                    <div>
+                      <h4 className="text-xl font-bold text-gray-800">Preferences</h4>
+                      <p className="text-gray-600 text-sm">Customize your experience</p>
+                    </div>
+                  </div>
+                  
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between p-4 bg-gray-50 rounded-xl">
+                      <div>
+                        <p className="text-sm text-gray-600">Email Notifications</p>
+                        <p className="text-gray-800 font-medium">Enabled</p>
+                      </div>
+                      <div className="w-12 h-6 bg-blue-500 rounded-full relative">
+                        <div className="w-5 h-5 bg-white rounded-full absolute right-0.5 top-0.5"></div>
+                      </div>
+                    </div>
+                    
+                    <div className="flex items-center justify-between p-4 bg-gray-50 rounded-xl">
+                      <div>
+                        <p className="text-sm text-gray-600">Language</p>
+                        <p className="text-gray-800 font-medium">English</p>
+                      </div>
+                      <button className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors duration-150 text-sm font-medium">
+                        Change
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Data & Privacy */}
+                <div className="bg-white/90 backdrop-blur-lg rounded-3xl p-8 shadow-xl border border-white/30">
+                  <div className="flex items-center gap-4 mb-6">
+                    <div className="w-12 h-12 bg-gradient-to-r from-orange-500 to-red-600 rounded-xl flex items-center justify-center">
+                      <FaGlobe className="text-white h-6 w-6" />
+                    </div>
+                    <div>
+                      <h4 className="text-xl font-bold text-gray-800">Data & Privacy</h4>
+                      <p className="text-gray-600 text-sm">Manage your data and privacy</p>
+                    </div>
+                  </div>
+                  
+                  <div className="space-y-4">
+                    <button className="w-full p-4 bg-gray-50 rounded-xl text-left hover:bg-gray-100 transition-colors duration-150">
+                      <p className="text-sm text-gray-600">Download My Data</p>
+                      <p className="text-gray-800 font-medium">Get a copy of your data</p>
+                    </button>
+                    
+                    <button className="w-full p-4 bg-gray-50 rounded-xl text-left hover:bg-gray-100 transition-colors duration-150">
+                      <p className="text-sm text-gray-600">Delete Account</p>
+                      <p className="text-red-600 font-medium">Permanently delete your account</p>
+              </button>
+            </div>
+                </div>
+        </div>
+      )}
+    </div>
         </div>
       </div>
     </div>

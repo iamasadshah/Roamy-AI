@@ -278,19 +278,20 @@ export default function Navbar() {
               </motion.button>
             )}
             <motion.button
-              onClick={() => setIsOpen(!isOpen)}
-              className={`p-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 ${
-                isScrolled || !isHome ? 'bg-gray-100 hover:bg-gray-200' : 'bg-white/10 hover:bg-white/20'
-              }`}
-              whileTap={{ scale: 0.95 }}
-              aria-label="Toggle menu"
-            >
-              {isOpen ? (
-                <FaTimes className={`h-5 w-5 ${isScrolled || !isHome ? 'text-gray-800' : 'text-gray-800'}`} />
-              ) : (
-                <FaBars className={`h-5 w-5 ${isScrolled || !isHome ? 'text-gray-800' : 'text-gray-800'}`} />
-              )}
-            </motion.button>
+  onClick={() => setIsOpen(!isOpen)}
+  className={`p-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 ${
+    isScrolled || !isHome ? 'bg-gray-100 hover:bg-gray-200' : 'bg-white/10 hover:bg-white/20'
+  } z-[60]`}   // ✅ added high z-index
+  whileTap={{ scale: 0.95 }}
+  aria-label="Toggle menu"
+>
+  {isOpen ? (
+    <FaTimes className={`h-5 w-5 ${isScrolled || !isHome ? 'text-gray-800' : 'text-gray-800'}`} />
+  ) : (
+    <FaBars className={`h-5 w-5 ${isScrolled || !isHome ? 'text-gray-800' : 'text-gray-800'}`} />
+  )}
+</motion.button>
+
           </motion.div>
         </div>
       </div>
