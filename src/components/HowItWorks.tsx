@@ -125,7 +125,7 @@ export default function HowItWorks() {
               className="relative group"
             >
               {/* Step Number */}
-              <div className="absolute -top-4 -left-4 w-12 h-12 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-full flex items-center justify-center text-white font-bold text-lg shadow-lg">
+              <div className="absolute z-20 -top-4 -left-4 w-12 h-12 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-full flex items-center justify-center text-white font-bold text-lg shadow-lg">
                 {step.step}
               </div>
 
