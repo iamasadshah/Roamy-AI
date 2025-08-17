@@ -82,8 +82,8 @@ export interface FormStep {
 
 export type FormData = {
   destination: string;
-  startDate: Date | null;
-  endDate: Date | null;
+  startDate: string;
+  endDate: string;
   budget: string;
   accommodation: string;
   travelers: string;

@@ -55,6 +55,32 @@ export default function PlanPage() {
     setTripPlan(null);
 
     try {
+      // Validate form data before sending to API
+      if (!formData.destination || !formData.startDate || !formData.endDate) {
+        throw new Error("Please fill in all required fields");
+      }
+
+      // Validate dates
+      const startDate = new Date(formData.startDate);
+      const endDate = new Date(formData.endDate);
+      
+      if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
+        throw new Error("Invalid date format");
+      }
+
+      if (startDate < new Date()) {
+        throw new Error("Start date cannot be in the past");
+      }
+
+      if (endDate <= startDate) {
+        throw new Error("End date must be after start date");
+      }
+
+      const daysDiff = Math.ceil((endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24));
+      if (daysDiff > 10) {
+        throw new Error("Travel planning is limited to 10 days maximum");
+      }
+
       const plan = await generateTripPlan(formData);
       if (!plan || !plan.trip_overview) {
         throw new Error("Invalid plan data received");

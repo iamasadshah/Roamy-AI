@@ -17,6 +17,18 @@ export async function generateTripPlan(formData: FormData): Promise<TravelItiner
       throw new Error('API key is not configured. Please contact the administrator.');
     }
 
+    // Validate and format dates
+    if (!formData.startDate || !formData.endDate) {
+      throw new Error('Start date and end date are required');
+    }
+
+    const startDate = new Date(formData.startDate);
+    const endDate = new Date(formData.endDate);
+
+    if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
+      throw new Error('Invalid date format provided');
+    }
+
     // Fetch real-time destination data
     const destinationData = await getDestinationData(formData.destination);
 
@@ -123,7 +135,7 @@ Please follow these requirements exactly:
 
 Trip details to use:
 - Destination: ${formData.destination}
-- Dates: ${formData.startDate?.toLocaleDateString()} - ${formData.endDate?.toLocaleDateString()}
+- Dates: ${new Date(formData.startDate).toLocaleDateString()} - ${new Date(formData.endDate).toLocaleDateString()}
 - Budget Level: ${formData.budget}
 - Accommodation: ${formData.accommodation}
 - Number of Travelers: ${formData.travelers}
