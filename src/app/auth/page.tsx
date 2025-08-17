@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { Auth } from "@supabase/auth-ui-react";
 import { ThemeSupa } from "@supabase/auth-ui-shared";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { FaPlane, FaGlobe, FaShieldAlt, FaRocket } from "react-icons/fa";
 import Link from "next/link";
 
