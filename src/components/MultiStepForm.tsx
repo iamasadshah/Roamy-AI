@@ -1,35 +1,32 @@
 "use client";
 
-import * as React from "react";
-import { useState, useMemo, useCallback } from "react";
+import React, { useState, useCallback, useEffect, useMemo } from "react";
 import { motion, AnimatePresence, LazyMotion, domAnimation } from "framer-motion";
-import {
+import { 
+  FaGlobe, 
+  FaClock, 
+  FaWallet, 
+  FaHotel, 
+  FaUsers, 
+  FaUtensils,
+  FaChevronDown,
   FaChevronLeft,
   FaChevronRight,
-  FaWallet,
-  FaHotel,
-  FaUsers,
-  FaUtensils,
-  FaCheck,
-  FaHome,
+  FaSearch,
   FaBed,
   FaUmbrellaBeach,
+  FaHome,
   FaUser,
-  FaHeart,
   FaUserFriends,
   FaLeaf,
+  FaHeart,
   FaMosque,
-  FaSearch,
-  FaChevronDown,
-  FaGlobe,
-  FaClock,
+  FaCheck
 } from "react-icons/fa";
-import DatePicker from "react-datepicker";
-import "react-datepicker/dist/react-datepicker.css";
+import { Calendar, Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import toast from "react-hot-toast";
-import { Loader2, Calendar } from "lucide-react";
 
 interface FormStep {
   id: number;
@@ -40,8 +37,8 @@ interface FormStep {
 
 interface FormData {
   destination: string;
-  startDate: Date | null;
-  endDate: Date | null;
+  startDate: string;
+  endDate: string;
   budget: string;
   accommodation: string;
   travelers: string;
@@ -399,7 +396,7 @@ const DestinationInput = ({
                 <div className="flex-1 overflow-y-auto custom-scrollbar p-4 sm:p-6">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
                     {filteredCountries.length > 0 ? (
-                      filteredCountries.map((country) => (
+                      filteredCountries.map((country: string) => (
                         <motion.button
                           key={country}
                           className="flex items-center p-3 sm:p-4 lg:p-6 text-left text-gray-700 hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50 hover:border-blue-300 border-2 border-transparent rounded-xl sm:rounded-2xl transition-all group shadow-sm hover:shadow-lg"
@@ -435,91 +432,13 @@ const DestinationInput = ({
   );
 };
 
-// Enhanced Date Picker Component
-const EnhancedDatePicker = ({ 
-  selected, 
-  onChange, 
-  placeholder, 
-  minDate, 
-  maxDate,
-  selectsStart,
-  selectsEnd,
-  startDate,
-  endDate,
-  label
-}: {
-  selected: Date | null;
-  onChange: (date: Date | null) => void;
-  placeholder: string;
-  minDate?: Date;
-  maxDate?: Date;
-  selectsStart?: boolean;
-  selectsEnd?: boolean;
-  startDate?: Date | null;
-  endDate?: Date | null;
-  label: string;
-}) => {
-  const [isOpen, setIsOpen] = useState(false);
-
-  return (
-    <motion.div
-      variants={itemVariants}
-      className="space-y-3 sm:space-y-4"
-    >
-      <label className="block text-lg sm:text-xl font-bold text-gray-800 mb-3 sm:mb-4 flex items-center gap-2 sm:gap-3">
-        <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-blue-100 to-indigo-200 rounded-xl flex items-center justify-center shadow-sm">
-          <Calendar className="h-4 w-4 sm:h-6 sm:w-6 text-blue-600" />
-        </div>
-        <span className="text-gray-800">{label}</span>
-      </label>
-      
-      <div className="relative">
-        <DatePicker
-          selected={selected}
-          onChange={(date) => {
-            onChange(date);
-            setIsOpen(false);
-          }}
-          selectsStart={selectsStart}
-          selectsEnd={selectsEnd}
-          startDate={startDate}
-          endDate={endDate}
-          minDate={minDate}
-          maxDate={maxDate}
-          open={isOpen}
-          onInputClick={() => setIsOpen(true)}
-          onClickOutside={() => setIsOpen(false)}
-          className="w-full p-4 sm:p-5 lg:p-6 border-2 border-gray-200 rounded-2xl sm:rounded-3xl focus:ring-4 focus:ring-blue-400/20 focus:border-blue-500 transition-all duration-300 text-base sm:text-lg lg:text-xl font-semibold shadow-lg hover:shadow-xl bg-white cursor-pointer text-gray-800 placeholder-gray-500"
-          placeholderText={placeholder}
-          dateFormat="MMMM d, yyyy"
-          calendarClassName="!rounded-2xl !shadow-2xl !border !border-gray-200 !bg-white !p-4 sm:!p-6 !z-50"
-          dayClassName={(date) => {
-            if (startDate && endDate && date >= startDate && date <= endDate) {
-              return "!bg-gradient-to-br !from-blue-500 !to-indigo-600 !text-white !rounded-full !border-blue-500 !shadow-lg !font-semibold";
-            }
-            if (date.getTime() === selected?.getTime()) {
-              return "!bg-gradient-to-br !from-indigo-600 !to-purple-600 !text-white !rounded-full !border-indigo-600 !shadow-lg !font-semibold";
-            }
-            return "!font-medium !text-gray-700 hover:!bg-blue-50 !rounded-full";
-          }}
-          popperClassName="!z-50"
-          popperPlacement="bottom-start"
-          showPopperArrow={false}
-        />
-        <div className="absolute right-4 sm:right-5 lg:right-6 top-1/2 -translate-y-1/2 pointer-events-none">
-          <Calendar className="h-5 w-5 sm:h-6 sm:w-6 lg:h-7 lg:w-7 text-blue-500" />
-        </div>
-      </div>
-    </motion.div>
-  );
-};
-
+// Remove the entire EnhancedDatePicker component
 const MultiStepForm: React.FC<Props> = ({ onSubmit, isLoading }) => {
   const [currentStep, setCurrentStep] = useState(1);
   const [formData, setFormData] = useState<FormData>({
     destination: "",
-    startDate: null,
-    endDate: null,
+    startDate: "",
+    endDate: "",
     budget: "",
     accommodation: "",
     travelers: "",
@@ -605,7 +524,7 @@ const MultiStepForm: React.FC<Props> = ({ onSubmit, isLoading }) => {
       case 1:
         return formData.destination.trim() !== "";
       case 2:
-        return formData.startDate !== null && formData.endDate !== null;
+        return formData.startDate !== "" && formData.endDate !== "";
       case 3:
         return formData.budget !== "";
       case 4:
@@ -627,140 +546,106 @@ const MultiStepForm: React.FC<Props> = ({ onSubmit, isLoading }) => {
     }`;
   }, []);
 
-  const renderStepContent = useCallback((): React.ReactNode => {
-    switch (currentStep) {
+  const renderStepContent = (step: number) => {
+    switch (step) {
       case 1:
         return (
-          <div className="w-full max-w-2xl mx-auto px-4">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.1 }}
-              className="text-center mb-6 sm:mb-8 lg:mb-12"
-            >
-              <h3 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-800 mb-3 sm:mb-4 lg:mb-6">
-                Where would you like to go?
+          <div className="space-y-6">
+            <div>
+              <h3 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
+                Where do you want to go?
               </h3>
-              <p className="text-gray-600 text-base sm:text-lg lg:text-xl leading-relaxed max-w-2xl mx-auto">
-                Tell us your dream destination and we&apos;ll create the perfect itinerary for you
+              <p className="text-base sm:text-lg lg:text-xl text-gray-600 mb-6">
+                Tell us your dream destination and we&apos;ll create the perfect itinerary for you.
               </p>
-            </motion.div>
-            
-            <motion.div
-              variants={staggerContainer}
-              initial="initial"
-              animate="animate"
-            >
-              <motion.div variants={itemVariants}>
-                <DestinationInput
-                  value={formData.destination}
-                  onChange={(value) => setFormData({ ...formData, destination: value })}
-                />
-              </motion.div>
-            </motion.div>
+              <DestinationInput
+                value={formData.destination}
+                onChange={(value) => setFormData({ ...formData, destination: value })}
+              />
+            </div>
           </div>
         );
+
       case 2:
         return (
-          <div className="w-full max-w-4xl mx-auto px-4">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.1 }}
-              className="text-center mb-6 sm:mb-8 lg:mb-12"
-            >
-              <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 mb-4 sm:mb-6">
-                <div className="w-12 h-12 sm:w-16 sm:h-16 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl flex items-center justify-center shadow-lg">
-                  <Calendar className="h-6 w-6 sm:h-8 sm:w-8 text-white" />
-                </div>
-                <h3 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-800 text-center">
-                  When are you planning to travel?
-                </h3>
-              </div>
-              <p className="text-gray-600 text-base sm:text-lg lg:text-xl leading-relaxed max-w-3xl mx-auto">
-                Select your arrival and departure dates to create the perfect itinerary for your trip
+          <div className="space-y-6">
+            <div>
+              <h3 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
+                When are you planning to travel?
+              </h3>
+              <p className="text-base sm:text-lg lg:text-xl text-gray-600 mb-6">
+                Select your travel dates to help us plan the perfect trip timing.
               </p>
-            </motion.div>
-
-            <motion.div
-              className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8"
-              variants={staggerContainer}
-              initial="initial"
-              animate="animate"
-            >
-              <EnhancedDatePicker
-                selected={formData.startDate}
-                onChange={(date) => setFormData({ ...formData, startDate: date })}
-                placeholder="📅 Click to select your arrival date"
-                minDate={new Date()}
-                selectsStart
-                startDate={formData.startDate}
-                endDate={formData.endDate}
-                label="Start Date"
-              />
               
-              <EnhancedDatePicker
-                selected={formData.endDate}
-                onChange={(date) => setFormData({ ...formData, endDate: date })}
-                placeholder="📅 Click to select your departure date"
-                minDate={formData.startDate || new Date()}
-                selectsEnd
-                startDate={formData.startDate}
-                endDate={formData.endDate}
-                label="End Date"
-              />
-            </motion.div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+                <div>
+                  <label className="block text-lg sm:text-xl font-semibold text-gray-700 mb-3">
+                    Arrival Date
+                  </label>
+                  <input
+                    type="date"
+                    value={formData.startDate}
+                    onChange={(e) => setFormData({ ...formData, startDate: e.target.value })}
+                    className="w-full p-4 sm:p-5 lg:p-6 border-2 border-gray-300 rounded-2xl text-base sm:text-lg lg:text-xl font-medium text-gray-900 bg-white focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all duration-200 placeholder:text-gray-500"
+                    placeholder="Select arrival date"
+                    min={new Date().toISOString().split('T')[0]}
+                  />
+                </div>
+                
+                <div>
+                  <label className="block text-lg sm:text-xl font-semibold text-gray-700 mb-3">
+                    Departure Date
+                  </label>
+                  <input
+                    type="date"
+                    value={formData.endDate}
+                    onChange={(e) => setFormData({ ...formData, endDate: e.target.value })}
+                    className="w-full p-4 sm:p-5 lg:p-6 border-2 border-gray-300 rounded-2xl text-base sm:text-lg lg:text-xl font-medium text-gray-900 bg-white focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all duration-200 placeholder:text-gray-500"
+                    placeholder="Select departure date"
+                    min={formData.startDate || new Date().toISOString().split('T')[0]}
+                  />
+                </div>
+              </div>
 
-            {/* Date Range Display */}
-            {formData.startDate && formData.endDate && (
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="mt-6 sm:mt-8 p-4 sm:p-6 lg:p-8 bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 rounded-2xl sm:rounded-3xl border-2 border-blue-200 shadow-lg"
-              >
-                <div className="text-center">
-                  <div className="flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-3 mb-3 sm:mb-4">
-                    <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center shadow-lg">
-                      <Calendar className="h-5 w-5 sm:h-6 sm:w-6 text-white" />
-                    </div>
-                    <h4 className="text-xl sm:text-2xl font-bold text-gray-800">Your Travel Dates</h4>
-                  </div>
-                  
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 mb-4 sm:mb-6">
-                    <div className="bg-white/80 backdrop-blur-sm rounded-xl sm:rounded-2xl p-3 sm:p-4 border border-blue-200">
-                      <div className="text-xs sm:text-sm font-semibold text-blue-600 mb-1">Arrival</div>
-                      <div className="text-sm sm:text-lg font-bold text-gray-800">
-                        {formData.startDate.toLocaleDateString('en-US', { 
-                          weekday: 'long',
+              {formData.startDate && formData.endDate && (
+                <div className="mt-6 p-4 sm:p-6 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-2xl border border-blue-200">
+                  <div className="flex items-center justify-center space-x-4 sm:space-x-6">
+                    <div className="flex items-center space-x-2 sm:space-x-3">
+                      <div className="w-3 h-3 bg-blue-500 rounded-full"></div>
+                      <span className="text-sm sm:text-base lg:text-lg font-semibold text-blue-900">
+                        {new Date(formData.startDate).toLocaleDateString('en-US', { 
+                          weekday: 'long', 
+                          year: 'numeric', 
                           month: 'long', 
-                          day: 'numeric', 
-                          year: 'numeric' 
+                          day: 'numeric' 
                         })}
-                      </div>
+                      </span>
                     </div>
-                    
-                    <div className="bg-white/80 backdrop-blur-sm rounded-xl sm:rounded-2xl p-3 sm:p-4 border border-blue-200">
-                      <div className="text-xs sm:text-sm font-semibold text-blue-600 mb-1">Departure</div>
-                      <div className="text-sm sm:text-lg font-bold text-gray-800">
-                        {formData.endDate.toLocaleDateString('en-US', { 
-                          weekday: 'long',
+                    <div className="text-gray-400">
+                      <svg className="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                      </svg>
+                    </div>
+                    <div className="flex items-center space-x-2 sm:space-x-3">
+                      <div className="w-3 h-3 bg-indigo-500 rounded-full"></div>
+                      <span className="text-sm sm:text-base lg:text-lg font-semibold text-indigo-900">
+                        {new Date(formData.endDate).toLocaleDateString('en-US', { 
+                          weekday: 'long', 
+                          year: 'numeric', 
                           month: 'long', 
-                          day: 'numeric', 
-                          year: 'numeric' 
+                          day: 'numeric' 
                         })}
-                      </div>
+                      </span>
                     </div>
                   </div>
-                  
-                  <div className="bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-xl sm:rounded-2xl p-3 sm:p-4 shadow-lg">
-                    <div className="text-xs sm:text-sm font-semibold mb-1">Total Trip Duration</div>
-                    <div className="text-lg sm:text-2xl font-bold">
-                      {Math.ceil((formData.endDate.getTime() - formData.startDate.getTime()) / (1000 * 60 * 60 * 24))} days
-                    </div>
+                  <div className="mt-3 text-center">
+                    <span className="text-sm sm:text-base text-gray-600">
+                      {Math.ceil((new Date(formData.endDate).getTime() - new Date(formData.startDate).getTime()) / (1000 * 60 * 60 * 24))} days
+                    </span>
                   </div>
                 </div>
-              </motion.div>
-            )}
+              )}
+            </div>
           </div>
         );
       case 3:
@@ -958,7 +843,7 @@ const MultiStepForm: React.FC<Props> = ({ onSubmit, isLoading }) => {
       default:
         return null;
     }
-  }, [currentStep, formData, optionButtonClasses]);
+  };
 
   return (
     <LazyMotion features={domAnimation}>
@@ -1051,7 +936,7 @@ const MultiStepForm: React.FC<Props> = ({ onSubmit, isLoading }) => {
               exit="exit"
               className="w-full max-w-6xl mx-auto"
             >
-              {renderStepContent()}
+              {renderStepContent(currentStep)}
             </motion.div>
           </AnimatePresence>
         </div>
