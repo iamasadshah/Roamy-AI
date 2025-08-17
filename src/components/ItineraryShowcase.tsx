@@ -93,7 +93,7 @@ const fadeTransition = {
 };
 
 export default function ItineraryShowcase() {
-  const [[currentIndex, direction], setCurrentIndex] = useState([0, 0]);
+  const [[currentIndex], setCurrentIndex] = useState([0, 0]);
   const [isHovered, setIsHovered] = useState(false);
   const currentItinerary = sampleItineraries[currentIndex];
 
