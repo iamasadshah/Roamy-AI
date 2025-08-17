@@ -2,12 +2,12 @@
 
 import React, { useState, useCallback, useEffect, useMemo } from "react";
 import { motion, AnimatePresence, LazyMotion, domAnimation } from "framer-motion";
-import { 
+import {
   FaGlobe, 
   FaClock, 
-  FaWallet, 
-  FaHotel, 
-  FaUsers, 
+  FaWallet,
+  FaHotel,
+  FaUsers,
   FaUtensils,
   FaChevronDown,
   FaChevronLeft,
@@ -444,8 +444,81 @@ const MultiStepForm: React.FC<Props> = ({ onSubmit, isLoading }) => {
     travelers: "",
     dietaryPlan: "",
   });
+  const [dateErrors, setDateErrors] = useState<{ startDate?: string; endDate?: string }>({});
   const router = useRouter();
   const supabase = createClientComponentClient();
+
+  // Date validation functions
+  const validateStartDate = (date: string): string | undefined => {
+    if (!date) return undefined;
+    
+    const selectedDate = new Date(date);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    
+    if (selectedDate < today) {
+      return "Please select a start date from today or in the future";
+    }
+    return undefined;
+  };
+
+  const validateEndDate = (startDate: string, endDate: string): string | undefined => {
+    if (!startDate || !endDate) return undefined;
+    
+    const start = new Date(startDate);
+    const end = new Date(endDate);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    
+    if (end < today) {
+      return "Please select an end date from today or in the future";
+    }
+    
+    if (end <= start) {
+      return "End date must be after start date";
+    }
+    
+    const daysDiff = Math.ceil((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24));
+    if (daysDiff > 10) {
+      return "Travel planning is limited to 10 days maximum";
+    }
+    
+    return undefined;
+  };
+
+  const handleStartDateChange = (date: string) => {
+    const error = validateStartDate(date);
+    setDateErrors(prev => ({ ...prev, startDate: error }));
+    
+    // Clear end date if start date becomes invalid
+    if (error && formData.endDate) {
+      setFormData(prev => ({ ...prev, endDate: "" }));
+      setDateErrors(prev => ({ ...prev, endDate: undefined }));
+    }
+    
+    setFormData(prev => ({ ...prev, startDate: date }));
+  };
+
+  const handleEndDateChange = (date: string) => {
+    const error = validateEndDate(formData.startDate, date);
+    setDateErrors(prev => ({ ...prev, endDate: error }));
+    setFormData(prev => ({ ...prev, endDate: date }));
+  };
+
+  // Get today's date in YYYY-MM-DD format
+  const getTodayString = (): string => {
+    const today = new Date();
+    return today.toISOString().split('T')[0];
+  };
+
+  // Get maximum allowed end date (start date + 10 days)
+  const getMaxEndDate = (): string => {
+    if (!formData.startDate) return "";
+    const start = new Date(formData.startDate);
+    const maxEnd = new Date(start);
+    maxEnd.setDate(start.getDate() + 10);
+    return maxEnd.toISOString().split('T')[0];
+  };
 
   const handleNext = useCallback(async (): Promise<void> => {
     if (currentStep === steps.length) {
@@ -519,12 +592,15 @@ const MultiStepForm: React.FC<Props> = ({ onSubmit, isLoading }) => {
     setCurrentStep((prev) => Math.max(1, prev - 1));
   }, []);
 
-  const isStepValid = useCallback((): boolean => {
-    switch (currentStep) {
+  const canProceedToNextStep = useCallback((step: number): boolean => {
+    switch (step) {
       case 1:
         return formData.destination.trim() !== "";
       case 2:
-        return formData.startDate !== "" && formData.endDate !== "";
+        return formData.startDate !== "" && 
+               formData.endDate !== "" && 
+               !dateErrors.startDate && 
+               !dateErrors.endDate;
       case 3:
         return formData.budget !== "";
       case 4:
@@ -536,7 +612,7 @@ const MultiStepForm: React.FC<Props> = ({ onSubmit, isLoading }) => {
       default:
         return false;
     }
-  }, [currentStep, formData]);
+  }, [formData, dateErrors]);
 
   const optionButtonClasses = useCallback((isSelected: boolean) => {
     return `relative p-4 sm:p-6 lg:p-8 rounded-2xl sm:rounded-3xl border-2 transition-all duration-300 text-center group ${
@@ -558,10 +634,10 @@ const MultiStepForm: React.FC<Props> = ({ onSubmit, isLoading }) => {
               <p className="text-base sm:text-lg lg:text-xl text-gray-600 mb-6">
                 Tell us your dream destination and we&apos;ll create the perfect itinerary for you.
               </p>
-              <DestinationInput
-                value={formData.destination}
+            <DestinationInput
+              value={formData.destination}
                 onChange={(value) => setFormData({ ...formData, destination: value })}
-              />
+            />
             </div>
           </div>
         );
@@ -581,29 +657,48 @@ const MultiStepForm: React.FC<Props> = ({ onSubmit, isLoading }) => {
                 <div>
                   <label className="block text-lg sm:text-xl font-semibold text-gray-700 mb-3">
                     Arrival Date
-                  </label>
+              </label>
                   <input
                     type="date"
                     value={formData.startDate}
-                    onChange={(e) => setFormData({ ...formData, startDate: e.target.value })}
+                    onChange={(e) => handleStartDateChange(e.target.value)}
                     className="w-full p-4 sm:p-5 lg:p-6 border-2 border-gray-300 rounded-2xl text-base sm:text-lg lg:text-xl font-medium text-gray-900 bg-white focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all duration-200 placeholder:text-gray-500"
                     placeholder="Select arrival date"
-                    min={new Date().toISOString().split('T')[0]}
+                    min={getTodayString()}
                   />
+                  {dateErrors.startDate && (
+                    <p className="text-red-500 text-sm mt-2">{dateErrors.startDate}</p>
+                  )}
                 </div>
                 
                 <div>
                   <label className="block text-lg sm:text-xl font-semibold text-gray-700 mb-3">
                     Departure Date
-                  </label>
+              </label>
                   <input
                     type="date"
                     value={formData.endDate}
-                    onChange={(e) => setFormData({ ...formData, endDate: e.target.value })}
+                    onChange={(e) => handleEndDateChange(e.target.value)}
                     className="w-full p-4 sm:p-5 lg:p-6 border-2 border-gray-300 rounded-2xl text-base sm:text-lg lg:text-xl font-medium text-gray-900 bg-white focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all duration-200 placeholder:text-gray-500"
                     placeholder="Select departure date"
-                    min={formData.startDate || new Date().toISOString().split('T')[0]}
+                    min={formData.startDate || getTodayString()}
+                    max={getMaxEndDate()}
                   />
+                  {dateErrors.endDate && (
+                    <p className="text-red-500 text-sm mt-2">{dateErrors.endDate}</p>
+                  )}
+                </div>
+              </div>
+
+              {/* Helpful hint about travel duration */}
+              <div className="mt-4 p-3 sm:p-4 bg-blue-50 border border-blue-200 rounded-xl">
+                <div className="flex items-center gap-2 text-blue-700">
+                  <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  <span className="text-sm sm:text-base font-medium">
+                    Travel planning is limited to 10 days maximum for optimal itinerary quality.
+                  </span>
                 </div>
               </div>
 
@@ -639,9 +734,23 @@ const MultiStepForm: React.FC<Props> = ({ onSubmit, isLoading }) => {
                     </div>
                   </div>
                   <div className="mt-3 text-center">
-                    <span className="text-sm sm:text-base text-gray-600">
-                      {Math.ceil((new Date(formData.endDate).getTime() - new Date(formData.startDate).getTime()) / (1000 * 60 * 60 * 24))} days
-                    </span>
+                    <div className="flex items-center justify-center gap-2">
+                      <span className="text-sm sm:text-base text-gray-600">
+                        {Math.ceil((new Date(formData.endDate).getTime() - new Date(formData.startDate).getTime()) / (1000 * 60 * 60 * 24))} days
+                      </span>
+                      <span className="text-xs text-gray-500">
+                        (max 10 days)
+                      </span>
+                    </div>
+                    {/* Progress bar showing days used vs limit */}
+                    <div className="mt-2 w-full bg-gray-200 rounded-full h-2">
+                      <div 
+                        className="bg-gradient-to-r from-blue-500 to-indigo-600 h-2 rounded-full transition-all duration-300"
+                        style={{ 
+                          width: `${Math.min(100, (Math.ceil((new Date(formData.endDate).getTime() - new Date(formData.startDate).getTime()) / (1000 * 60 * 60 * 24)) / 10) * 100)}%` 
+                        }}
+                      ></div>
+                    </div>
                   </div>
                 </div>
               )}
@@ -653,7 +762,7 @@ const MultiStepForm: React.FC<Props> = ({ onSubmit, isLoading }) => {
           <div className="w-full max-w-6xl mx-auto px-4">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
+                animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1 }}
               className="text-center mb-6 sm:mb-8 lg:mb-12"
             >
@@ -690,9 +799,9 @@ const MultiStepForm: React.FC<Props> = ({ onSubmit, isLoading }) => {
                     <h4 className="font-bold text-lg sm:text-xl lg:text-2xl mb-1 sm:mb-2">{option.label}</h4>
                     <p className="text-xs sm:text-sm opacity-80 mb-1 sm:mb-2 lg:mb-3">{option.desc}</p>
                     <div className="text-xs sm:text-sm font-semibold opacity-90">{option.price}</div>
-                  </div>
-                </motion.button>
-              ))}
+                </div>
+              </motion.button>
+            ))}
             </motion.div>
           </div>
         );
@@ -727,7 +836,7 @@ const MultiStepForm: React.FC<Props> = ({ onSubmit, isLoading }) => {
                 { value: "guesthouse", label: "Guesthouse", icon: <FaUser />, desc: "Local charm" },
                 { value: "camping", label: "Camping", icon: <FaLeaf />, desc: "Nature adventure" }
               ].map((option) => (
-                <motion.button
+              <motion.button
                   key={option.value}
                   variants={itemVariants}
                   className={optionButtonClasses(formData.accommodation === option.value)}
@@ -740,8 +849,8 @@ const MultiStepForm: React.FC<Props> = ({ onSubmit, isLoading }) => {
                     <h4 className="font-bold text-lg sm:text-xl lg:text-2xl mb-1 sm:mb-2">{option.label}</h4>
                     <p className="text-xs sm:text-sm opacity-80">{option.desc}</p>
                   </div>
-                </motion.button>
-              ))}
+              </motion.button>
+            ))}
             </motion.div>
           </div>
         );
@@ -750,7 +859,7 @@ const MultiStepForm: React.FC<Props> = ({ onSubmit, isLoading }) => {
           <div className="w-full max-w-6xl mx-auto px-4">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
+                animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1 }}
               className="text-center mb-6 sm:mb-8 lg:mb-12"
             >
@@ -787,8 +896,8 @@ const MultiStepForm: React.FC<Props> = ({ onSubmit, isLoading }) => {
                     <h4 className="font-bold text-lg sm:text-xl lg:text-2xl mb-1 sm:mb-2">{option.label}</h4>
                     <p className="text-xs sm:text-sm opacity-80">{option.desc}</p>
                   </div>
-                </motion.button>
-              ))}
+              </motion.button>
+            ))}
             </motion.div>
           </div>
         );
@@ -855,7 +964,7 @@ const MultiStepForm: React.FC<Props> = ({ onSubmit, isLoading }) => {
             <div className="hidden lg:flex items-center w-full">
               {steps.map((step, index) => (
                 <div key={step.id} className="flex items-center flex-1">
-                  <motion.div
+      <motion.div
                     initial={{ scale: 0 }}
                     animate={{ scale: 1 }}
                     transition={{ delay: index * 0.1 }}
@@ -882,7 +991,7 @@ const MultiStepForm: React.FC<Props> = ({ onSubmit, isLoading }) => {
                   )}
                 </div>
               ))}
-            </div>
+        </div>
 
             {/* Mobile Progress Steps */}
             <div className="lg:hidden flex items-center justify-center w-full">
@@ -960,14 +1069,14 @@ const MultiStepForm: React.FC<Props> = ({ onSubmit, isLoading }) => {
 
           <motion.button
             onClick={handleNext}
-            disabled={!isStepValid() || isLoading}
+            disabled={!canProceedToNextStep(currentStep) || isLoading}
             className={`flex items-center gap-2 sm:gap-3 px-8 sm:px-10 lg:px-12 py-3 sm:py-4 lg:py-5 rounded-2xl sm:rounded-3xl font-bold text-base sm:text-lg lg:text-xl transition-all duration-300 w-full sm:w-auto justify-center ${
-              !isStepValid() || isLoading
+              !canProceedToNextStep(currentStep) || isLoading
                 ? "bg-gray-100 text-gray-400 cursor-not-allowed"
                 : "bg-gradient-to-r from-blue-600 to-indigo-600 text-white hover:from-blue-700 hover:to-indigo-700 shadow-xl hover:shadow-2xl"
             }`}
-            whileHover={isStepValid() && !isLoading ? { scale: 1.02 } : {}}
-            whileTap={isStepValid() && !isLoading ? { scale: 0.98 } : {}}
+            whileHover={canProceedToNextStep(currentStep) && !isLoading ? { scale: 1.02 } : {}}
+            whileTap={canProceedToNextStep(currentStep) && !isLoading ? { scale: 0.98 } : {}}
           >
             {isLoading ? (
               <>
@@ -986,7 +1095,7 @@ const MultiStepForm: React.FC<Props> = ({ onSubmit, isLoading }) => {
               </>
             )}
           </motion.button>
-        </div>
+    </div>
       </div>
     </LazyMotion>
   );
