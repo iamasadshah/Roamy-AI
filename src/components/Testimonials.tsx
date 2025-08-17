@@ -65,7 +65,7 @@ const fadeInUp = {
 
 export default function Testimonials() {
   return (
-    <section className="py-16 md:py-24 lg:py-32 bg-gradient-to-b from-blue-50 to-white relative overflow-hidden">
+    <section className="py-16 md:py-24 lg:py-32 bg-gradient-to-b from-blue-50 to-white relative overflow-hidden" id="testimonials">
       {/* Simple static background - removed heavy animations */}
       <div className="absolute inset-0">
         <div className="absolute top-0 left-0 w-96 h-96 bg-blue-100 rounded-full mix-blend-multiply filter blur-3xl opacity-10"></div>

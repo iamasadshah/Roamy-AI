@@ -52,7 +52,6 @@ const DEFAULT_AVATAR =
   "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23ffffff'%3E%3Cpath d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z'/%3E%3C/svg%3E";
 
 const menuItems = [
-  { href: "/plan", label: "Plan Trip" },
   { href: "/#features", label: "Features" },
   { href: "/#how-it-works", label: "How It Works" },
   { href: "/#testimonials", label: "Testimonials" },
@@ -201,14 +200,14 @@ export default function Navbar() {
                         className="object-cover w-full h-full"
                       />
                     </div>
-                    <span className={`font-medium ${isScrolled || !isHome ? 'text-gray-700' : 'text-white'}`}>
+                    <span className={`font-medium ${isScrolled || !isHome ? 'text-gray-700' : 'text-indigo-600'}`}>
                       {user.user_metadata?.full_name || user.email?.split('@')[0]}
                     </span>
                     <motion.div
                       animate={{ rotate: isDropdownOpen ? 180 : 0 }}
                       transition={{ duration: 0.2 }}
                     >
-                      <FaChevronDown className={`text-xs transition-colors duration-200 ${isScrolled || !isHome ? 'text-gray-500' : 'text-white/80'}`} />
+                      <FaChevronDown className={`text-xs transition-colors duration-200 ${isScrolled || !isHome ? 'text-gray-500' : 'text-indigo-600'}`} />
                     </motion.div>
                   </button>
                   
