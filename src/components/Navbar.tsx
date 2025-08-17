@@ -214,7 +214,7 @@ export default function Navbar() {
                   
                   <AnimatePresence>
                     {isDropdownOpen && (
-                      <motion.div 
+                  <motion.div 
                         variants={dropdownVariants}
                         initial="closed"
                         animate="open"
@@ -229,14 +229,14 @@ export default function Navbar() {
                           Profile
                         </button>
                         <div className="border-t border-gray-100 my-1"></div>
-                        <button
-                          onClick={handleLogout}
+                    <button
+                      onClick={handleLogout}
                           className="w-full text-left px-4 py-3 text-sm text-gray-700 hover:bg-red-50 flex items-center transition-colors duration-200"
-                        >
+                    >
                           <FaSignOutAlt className="mr-3 text-red-500" />
-                          Sign out
-                        </button>
-                      </motion.div>
+                      Sign out
+                    </button>
+                  </motion.div>
                     )}
                   </AnimatePresence>
                 </div>
@@ -353,13 +353,13 @@ export default function Navbar() {
                         className="relative"
                       >
                         <div className="relative w-20 h-20 rounded-full overflow-hidden border-4 border-white shadow-xl">
-                          <Image
-                            src={user.user_metadata?.avatar_url || DEFAULT_AVATAR}
-                            alt="User Avatar"
-                            width={80}
-                            height={80}
-                            className="object-cover w-full h-full"
-                          />
+                        <Image
+                          src={user.user_metadata?.avatar_url || DEFAULT_AVATAR}
+                          alt="User Avatar"
+                          width={80}
+                          height={80}
+                          className="object-cover w-full h-full"
+                        />
                           <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent rounded-full"></div>
                         </div>
                       </motion.button>

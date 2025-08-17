@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback, useMemo } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Toaster, toast } from "react-hot-toast";
 import { motion, AnimatePresence, LazyMotion, domAnimation } from "framer-motion";
 import MultiStepForm from "@/components/MultiStepForm";
@@ -88,18 +88,6 @@ export default function PlanPage() {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, []);
 
-  // Memoized background elements for better performance
-  const backgroundElements = useMemo(() => 
-    Array.from({ length: 12 }, (_, i) => ({
-      id: i,
-      size: Math.random() * 300 + 200,
-      left: `${Math.random() * 100}%`,
-      top: `${Math.random() * 100}%`,
-      duration: Math.random() * 50 + 40,
-      delay: Math.random() * 20
-    })), []
-  );
-
   return (
     <LazyMotion features={domAnimation}>
       <main className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 relative overflow-hidden">
@@ -132,33 +120,12 @@ export default function PlanPage() {
           }}
         />
 
-        {/* Optimized Animated Background Elements */}
+        {/* Simple static background elements - removed heavy animations */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          {backgroundElements.map((element) => (
-            <motion.div
-              key={element.id}
-              className="absolute rounded-full bg-gradient-to-r from-blue-100/30 to-indigo-100/30"
-              style={{
-                width: element.size,
-                height: element.size,
-                left: element.left,
-                top: element.top,
-                filter: 'blur(80px)',
-              }}
-              animate={{
-                x: [0, Math.random() * 300 - 150],
-                y: [0, Math.random() * 300 - 150],
-                scale: [1, 1.1, 1],
-              }}
-              transition={{
-                duration: element.duration,
-                repeat: Infinity,
-                repeatType: 'reverse',
-                ease: 'easeInOut',
-                delay: element.delay,
-              }}
-            />
-          ))}
+          <div className="absolute top-0 right-0 w-96 h-96 bg-blue-100 rounded-full mix-blend-multiply filter blur-3xl opacity-10"></div>
+          <div className="absolute bottom-0 left-0 w-96 h-96 bg-indigo-100 rounded-full mix-blend-multiply filter blur-3xl opacity-10"></div>
+          <div className="absolute top-1/2 left-0 w-64 h-64 bg-purple-100 rounded-full mix-blend-multiply filter blur-3xl opacity-10"></div>
+          <div className="absolute top-1/3 right-1/4 w-80 h-80 bg-green-100 rounded-full mix-blend-multiply filter blur-3xl opacity-10"></div>
         </div>
 
         {/* Enhanced Header with Smooth Animations */}

@@ -620,7 +620,7 @@ const MultiStepForm: React.FC<Props> = ({ onSubmit, isLoading }) => {
 
   const optionButtonClasses = useCallback((isSelected: boolean) => {
     return `relative p-6 sm:p-8 rounded-3xl border-2 transition-all duration-300 text-center group ${
-      isSelected
+        isSelected
         ? "bg-gradient-to-br from-blue-500 to-indigo-600 border-blue-500 text-white shadow-xl scale-105"
         : "bg-white/90 backdrop-blur-sm border-gray-200 text-gray-700 hover:bg-gradient-to-br hover:from-blue-50 hover:to-indigo-50 hover:border-blue-300 hover:shadow-lg"
     }`;
@@ -651,10 +651,10 @@ const MultiStepForm: React.FC<Props> = ({ onSubmit, isLoading }) => {
               animate="animate"
             >
               <motion.div variants={itemVariants}>
-                <DestinationInput
-                  value={formData.destination}
+            <DestinationInput
+              value={formData.destination}
                   onChange={(value) => setFormData({ ...formData, destination: value })}
-                />
+            />
               </motion.div>
             </motion.div>
           </div>
@@ -670,7 +670,7 @@ const MultiStepForm: React.FC<Props> = ({ onSubmit, isLoading }) => {
             >
               <div className="flex items-center justify-center gap-4 mb-6">
                 <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl flex items-center justify-center shadow-lg">
-                  <Calendar className="h-8 w-8 text-white" />
+                  <Calendar className="h-8 w-8 text-gray-white" />
                 </div>
                 <h3 className="text-3xl sm:text-4xl font-bold text-gray-800">
                   When are you planning to travel?
@@ -682,7 +682,7 @@ const MultiStepForm: React.FC<Props> = ({ onSubmit, isLoading }) => {
             </motion.div>
             
             <motion.div
-              className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8"
+              className="text-gray-600 grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8"
               variants={staggerContainer}
               initial="initial"
               animate="animate"
@@ -767,7 +767,7 @@ const MultiStepForm: React.FC<Props> = ({ onSubmit, isLoading }) => {
           <div className="w-full max-w-6xl mx-auto">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
+                animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1 }}
               className="text-center mb-8 sm:mb-12"
             >
@@ -804,9 +804,9 @@ const MultiStepForm: React.FC<Props> = ({ onSubmit, isLoading }) => {
                     <h4 className="font-bold text-xl sm:text-2xl mb-2">{option.label}</h4>
                     <p className="text-xs sm:text-sm opacity-80 mb-2 sm:mb-3">{option.desc}</p>
                     <div className="text-xs sm:text-sm font-semibold opacity-90">{option.price}</div>
-                  </div>
-                </motion.button>
-              ))}
+                </div>
+              </motion.button>
+            ))}
             </motion.div>
           </div>
         );
@@ -841,7 +841,7 @@ const MultiStepForm: React.FC<Props> = ({ onSubmit, isLoading }) => {
                 { value: "guesthouse", label: "Guesthouse", icon: <FaUser />, desc: "Local charm" },
                 { value: "camping", label: "Camping", icon: <FaLeaf />, desc: "Nature adventure" }
               ].map((option) => (
-                <motion.button
+              <motion.button
                   key={option.value}
                   variants={itemVariants}
                   className={optionButtonClasses(formData.accommodation === option.value)}
@@ -854,8 +854,8 @@ const MultiStepForm: React.FC<Props> = ({ onSubmit, isLoading }) => {
                     <h4 className="font-bold text-xl sm:text-2xl mb-2">{option.label}</h4>
                     <p className="text-xs sm:text-sm opacity-80">{option.desc}</p>
                   </div>
-                </motion.button>
-              ))}
+              </motion.button>
+            ))}
             </motion.div>
           </div>
         );
@@ -864,7 +864,7 @@ const MultiStepForm: React.FC<Props> = ({ onSubmit, isLoading }) => {
           <div className="w-full max-w-6xl mx-auto">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
+                animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1 }}
               className="text-center mb-8 sm:mb-12"
             >
@@ -901,8 +901,8 @@ const MultiStepForm: React.FC<Props> = ({ onSubmit, isLoading }) => {
                     <h4 className="font-bold text-2xl mb-2">{option.label}</h4>
                     <p className="text-sm opacity-80">{option.desc}</p>
                   </div>
-                </motion.button>
-              ))}
+              </motion.button>
+            ))}
             </motion.div>
           </div>
         );
@@ -969,7 +969,7 @@ const MultiStepForm: React.FC<Props> = ({ onSubmit, isLoading }) => {
             <div className="hidden md:flex items-center w-full">
               {steps.map((step, index) => (
                 <div key={step.id} className="flex items-center flex-1">
-                  <motion.div
+      <motion.div
                     initial={{ scale: 0 }}
                     animate={{ scale: 1 }}
                     transition={{ delay: index * 0.1 }}
@@ -996,8 +996,8 @@ const MultiStepForm: React.FC<Props> = ({ onSubmit, isLoading }) => {
                   )}
                 </div>
               ))}
-            </div>
-            
+        </div>
+
             {/* Mobile Progress Steps */}
             <div className="md:hidden flex items-center justify-center w-full">
               <div className="flex items-center gap-4">
@@ -1049,8 +1049,8 @@ const MultiStepForm: React.FC<Props> = ({ onSubmit, isLoading }) => {
               animate="animate"
               exit="exit"
               className="w-full"
-            >
-              {renderStepContent()}
+              >
+                {renderStepContent()}
             </motion.div>
           </AnimatePresence>
         </div>
@@ -1100,7 +1100,7 @@ const MultiStepForm: React.FC<Props> = ({ onSubmit, isLoading }) => {
               </>
             )}
           </motion.button>
-        </div>
+    </div>
       </div>
     </LazyMotion>
   );

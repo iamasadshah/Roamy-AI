@@ -494,7 +494,7 @@ function ProfileContent({ user }: { user: User | null }) {
         </p>
           <p className="text-xs text-gray-500">
             Supported formats: JPG, PNG, GIF (Max 5MB)
-          </p>
+        </p>
         </div>
       </div>
 
@@ -770,7 +770,7 @@ function TripsContent({ trips: initialTrips }: { trips: Trip[] }) {
                 <div>
                   <h4 className="text-2xl font-bold text-gray-800">
                     {day.day_title || `Day ${day.day}`}
-                  </h4>
+              </h4>
                   {day.day_description && (
                     <p className="text-gray-600 mt-1">{day.day_description}</p>
                   )}
@@ -832,7 +832,7 @@ function TripsContent({ trips: initialTrips }: { trips: Trip[] }) {
                           <span className="text-lg">🍽️</span>
                           <h6 className="font-semibold text-gray-800">{meal.restaurant_name}</h6>
                           <span className="text-sm text-gray-500">{meal.time}</span>
-                        </div>
+            </div>
                         <p className="text-gray-600 text-sm">{meal.cuisine_type}</p>
                       </div>
                     ))}

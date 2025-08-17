@@ -5,32 +5,10 @@ import { FaPaperPlane, FaGithub, FaArrowRight } from "react-icons/fa";
 export default function CallToAction() {
   return (
     <section className="relative py-20 overflow-hidden bg-gradient-to-br from-blue-50 to-indigo-50">
-      {/* Decorative elements */}
-      <div className="absolute inset-0 overflow-hidden">
-        {[...Array(5)].map((_, i) => (
-          <motion.div
-            key={i}
-            className="absolute rounded-full bg-gradient-to-r from-blue-100 to-indigo-100"
-            style={{
-              width: `${Math.random() * 300 + 100}px`,
-              height: `${Math.random() * 300 + 100}px`,
-              left: `${Math.random() * 100}%`,
-              top: `${Math.random() * 100}%`,
-              opacity: 0.3,
-              filter: 'blur(40px)'
-            }}
-            animate={{
-              x: [0, Math.random() * 100 - 50],
-              y: [0, Math.random() * 100 - 50],
-            }}
-            transition={{
-              duration: Math.random() * 20 + 20,
-              repeat: Infinity,
-              repeatType: 'reverse',
-              ease: 'easeInOut',
-            }}
-          />
-        ))}
+      {/* Simple static background - removed heavy animations */}
+      <div className="absolute inset-0">
+        <div className="absolute top-0 right-0 w-96 h-96 bg-blue-100 rounded-full mix-blend-multiply filter blur-3xl opacity-10"></div>
+        <div className="absolute bottom-0 left-0 w-96 h-96 bg-indigo-100 rounded-full mix-blend-multiply filter blur-3xl opacity-10"></div>
       </div>
 
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
@@ -38,7 +16,7 @@ export default function CallToAction() {
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+          transition={{ duration: 0.5, ease: "easeOut" }}
           className="bg-white rounded-2xl p-8 md:p-12 shadow-xl relative overflow-hidden"
         >
           {/* Decorative accent */}
@@ -49,7 +27,7 @@ export default function CallToAction() {
               className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 mb-6"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2, duration: 0.6 }}
+              transition={{ delay: 0.1, duration: 0.4 }}
             >
               <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-indigo-600">
                 Ready to Plan Your Perfect Trip?
@@ -60,7 +38,7 @@ export default function CallToAction() {
               className="text-lg md:text-xl text-gray-600 mb-10 max-w-2xl mx-auto leading-relaxed"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.3, duration: 0.6 }}
+              transition={{ delay: 0.2, duration: 0.4 }}
             >
               Let our AI handle all the details while you focus on the excitement of your upcoming journey. Get personalized recommendations tailored just for you.
             </motion.p>
@@ -69,20 +47,18 @@ export default function CallToAction() {
               className="flex flex-col sm:flex-row justify-center gap-4 mb-8"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.4, duration: 0.6 }}
+              transition={{ delay: 0.3, duration: 0.4 }}
             >
               <Link href="/plan">
-                <motion.button
-                  whileHover={{ scale: 1.03, boxShadow: '0 10px 25px -5px rgba(59, 130, 246, 0.3)' }}
-                  whileTap={{ scale: 0.98 }}
-                  className="group relative flex items-center justify-center gap-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold rounded-xl px-8 py-4 text-lg transition-all duration-300 overflow-hidden"
+                <button
+                  className="group relative flex items-center justify-center gap-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold rounded-xl px-8 py-4 text-lg transition-all duration-300 overflow-hidden transform hover:scale-105 hover:shadow-lg"
                 >
                   <span className="relative z-10 flex items-center">
                     Get My Free AI Itinerary
                     <FaPaperPlane className="ml-2 group-hover:translate-x-1 transition-transform duration-300" />
                   </span>
                   <span className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                </motion.button>
+                </button>
               </Link>
 
               <Link
@@ -91,15 +67,13 @@ export default function CallToAction() {
                 rel="noopener noreferrer"
                 className="group"
               >
-                <motion.div
-                  whileHover={{ scale: 1.03, boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.1)' }}
-                  whileTap={{ scale: 0.98 }}
-                  className="flex items-center justify-center gap-2 bg-white text-gray-800 font-semibold rounded-xl px-8 py-4 border-2 border-gray-200 hover:border-blue-500 hover:text-blue-600 transition-all duration-300"
+                <div
+                  className="flex items-center justify-center gap-2 bg-white text-gray-800 font-semibold rounded-xl px-8 py-4 border-2 border-gray-200 hover:border-blue-500 hover:text-blue-600 transition-all duration-300 transform hover:scale-105 hover:shadow-lg"
                 >
                   <FaGithub className="text-lg" />
                   <span>View Documentation</span>
                   <FaArrowRight className="ml-1 opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300" />
-                </motion.div>
+                </div>
               </Link>
             </motion.div>
 
@@ -107,7 +81,7 @@ export default function CallToAction() {
               className="text-sm text-gray-500 font-medium flex items-center justify-center gap-2"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.5, duration: 0.6 }}
+              transition={{ delay: 0.4, duration: 0.4 }}
             >
               <span className="flex h-2 w-2 relative">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>

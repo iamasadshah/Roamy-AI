@@ -64,25 +64,26 @@ const features = [
   }
 ];
 
+// Simplified animation variants for better performance
 const containerVariants: Variants = {
   hidden: { opacity: 0 },
   visible: {
     opacity: 1,
     transition: {
       staggerChildren: 0.1,
-      delayChildren: 0.2,
+      delayChildren: 0.1,
     },
   },
 };
 
 const itemVariants: Variants = {
-  hidden: { opacity: 0, y: 30 },
+  hidden: { opacity: 0, y: 20 },
   visible: {
     opacity: 1,
     y: 0,
     transition: {
-      duration: 0.6,
-      ease: [0.25, 0.1, 0.25, 1.0]
+      duration: 0.4,
+      ease: "easeOut"
     },
   },
 };
@@ -93,40 +94,48 @@ const fadeInUp: Variants = {
     opacity: 1,
     y: 0,
     transition: {
-      duration: 0.8,
-      ease: [0.25, 0.1, 0.25, 1.0]
+      duration: 0.4,
+      ease: "easeOut"
     },
   },
 };
 
 export default function Features() {
   return (
-    <section className="py-20 md:py-28 bg-white">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section id="features" className="py-16 md:py-24 lg:py-32 bg-white relative overflow-hidden">
+      {/* Simple static background */}
+      <div className="absolute inset-0">
+        <div className="absolute top-0 right-0 w-96 h-96 bg-blue-50 rounded-full mix-blend-multiply filter blur-3xl opacity-30"></div>
+        <div className="absolute bottom-0 left-0 w-96 h-96 bg-indigo-50 rounded-full mix-blend-multiply filter blur-3xl opacity-30"></div>
+      </div>
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
         <motion.div
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, margin: "-100px 0px" }}
-          className="text-center max-w-3xl mx-auto mb-16"
+          className="text-center max-w-4xl mx-auto mb-16 md:mb-20"
         >
           <motion.span 
             variants={fadeInUp}
-            className="inline-block px-4 py-2 rounded-full bg-blue-100 text-blue-800 text-sm font-medium mb-4"
+            className="inline-block px-6 py-3 rounded-full bg-gradient-to-r from-blue-100 to-indigo-100 text-blue-800 text-sm font-semibold mb-6 shadow-sm border border-blue-200/50"
           >
             Powerful Features
           </motion.span>
           <motion.h2 
             variants={fadeInUp}
-            className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 mb-6"
+            className="text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold text-gray-900 mb-6 leading-tight"
           >
-            Everything You Need for Perfect Travel
+            Everything You Need for{" "}
+            <span className="bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 bg-clip-text text-transparent">
+              Perfect Travel
+            </span>
           </motion.h2>
           <motion.p 
             variants={fadeInUp}
-            className="text-lg text-gray-600"
+            className="text-lg md:text-xl text-gray-600 leading-relaxed max-w-3xl mx-auto"
           >
-            Discover how Roamy AI transforms your travel planning experience with cutting-edge features
-            designed to make every trip unforgettable.
+            Discover the advanced features that make Roamy AI the ultimate travel planning companion.
           </motion.p>
         </motion.div>
 
@@ -135,47 +144,51 @@ export default function Features() {
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, margin: "-100px 0px" }}
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8"
         >
-                        {features.map((feature) => (
+          {features.map((feature, index) => (
             <motion.div
-              key={feature.title}
+              key={index}
               variants={itemVariants}
-              className="h-full"
-              whileHover={{ y: -5 }}
-              transition={{ type: 'spring', stiffness: 300 }}
+              className="group"
             >
-              <Card className="h-full bg-gradient-to-br from-white to-gray-50 border border-gray-100 shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden group">
-                <CardContent className="p-6">
-                  <div className={`w-12 h-12 rounded-lg mb-6 flex items-center justify-center bg-gradient-to-br ${feature.color} group-hover:scale-110 transition-transform duration-300`}>
-                    {feature.icon}
+              <Card className="h-full p-6 bg-white/80 backdrop-blur-sm border border-gray-100 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-2">
+                <CardContent className="p-0">
+                  <div className="text-center">
+                    <div className={`inline-flex p-4 rounded-full bg-gradient-to-r ${feature.color} mb-4 group-hover:scale-110 transition-transform duration-300`}>
+                      {feature.icon}
+                    </div>
+                    <h3 className="text-lg font-bold text-gray-900 mb-3">{feature.title}</h3>
+                    <p className="text-gray-600 text-sm leading-relaxed">{feature.description}</p>
                   </div>
-                  <h3 className="text-lg font-semibold text-gray-900 mb-2 group-hover:text-blue-600 transition-colors">
-                    {feature.title}
-                  </h3>
-                  <p className="text-gray-600 text-sm">
-                    {feature.description}
-                  </p>
                 </CardContent>
               </Card>
             </motion.div>
           ))}
         </motion.div>
 
-        <motion.div 
-          className="mt-16 text-center"
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-50px 0px" }}
-          transition={{ delay: 0.3 }}
+        <motion.div
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-100px 0px" }}
+          className="text-center mt-16"
         >
-          <div className="inline-flex items-center px-6 py-3 rounded-full bg-blue-50 text-blue-700 text-sm font-medium">
-            <Link href="/plan" className="flex items-center">
-              <span>And many more features to discover</span>
-              <FaArrowRight className="ml-2 h-3 w-3" />
+          <motion.div
+            variants={fadeInUp}
+            className="flex flex-col sm:flex-row justify-center gap-4"
+          >
+            <Link href="/plan">
+              <button className="px-8 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-semibold rounded-xl hover:from-blue-700 hover:to-indigo-700 transition-all duration-300 transform hover:-translate-y-1 hover:shadow-lg">
+                Start Planning Now
+                <FaArrowRight className="inline-block ml-2" />
+              </button>
             </Link>
-            
-          </div>
+            <Link href="#how-it-works">
+              <button className="px-8 py-4 border-2 border-gray-200 text-gray-700 font-semibold rounded-xl hover:border-blue-500 hover:text-blue-600 transition-all duration-300">
+                Learn More
+              </button>
+            </Link>
+          </motion.div>
         </motion.div>
       </div>
     </section>

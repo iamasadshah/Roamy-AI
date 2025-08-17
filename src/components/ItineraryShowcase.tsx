@@ -60,14 +60,15 @@ const sampleItineraries = [
   },
 ];
 
+// Simplified animation variants for better performance
 const fadeInUp = {
-  hidden: { opacity: 0, y: 40 },
+  hidden: { opacity: 0, y: 20 },
   visible: {
     opacity: 1,
     y: 0,
     transition: {
-      duration: 0.8,
-      ease: [0.25, 0.1, 0.25, 1.0]
+      duration: 0.4,
+      ease: "easeOut"
     },
   },
 };
@@ -77,96 +78,30 @@ const staggerContainer = {
   visible: {
     opacity: 1,
     transition: {
-      staggerChildren: 0.15,
-      delayChildren: 0.3,
+      staggerChildren: 0.1,
+      delayChildren: 0.1,
     },
   },
 };
 
-// Enhanced slide animations with better easing and smoother transitions
-const slideVariants = {
-  enter: (direction: number) => ({
-    x: direction > 0 ? 1000 : -1000,
-    opacity: 0,
-    scale: 0.8,
-    rotateY: direction > 0 ? 15 : -15,
-  }),
-  center: {
-    zIndex: 1,
-    x: 0,
-    opacity: 1,
-    scale: 1,
-    rotateY: 0,
-    transition: {
-      duration: 0.8,
-      ease: [0.25, 0.1, 0.25, 1.0],
-      opacity: { duration: 0.6 },
-      scale: { duration: 0.8, ease: "easeOut" },
-      rotateY: { duration: 0.8, ease: "easeOut" }
-    }
-  },
-  exit: (direction: number) => ({
-    zIndex: 0,
-    x: direction < 0 ? 1000 : -1000,
-    opacity: 0,
-    scale: 0.8,
-    rotateY: direction < 0 ? 15 : -15,
-    transition: {
-      duration: 0.6,
-      ease: [0.25, 0.1, 0.25, 1.0],
-      opacity: { duration: 0.4 },
-      scale: { duration: 0.6, ease: "easeIn" },
-      rotateY: { duration: 0.6, ease: "easeIn" }
-    }
-  })
-};
-
-const cardHoverVariants = {
-  hover: {
-    y: -5,
-    scale: 1.02,
-    transition: {
-      duration: 0.3,
-      ease: "easeOut"
-    }
-  }
-};
-
-// Enhanced button animations
-const buttonVariants = {
-  hover: {
-    scale: 1.1,
-    backgroundColor: "#3b82f6",
-    transition: {
-      duration: 0.2,
-      ease: "easeOut"
-    }
-  },
-  tap: {
-    scale: 0.95,
-    transition: {
-      duration: 0.1
-    }
-  }
+// Simple fade transition for carousel
+const fadeTransition = {
+  initial: { opacity: 0 },
+  animate: { opacity: 1 },
+  exit: { opacity: 0 },
+  transition: { duration: 0.3 }
 };
 
 export default function ItineraryShowcase() {
   const [[currentIndex, direction], setCurrentIndex] = useState([0, 0]);
   const [isHovered, setIsHovered] = useState(false);
-  const [isTransitioning, setIsTransitioning] = useState(false);
   const currentItinerary = sampleItineraries[currentIndex];
 
   const navigate = (newDirection: number) => {
-    if (isTransitioning) return; // Prevent rapid clicking
-    
-    setIsTransitioning(true);
     setCurrentIndex(([prevIndex]) => {
       const newIndex = (prevIndex + newDirection + sampleItineraries.length) % sampleItineraries.length;
       return [newIndex, newDirection];
     });
-    
-    // Reset transition flag after animation completes
-    setTimeout(() => setIsTransitioning(false), 800);
   };
 
   const nextItinerary = () => navigate(1);
@@ -174,10 +109,10 @@ export default function ItineraryShowcase() {
 
   return (
     <section className="py-16 md:py-24 lg:py-32 bg-gradient-to-b from-white to-blue-50 relative overflow-hidden">
-      {/* Enhanced Background Elements */}
+      {/* Simple static background - removed heavy animations */}
       <div className="absolute inset-0">
-        <div className="absolute top-0 right-0 w-96 h-96 bg-blue-100 rounded-full mix-blend-multiply filter blur-3xl opacity-10 animate-blob"></div>
-        <div className="absolute bottom-0 left-0 w-96 h-96 bg-indigo-100 rounded-full mix-blend-multiply filter blur-3xl opacity-10 animate-blob animation-delay-2000"></div>
+        <div className="absolute top-0 right-0 w-96 h-96 bg-blue-100 rounded-full mix-blend-multiply filter blur-3xl opacity-10"></div>
+        <div className="absolute bottom-0 left-0 w-96 h-96 bg-indigo-100 rounded-full mix-blend-multiply filter blur-3xl opacity-10"></div>
       </div>
       
       {/* Subtle World Map Background */}
@@ -220,27 +155,15 @@ export default function ItineraryShowcase() {
           onMouseEnter={() => setIsHovered(true)}
           onMouseLeave={() => setIsHovered(false)}
         >
-          {/* Enhanced Carousel Container with 3D perspective */}
-          <div className="relative perspective-1000">
-            <AnimatePresence custom={direction} initial={false} mode="wait">
+          {/* Simplified Carousel Container */}
+          <div className="relative">
+            <AnimatePresence mode="wait">
               <motion.div
                 key={currentItinerary.id}
-                custom={direction}
-                variants={slideVariants}
-                initial="enter"
-                animate="center"
-                exit="exit"
+                {...fadeTransition}
                 className="w-full"
-                style={{
-                  transformStyle: "preserve-3d",
-                  backfaceVisibility: "hidden"
-                }}
               >
-                <motion.div
-                  variants={cardHoverVariants}
-                  whileHover="hover"
-                  className="w-full"
-                >
+                <div className="w-full">
                   <Card className="overflow-hidden shadow-2xl border-0 bg-white/90 backdrop-blur-sm">
                     <div className="grid lg:grid-cols-2 gap-0">
                       <div className="relative h-80 lg:h-auto min-h-[400px]">
@@ -312,102 +235,58 @@ export default function ItineraryShowcase() {
                         
                         <div className="flex flex-wrap gap-2 mb-8">
                           {currentItinerary.tags.map((tag, i) => (
-                            <motion.span 
+                            <span 
                               key={i} 
                               className="bg-gray-100 text-gray-600 text-xs md:text-sm px-3 py-2 rounded-full border border-gray-200 hover:bg-blue-50 hover:border-blue-200 transition-all duration-300"
-                              whileHover={{ scale: 1.05 }}
                             >
                               {tag}
-                            </motion.span>
+                            </span>
                           ))}
                         </div>
                         
-                        <motion.button 
+                        <button 
                           className="w-full bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 hover:from-blue-700 hover:via-indigo-700 hover:to-purple-700 text-white font-semibold py-4 px-6 rounded-xl transition-all duration-300 transform hover:scale-[1.02] shadow-lg hover:shadow-xl active:scale-95"
-                          whileHover={{ y: -2 }}
-                          whileTap={{ scale: 0.98 }}
                         >
                           Customize This Itinerary
-                        </motion.button>
+                        </button>
                       </div>
                     </div>
                   </Card>
-                </motion.div>
+                </div>
               </motion.div>
             </AnimatePresence>
           </div>
 
-          {/* Enhanced Navigation Buttons */}
-          <motion.button
+          {/* Simplified Navigation Buttons */}
+          <button
             onClick={prevItinerary}
-            disabled={isTransitioning}
-            className={`absolute left-4 top-1/2 -translate-y-1/2 z-20 bg-white/90 backdrop-blur-sm text-gray-800 p-4 rounded-full shadow-xl hover:bg-white transition-all duration-300 transform hover:scale-110 border border-gray-200/50 disabled:opacity-50 disabled:cursor-not-allowed ${isHovered ? 'opacity-100' : 'opacity-0 lg:opacity-100 lg:-translate-x-4'}`}
+            className={`absolute left-4 top-1/2 -translate-y-1/2 z-20 bg-white/90 backdrop-blur-sm text-gray-800 p-4 rounded-full shadow-xl hover:bg-white transition-all duration-300 transform hover:scale-110 border border-gray-200/50 ${isHovered ? 'opacity-100' : 'opacity-0 lg:opacity-100 lg:-translate-x-4'}`}
             aria-label="Previous itinerary"
-            variants={buttonVariants}
-            whileHover="hover"
-            whileTap="tap"
           >
             <FaChevronLeft className="w-5 h-5" />
-          </motion.button>
+          </button>
           
-          <motion.button
+          <button
             onClick={nextItinerary}
-            disabled={isTransitioning}
-            className={`absolute right-4 top-1/2 -translate-y-1/2 z-20 bg-white/90 backdrop-blur-sm text-gray-800 p-4 rounded-full shadow-xl hover:bg-white transition-all duration-300 transform hover:scale-110 border border-gray-200/50 disabled:opacity-50 disabled:cursor-not-allowed ${isHovered ? 'opacity-100' : 'opacity-0 lg:opacity-100 lg:translate-x-4'}`}
+            className={`absolute right-4 top-1/2 -translate-y-1/2 z-20 bg-white/90 backdrop-blur-sm text-gray-800 p-4 rounded-full shadow-xl hover:bg-white transition-all duration-300 transform hover:scale-110 border border-gray-200/50 ${isHovered ? 'opacity-100' : 'opacity-0 lg:opacity-100 lg:translate-x-4'}`}
             aria-label="Next itinerary"
-            variants={buttonVariants}
-            whileHover="hover"
-            whileTap="tap"
           >
             <FaChevronRight className="w-5 h-5" />
-          </motion.button>
+          </button>
           
-          {/* Enhanced Dots Indicator */}
+          {/* Simplified Dots Indicator */}
           <div className="flex justify-center mt-8 space-x-3">
             {sampleItineraries.map((_, i) => (
-              <motion.button
+              <button
                 key={i}
-                onClick={() => {
-                  if (!isTransitioning) {
-                    setCurrentIndex([i, i > currentIndex ? 1 : -1]);
-                  }
-                }}
-                disabled={isTransitioning}
-                className={`w-3 h-3 rounded-full transition-all duration-300 disabled:cursor-not-allowed ${i === currentIndex ? 'bg-gradient-to-r from-blue-600 to-indigo-600 w-8 shadow-lg' : 'bg-gray-300 hover:bg-gray-400'}`}
+                onClick={() => setCurrentIndex([i, i > currentIndex ? 1 : -1])}
+                className={`w-3 h-3 rounded-full transition-all duration-300 ${i === currentIndex ? 'bg-gradient-to-r from-blue-600 to-indigo-600 w-8 shadow-lg' : 'bg-gray-300 hover:bg-gray-400'}`}
                 aria-label={`Go to slide ${i + 1}`}
-                whileHover={{ scale: 1.2 }}
-                whileTap={{ scale: 0.9 }}
               />
             ))}
           </div>
         </div>
       </div>
-
-      <style jsx>{`
-        @keyframes blob {
-          0% {
-            transform: translate(0px, 0px) scale(1);
-          }
-          33% {
-            transform: translate(30px, -50px) scale(1.1);
-          }
-          66% {
-            transform: translate(-20px, 20px) scale(0.9);
-          }
-          100% {
-            transform: translate(0px, 0px) scale(1);
-          }
-        }
-        .animate-blob {
-          animation: blob 7s infinite;
-        }
-        .animation-delay-2000 {
-          animation-delay: 2s;
-        }
-        .perspective-1000 {
-          perspective: 1000px;
-        }
-      `}</style>
     </section>
   );
 }

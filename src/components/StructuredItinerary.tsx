@@ -78,7 +78,7 @@ const StructuredItinerary: React.FC<Props> = ({ itinerary }) => {
           <BookOpen className="h-16 w-16 text-gray-400" />
           <h3 className="text-xl font-semibold text-gray-600">No itinerary data available</h3>
           <p className="text-gray-500">Please generate a new itinerary to see detailed information.</p>
-        </div>
+      </div>
       </motion.div>
     );
   }
@@ -133,7 +133,7 @@ const StructuredItinerary: React.FC<Props> = ({ itinerary }) => {
                   </span>
                 ))}
               </div>
-            </div>
+          </div>
           )}
 
           {activity.tips && (
@@ -143,7 +143,7 @@ const StructuredItinerary: React.FC<Props> = ({ itinerary }) => {
                 Pro Tip
               </h5>
               <p className="text-sm text-blue-700">{activity.tips}</p>
-            </div>
+          </div>
           )}
 
           {activity.booking_info && (
@@ -153,16 +153,16 @@ const StructuredItinerary: React.FC<Props> = ({ itinerary }) => {
                 Booking Information
               </h5>
               <p className="text-sm text-orange-700">{activity.booking_info}</p>
-            </div>
+          </div>
           )}
+          </div>
         </div>
-      </div>
     </motion.div>
   );
 
   const renderMeal = (meal: Meal, index: number) => (
-    <motion.div
-      key={index}
+              <motion.div
+                key={index}
       variants={itemVariants}
       className="bg-gradient-to-br from-orange-50 to-red-50 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-orange-200/30 hover:shadow-xl transition-all duration-300"
     >
@@ -280,38 +280,38 @@ const StructuredItinerary: React.FC<Props> = ({ itinerary }) => {
       {/* Day Content */}
       <div className="p-6 space-y-8">
         {/* Morning Activities */}
-        {day.morning && day.morning.length > 0 && (
-          <div>
+                  {day.morning && day.morning.length > 0 && (
+                    <div>
             <h4 className="text-lg font-bold text-gray-800 mb-4 flex items-center gap-3">
               <div className="w-8 h-8 bg-gradient-to-br from-yellow-100 to-orange-200 rounded-lg flex items-center justify-center">
                 <Sun className="h-5 w-5 text-yellow-600" />
               </div>
               Morning Activities
-            </h4>
+                      </h4>
             <div className="space-y-4">
               {day.morning.map((activity: Activity, index: number) => renderActivity(activity, index))}
             </div>
-          </div>
-        )}
+                    </div>
+                  )}
 
         {/* Afternoon Activities */}
-        {day.afternoon && day.afternoon.length > 0 && (
-          <div>
+                  {day.afternoon && day.afternoon.length > 0 && (
+                    <div>
             <h4 className="text-lg font-bold text-gray-800 mb-4 flex items-center gap-3">
               <div className="w-8 h-8 bg-gradient-to-br from-orange-100 to-red-200 rounded-lg flex items-center justify-center">
                 <Sun className="h-5 w-5 text-orange-600" />
               </div>
               Afternoon Activities
-            </h4>
+                      </h4>
             <div className="space-y-4">
               {day.afternoon.map((activity: Activity, index: number) => renderActivity(activity, index))}
             </div>
-          </div>
-        )}
+                    </div>
+                  )}
 
         {/* Evening Activities */}
-        {day.evening && day.evening.length > 0 && (
-          <div>
+                  {day.evening && day.evening.length > 0 && (
+                    <div>
             <h4 className="text-lg font-bold text-gray-800 mb-4 flex items-center gap-3">
               <div className="w-8 h-8 bg-gradient-to-br from-purple-100 to-indigo-200 rounded-lg flex items-center justify-center">
                 <Moon className="h-5 w-5 text-purple-600" />
@@ -332,14 +332,14 @@ const StructuredItinerary: React.FC<Props> = ({ itinerary }) => {
                 <Coffee className="h-5 w-5 text-green-600" />
               </div>
               Dining Experiences
-            </h4>
+                      </h4>
             <div className="space-y-4">
               {day.meals.map((meal: Meal, index: number) => renderMeal(meal, index))}
             </div>
-          </div>
-        )}
-      </div>
-    </motion.div>
+                    </div>
+                  )}
+                </div>
+              </motion.div>
   );
 
   const renderInfoSection = (title: string, items: string[], icon: React.ReactNode, color: string) => (
@@ -350,17 +350,17 @@ const StructuredItinerary: React.FC<Props> = ({ itinerary }) => {
       <h3 className="text-lg font-bold text-gray-800 mb-4 flex items-center gap-3">
         <div className={`w-8 h-8 bg-gradient-to-br from-${color}-100 to-${color}-200 rounded-lg flex items-center justify-center`}>
           {icon}
-        </div>
+              </div>
         {title}
-      </h3>
+                    </h3>
       <ul className="space-y-2">
         {items.map((item, index) => (
           <li key={index} className="flex items-start gap-3 text-gray-600">
             <div className={`w-2 h-2 bg-${color}-500 rounded-full mt-2 flex-shrink-0`}></div>
             <span className="leading-relaxed">{item}</span>
-          </li>
-        ))}
-      </ul>
+                        </li>
+                      ))}
+                    </ul>
     </motion.div>
   );
 
@@ -430,7 +430,7 @@ const StructuredItinerary: React.FC<Props> = ({ itinerary }) => {
               </div>
               <p className="text-lg font-bold text-gray-800">{itinerary.trip_overview.accommodation}</p>
             </div>
-          </div>
+                  </div>
         </motion.div>
 
         {/* Daily Itinerary */}
@@ -451,7 +451,7 @@ const StructuredItinerary: React.FC<Props> = ({ itinerary }) => {
           >
             {itinerary.itinerary.map((day, index) => renderDayItinerary(day, index))}
           </motion.div>
-        </div>
+            </div>
 
         {/* Additional Information */}
         <motion.div
@@ -473,16 +473,16 @@ const StructuredItinerary: React.FC<Props> = ({ itinerary }) => {
                 <h3 className="text-lg font-bold text-gray-800 mb-4 flex items-center gap-3">
                   <div className="w-8 h-8 bg-gradient-to-br from-blue-100 to-blue-200 rounded-lg flex items-center justify-center">
                     <Sun className="h-5 w-5 text-blue-600" />
-                  </div>
+                </div>
                   Weather Forecast
-                </h3>
+                    </h3>
                 <p className="text-gray-600 leading-relaxed">{itinerary.additional_info.weather_forecast}</p>
               </motion.div>
 
               {itinerary.additional_info.packing_tips && (
                 renderInfoSection("Packing Tips", itinerary.additional_info.packing_tips, <Shield className="h-5 w-5 text-blue-600" />, "blue")
               )}
-            </div>
+                  </div>
 
             {/* Transportation & Emergency */}
             <div className="space-y-6">
@@ -499,7 +499,7 @@ const StructuredItinerary: React.FC<Props> = ({ itinerary }) => {
                     <AlertTriangle className="h-5 w-5 text-red-600" />
                   </div>
                   Emergency Contacts
-                </h3>
+                  </h3>
                 <div className="space-y-3">
                   <div className="flex items-center gap-3">
                     <Phone className="h-4 w-4 text-red-500" />
@@ -509,12 +509,12 @@ const StructuredItinerary: React.FC<Props> = ({ itinerary }) => {
                     <Phone className="h-4 w-4 text-red-500" />
                     <span className="text-gray-600"><strong>Ambulance:</strong> {itinerary.additional_info.emergency.ambulance}</span>
                   </div>
-                  {itinerary.additional_info.emergency.touristPolice && (
+                    {itinerary.additional_info.emergency.touristPolice && (
                     <div className="flex items-center gap-3">
                       <Phone className="h-4 w-4 text-red-500" />
                       <span className="text-gray-600"><strong>Tourist Police:</strong> {itinerary.additional_info.emergency.touristPolice}</span>
-                    </div>
-                  )}
+                </div>
+              )}
                 </div>
               </motion.div>
             </div>
@@ -544,8 +544,8 @@ const StructuredItinerary: React.FC<Props> = ({ itinerary }) => {
             
             {itinerary.additional_info.best_times_to_visit && (
               renderInfoSection("Best Times to Visit", itinerary.additional_info.best_times_to_visit, <Calendar className="h-5 w-5 text-blue-600" />, "blue")
-            )}
-          </div>
+      )}
+    </div>
         </motion.div>
       </motion.div>
     </LazyMotion>

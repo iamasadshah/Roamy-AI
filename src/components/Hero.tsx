@@ -7,63 +7,29 @@ import { TypeAnimation } from 'react-type-animation';
 import Link from "next/link";
 import { Button } from "./ui/button";
 
-// Animation variants
+// Simplified animation variants
 const container: Variants = {
   hidden: { opacity: 0 },
   visible: {
     opacity: 1,
     transition: {
-      staggerChildren: 0.2,
-      delayChildren: 0.3,
+      staggerChildren: 0.1,
+      delayChildren: 0.1,
     },
   },
 };
 
 const item: Variants = {
-  hidden: { y: 30, opacity: 0 },
+  hidden: { y: 20, opacity: 0 },
   visible: (i: number = 0) => ({
     y: 0,
     opacity: 1,
     transition: {
-      duration: 0.8,
-      delay: i * 0.1,
-      ease: [0.16, 1, 0.3, 1],
+      duration: 0.4,
+      delay: i * 0.05,
+      ease: "easeOut",
     },
   }),
-};
-
-
-
-const floating = (delay: number = 0) => ({
-  y: [0, 15, 0],
-  transition: {
-    duration: 8 + delay * 2,
-    repeat: Infinity,
-    ease: "easeInOut",
-    repeatType: "reverse" as const,
-  },
-});
-
-const floatingX = (delay: number = 0) => ({
-  x: [0, 10, 0],
-  transition: {
-    duration: 10 + delay * 3,
-    repeat: Infinity,
-    ease: "easeInOut",
-    repeatType: "reverse" as const,
-  },
-});
-
-type ShapeConfig = {
-  top?: string;
-  right?: string;
-  bottom?: string;
-  left?: string;
-  size: string;
-  color: string;
-  opacity: number;
-  delay: number;
-  animation: 'floating' | 'floatingX';
 };
 
 export default function Hero() {
@@ -74,46 +40,6 @@ export default function Hero() {
     setMounted(true);
     controls.start("visible");
   }, [controls]);
-
-  // Background shapes configuration
-  const shapes: ShapeConfig[] = [
-    {
-      top: "10%",
-      left: "5%",
-      size: "150px",
-      color: "#3b82f6",
-      opacity: 0.08,
-      delay: 0,
-      animation: 'floating',
-    },
-    {
-      top: "15%",
-      right: "8%",
-      size: "200px",
-      color: "#8b5cf6",
-      opacity: 0.06,
-      delay: 1,
-      animation: 'floatingX',
-    },
-    {
-      bottom: "25%",
-      left: "12%",
-      size: "180px",
-      color: "#ec4899",
-      opacity: 0.05,
-      delay: 2,
-      animation: 'floating',
-    },
-    {
-      bottom: "15%",
-      right: "10%",
-      size: "220px",
-      color: "#10b981",
-      opacity: 0.04,
-      delay: 1.5,
-      animation: 'floatingX',
-    },
-  ];
 
   const features = [
     {
@@ -140,24 +66,11 @@ export default function Hero() {
 
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-br from-blue-50 via-white to-indigo-50 pt-20">
-      {/* Animated background shapes */}
-      {shapes.map((shape, i) => (
-        <motion.div
-          key={i}
-          className={`absolute rounded-full -z-10`}
-          style={{
-            width: shape.size,
-            height: shape.size,
-            top: shape.top,
-            left: shape.left,
-            right: shape.right,
-            bottom: shape.bottom,
-            background: `radial-gradient(circle, ${shape.color} 0%, transparent 70%)`,
-            opacity: shape.opacity,
-          }}
-          animate={shape.animation === 'floating' ? floating(shape.delay) : floatingX(shape.delay)}
-        />
-      ))}
+      {/* Simple static background shapes - removed heavy animations */}
+      <div className="absolute top-10 left-5 w-32 h-32 bg-blue-100 rounded-full opacity-20 -z-10"></div>
+      <div className="absolute top-20 right-8 w-40 h-40 bg-purple-100 rounded-full opacity-20 -z-10"></div>
+      <div className="absolute bottom-32 left-12 w-36 h-36 bg-indigo-100 rounded-full opacity-20 -z-10"></div>
+      <div className="absolute bottom-20 right-12 w-28 h-28 bg-green-100 rounded-full opacity-20 -z-10"></div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-28 w-full">
         <div className="text-center">
@@ -208,12 +121,7 @@ export default function Hero() {
                     />
                   )}
                 </span>
-                <motion.span
-                  className="absolute bottom-2 left-0 w-full h-3 bg-blue-100 -z-10 opacity-70 rounded-full"
-                  initial={{ scaleX: 0, opacity: 0 }}
-                  animate={{ scaleX: 1, opacity: 0.7 }}
-                  transition={{ duration: 1, delay: 1.5, ease: [0.22, 1, 0.36, 1] }}
-                />
+                <span className="absolute bottom-2 left-0 w-full h-3 bg-blue-100 -z-10 opacity-70 rounded-full"></span>
               </span>
               <span className="block mt-2">with Roamy AI</span>
             </motion.h1>
@@ -282,9 +190,9 @@ export default function Hero() {
                       opacity: 1,
                       y: 0,
                       transition: {
-                        delay: 0.5 + (i * 0.1),
-                        duration: 0.6,
-                        ease: [0.16, 1, 0.3, 1]
+                        delay: 0.2 + (i * 0.05),
+                        duration: 0.4,
+                        ease: "easeOut"
                       }
                     }
                   }}
@@ -304,41 +212,8 @@ export default function Hero() {
         </div>
       </div>
 
-      {/* Decorative elements */}
-      <motion.div
-        className="absolute bottom-0 left-0 right-0 h-48 bg-gradient-to-t from-white to-transparent z-10 pointer-events-none"
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.5, duration: 0.8 }}
-      />
-      
-      {/* Animated scroll indicator */}
-      <motion.div 
-        className="absolute bottom-8 left-1/2 transform -translate-x-1/2 z-20 text-center"
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ 
-          opacity: [0, 1, 1, 0],
-          y: [10, 0, -10, -20],
-        }}
-        transition={{ 
-          duration: 3,
-          repeat: Infinity,
-          repeatType: "loop"
-        }}
-      >
-        <div className="w-8 h-12 border-2 border-gray-300 rounded-full flex justify-center p-1">
-          <motion.div 
-            className="w-1 h-2 bg-gray-400 rounded-full"
-            animate={{ y: [0, 8, 0] }}
-            transition={{ 
-              duration: 1.5,
-              repeat: Infinity,
-              repeatType: "loop"
-            }}
-          />
-        </div>
-        <span className="text-xs text-gray-500 mt-2 block">Scroll to explore</span>
-      </motion.div>
+      {/* Simple decorative element - removed heavy animations */}
+      <div className="absolute bottom-0 left-0 right-0 h-48 bg-gradient-to-t from-white to-transparent z-10 pointer-events-none"></div>
     </section>
   );
 }
