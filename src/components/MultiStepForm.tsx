@@ -335,7 +335,7 @@ const DestinationInput = ({
       <div className="relative">
         <input
           type="text"
-          className="w-full p-6 rounded-3xl bg-white/95 text-gray-800 placeholder-gray-500 backdrop-blur-sm border-2 border-gray-200 pr-16 text-xl font-medium focus:ring-4 focus:ring-blue-400/20 focus:border-blue-500 transition-all duration-300 shadow-lg hover:shadow-xl"
+          className="w-full p-4 sm:p-5 lg:p-6 rounded-2xl sm:rounded-3xl bg-white/95 text-gray-800 placeholder-gray-500 backdrop-blur-sm border-2 border-gray-200 pr-12 sm:pr-16 text-base sm:text-lg lg:text-xl font-medium focus:ring-4 focus:ring-blue-400/20 focus:border-blue-500 transition-all duration-300 shadow-lg hover:shadow-xl"
           placeholder="Search for your dream destination..."
           value={value || searchTerm}
           onChange={(e) => {
@@ -346,11 +346,11 @@ const DestinationInput = ({
         />
         <button
           type="button"
-          className="absolute right-5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+          className="absolute right-4 sm:right-5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
           onClick={() => setIsOpen(!isOpen)}
         >
           <FaChevronDown
-            className={`transform transition-transform text-2xl ${
+            className={`transform transition-transform text-lg sm:text-xl lg:text-2xl ${
               isOpen ? "rotate-180" : ""
             }`}
           />
@@ -372,21 +372,21 @@ const DestinationInput = ({
                 animate={{ scale: 1, y: 0 }}
                 exit={{ scale: 0.95, y: 20 }}
                 onClick={(e) => e.stopPropagation()}
-                className="w-full h-[600px] max-w-4xl bg-white border border-gray-200 rounded-3xl shadow-2xl max-h-[85vh] flex flex-col"
+                className="w-full h-[500px] sm:h-[600px] max-w-4xl bg-white border border-gray-200 rounded-2xl sm:rounded-3xl shadow-2xl max-h-[85vh] flex flex-col"
               >
                 {/* Enhanced Header */}
-                <div className="p-8 border-b border-gray-100 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-t-3xl">
-                  <h3 className="text-3xl font-bold text-gray-800 mb-4">
+                <div className="p-4 sm:p-6 lg:p-8 border-b border-gray-100 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-t-2xl sm:rounded-t-3xl">
+                  <h3 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-800 mb-2 sm:mb-3 lg:mb-4">
                     Select Your Destination
                   </h3>
-                  <p className="text-gray-600 mb-6 text-lg">
+                  <p className="text-gray-600 mb-4 sm:mb-5 lg:mb-6 text-sm sm:text-base lg:text-lg">
                     Choose from our curated list of amazing destinations worldwide
                   </p>
                   <div className="relative">
-                    <FaSearch className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-400 text-xl" />
+                    <FaSearch className="absolute left-3 sm:left-4 lg:left-5 top-1/2 -translate-y-1/2 text-gray-400 text-lg sm:text-xl" />
                     <input
                       type="text"
-                      className="w-full pl-14 pr-5 py-5 bg-white border-2 border-gray-200 rounded-2xl text-gray-800 placeholder-gray-500 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-400/20 transition-all text-lg font-medium shadow-lg"
+                      className="w-full pl-10 sm:pl-12 lg:pl-14 pr-4 sm:pr-5 py-3 sm:py-4 lg:py-5 bg-white border-2 border-gray-200 rounded-xl sm:rounded-2xl text-gray-800 placeholder-gray-500 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-400/20 transition-all text-sm sm:text-base lg:text-lg font-medium shadow-lg"
                       placeholder="Type to search countries..."
                       value={searchTerm}
                       onChange={(e) => setSearchTerm(e.target.value)}
@@ -396,31 +396,31 @@ const DestinationInput = ({
                 </div>
 
                 {/* Enhanced Countries List */}
-                <div className="flex-1 overflow-y-auto custom-scrollbar p-6">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="flex-1 overflow-y-auto custom-scrollbar p-4 sm:p-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
                     {filteredCountries.length > 0 ? (
                       filteredCountries.map((country) => (
                         <motion.button
                           key={country}
-                          className="flex items-center p-6 text-left text-gray-700 hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50 hover:border-blue-300 border-2 border-transparent rounded-2xl transition-all group shadow-sm hover:shadow-lg"
+                          className="flex items-center p-3 sm:p-4 lg:p-6 text-left text-gray-700 hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50 hover:border-blue-300 border-2 border-transparent rounded-xl sm:rounded-2xl transition-all group shadow-sm hover:shadow-lg"
                           onClick={() => handleSelect(country)}
                           whileHover={{ scale: 1.02 }}
                           whileTap={{ scale: 0.98 }}
                         >
-                          <FaGlobe className="text-blue-500 mr-4 text-xl" />
-                          <span className="flex-1 truncate font-semibold text-lg">{country}</span>
+                          <FaGlobe className="text-blue-500 mr-3 sm:mr-4 text-lg sm:text-xl" />
+                          <span className="flex-1 truncate font-semibold text-sm sm:text-base lg:text-lg">{country}</span>
                           <motion.span
                             initial={{ opacity: 0, x: -10 }}
                             animate={{ opacity: 1, x: 0 }}
-                            className="text-blue-500 opacity-0 group-hover:opacity-100 transition-opacity ml-2 text-xl"
+                            className="text-blue-500 opacity-0 group-hover:opacity-100 transition-opacity ml-2 text-lg sm:text-xl"
                           >
                             →
                           </motion.span>
                         </motion.button>
                       ))
                     ) : (
-                      <div className="col-span-2 p-12 text-center text-gray-500 text-lg">
-                        <FaSearch className="mx-auto mb-4 text-4xl text-gray-300" />
+                      <div className="col-span-2 p-8 sm:p-12 text-center text-gray-500 text-base sm:text-lg">
+                        <FaSearch className="mx-auto mb-3 sm:mb-4 text-3xl sm:text-4xl text-gray-300" />
                         No countries found matching your search
                       </div>
                     )}
@@ -464,11 +464,11 @@ const EnhancedDatePicker = ({
   return (
     <motion.div
       variants={itemVariants}
-      className="space-y-4"
+      className="space-y-3 sm:space-y-4"
     >
-      <label className="block text-xl font-bold text-gray-800 mb-4 flex items-center gap-3">
-        <div className="w-10 h-10 bg-gradient-to-br from-blue-100 to-indigo-200 rounded-xl flex items-center justify-center shadow-sm">
-          <Calendar className="h-6 w-6 text-blue-600" />
+      <label className="block text-lg sm:text-xl font-bold text-gray-800 mb-3 sm:mb-4 flex items-center gap-2 sm:gap-3">
+        <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-blue-100 to-indigo-200 rounded-xl flex items-center justify-center shadow-sm">
+          <Calendar className="h-4 w-4 sm:h-6 sm:w-6 text-blue-600" />
         </div>
         <span className="text-gray-800">{label}</span>
       </label>
@@ -489,24 +489,25 @@ const EnhancedDatePicker = ({
           open={isOpen}
           onInputClick={() => setIsOpen(true)}
           onClickOutside={() => setIsOpen(false)}
-          className="w-full p-6 border-3 border-gray-200 rounded-3xl focus:ring-4 focus:ring-blue-400/20 focus:border-blue-500 transition-all duration-300 text-xl font-semibold shadow-lg hover:shadow-xl bg-white cursor-pointer text-gray-800"
+          className="w-full p-4 sm:p-5 lg:p-6 border-2 border-gray-200 rounded-2xl sm:rounded-3xl focus:ring-4 focus:ring-blue-400/20 focus:border-blue-500 transition-all duration-300 text-base sm:text-lg lg:text-xl font-semibold shadow-lg hover:shadow-xl bg-white cursor-pointer text-gray-800 placeholder-gray-500"
           placeholderText={placeholder}
           dateFormat="MMMM d, yyyy"
-          calendarClassName="!rounded-3xl !shadow-2xl !border !border-gray-200 !bg-white !p-6"
+          calendarClassName="!rounded-2xl !shadow-2xl !border !border-gray-200 !bg-white !p-4 sm:!p-6 !z-50"
           dayClassName={(date) => {
             if (startDate && endDate && date >= startDate && date <= endDate) {
-              return "!bg-gradient-to-br !from-blue-500 !to-indigo-600 !text-white !rounded-full !border-blue-500 !shadow-lg";
+              return "!bg-gradient-to-br !from-blue-500 !to-indigo-600 !text-white !rounded-full !border-blue-500 !shadow-lg !font-semibold";
             }
             if (date.getTime() === selected?.getTime()) {
-              return "!bg-gradient-to-br !from-indigo-600 !to-purple-600 !text-white !rounded-full !border-indigo-600 !shadow-lg";
+              return "!bg-gradient-to-br !from-indigo-600 !to-purple-600 !text-white !rounded-full !border-indigo-600 !shadow-lg !font-semibold";
             }
-            return "";
+            return "!font-medium !text-gray-700 hover:!bg-blue-50 !rounded-full";
           }}
           popperClassName="!z-50"
           popperPlacement="bottom-start"
+          showPopperArrow={false}
         />
-        <div className="absolute right-6 top-1/2 -translate-y-1/2 pointer-events-none">
-          <Calendar className="h-7 w-7 text-blue-500" />
+        <div className="absolute right-4 sm:right-5 lg:right-6 top-1/2 -translate-y-1/2 pointer-events-none">
+          <Calendar className="h-5 w-5 sm:h-6 sm:w-6 lg:h-7 lg:w-7 text-blue-500" />
         </div>
       </div>
     </motion.div>
@@ -619,7 +620,7 @@ const MultiStepForm: React.FC<Props> = ({ onSubmit, isLoading }) => {
   }, [currentStep, formData]);
 
   const optionButtonClasses = useCallback((isSelected: boolean) => {
-    return `relative p-6 sm:p-8 rounded-3xl border-2 transition-all duration-300 text-center group ${
+    return `relative p-4 sm:p-6 lg:p-8 rounded-2xl sm:rounded-3xl border-2 transition-all duration-300 text-center group ${
         isSelected
         ? "bg-gradient-to-br from-blue-500 to-indigo-600 border-blue-500 text-white shadow-xl scale-105"
         : "bg-white/90 backdrop-blur-sm border-gray-200 text-gray-700 hover:bg-gradient-to-br hover:from-blue-50 hover:to-indigo-50 hover:border-blue-300 hover:shadow-lg"
@@ -630,17 +631,17 @@ const MultiStepForm: React.FC<Props> = ({ onSubmit, isLoading }) => {
     switch (currentStep) {
       case 1:
         return (
-          <div className="w-full max-w-2xl mx-auto">
+          <div className="w-full max-w-2xl mx-auto px-4">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1 }}
-              className="text-center mb-8 sm:mb-12"
+              className="text-center mb-6 sm:mb-8 lg:mb-12"
             >
-              <h3 className="text-3xl sm:text-4xl font-bold text-gray-800 mb-4 sm:mb-6">
+              <h3 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-800 mb-3 sm:mb-4 lg:mb-6">
                 Where would you like to go?
               </h3>
-              <p className="text-gray-600 text-lg sm:text-xl leading-relaxed max-w-2xl mx-auto">
+              <p className="text-gray-600 text-base sm:text-lg lg:text-xl leading-relaxed max-w-2xl mx-auto">
                 Tell us your dream destination and we&apos;ll create the perfect itinerary for you
               </p>
             </motion.div>
@@ -651,38 +652,38 @@ const MultiStepForm: React.FC<Props> = ({ onSubmit, isLoading }) => {
               animate="animate"
             >
               <motion.div variants={itemVariants}>
-            <DestinationInput
-              value={formData.destination}
+                <DestinationInput
+                  value={formData.destination}
                   onChange={(value) => setFormData({ ...formData, destination: value })}
-            />
+                />
               </motion.div>
             </motion.div>
           </div>
         );
       case 2:
         return (
-          <div className="w-full max-w-4xl mx-auto">
+          <div className="w-full max-w-4xl mx-auto px-4">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1 }}
-              className="text-center mb-8 sm:mb-12"
+              className="text-center mb-6 sm:mb-8 lg:mb-12"
             >
-              <div className="flex items-center justify-center gap-4 mb-6">
-                <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl flex items-center justify-center shadow-lg">
-                  <Calendar className="h-8 w-8 text-gray-white" />
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 mb-4 sm:mb-6">
+                <div className="w-12 h-12 sm:w-16 sm:h-16 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl flex items-center justify-center shadow-lg">
+                  <Calendar className="h-6 w-6 sm:h-8 sm:w-8 text-white" />
                 </div>
-                <h3 className="text-3xl sm:text-4xl font-bold text-gray-800">
+                <h3 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-800 text-center">
                   When are you planning to travel?
                 </h3>
               </div>
-              <p className="text-gray-600 text-lg sm:text-xl leading-relaxed max-w-3xl mx-auto">
+              <p className="text-gray-600 text-base sm:text-lg lg:text-xl leading-relaxed max-w-3xl mx-auto">
                 Select your arrival and departure dates to create the perfect itinerary for your trip
               </p>
             </motion.div>
-            
+
             <motion.div
-              className="text-gray-600 grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8"
+              className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8"
               variants={staggerContainer}
               initial="initial"
               animate="animate"
@@ -715,20 +716,20 @@ const MultiStepForm: React.FC<Props> = ({ onSubmit, isLoading }) => {
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="mt-8 p-8 bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 rounded-3xl border-2 border-blue-200 shadow-lg"
+                className="mt-6 sm:mt-8 p-4 sm:p-6 lg:p-8 bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 rounded-2xl sm:rounded-3xl border-2 border-blue-200 shadow-lg"
               >
                 <div className="text-center">
-                  <div className="flex items-center justify-center gap-3 mb-4">
-                    <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center shadow-lg">
-                      <Calendar className="h-6 w-6 text-white" />
+                  <div className="flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-3 mb-3 sm:mb-4">
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center shadow-lg">
+                      <Calendar className="h-5 w-5 sm:h-6 sm:w-6 text-white" />
                     </div>
-                    <h4 className="text-2xl font-bold text-gray-800">Your Travel Dates</h4>
+                    <h4 className="text-xl sm:text-2xl font-bold text-gray-800">Your Travel Dates</h4>
                   </div>
                   
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                    <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-4 border border-blue-200">
-                      <div className="text-sm font-semibold text-blue-600 mb-1">Arrival</div>
-                      <div className="text-lg font-bold text-gray-800">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 mb-4 sm:mb-6">
+                    <div className="bg-white/80 backdrop-blur-sm rounded-xl sm:rounded-2xl p-3 sm:p-4 border border-blue-200">
+                      <div className="text-xs sm:text-sm font-semibold text-blue-600 mb-1">Arrival</div>
+                      <div className="text-sm sm:text-lg font-bold text-gray-800">
                         {formData.startDate.toLocaleDateString('en-US', { 
                           weekday: 'long',
                           month: 'long', 
@@ -738,9 +739,9 @@ const MultiStepForm: React.FC<Props> = ({ onSubmit, isLoading }) => {
                       </div>
                     </div>
                     
-                    <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-4 border border-blue-200">
-                      <div className="text-sm font-semibold text-blue-600 mb-1">Departure</div>
-                      <div className="text-lg font-bold text-gray-800">
+                    <div className="bg-white/80 backdrop-blur-sm rounded-xl sm:rounded-2xl p-3 sm:p-4 border border-blue-200">
+                      <div className="text-xs sm:text-sm font-semibold text-blue-600 mb-1">Departure</div>
+                      <div className="text-sm sm:text-lg font-bold text-gray-800">
                         {formData.endDate.toLocaleDateString('en-US', { 
                           weekday: 'long',
                           month: 'long', 
@@ -751,9 +752,9 @@ const MultiStepForm: React.FC<Props> = ({ onSubmit, isLoading }) => {
                     </div>
                   </div>
                   
-                  <div className="bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-2xl p-4 shadow-lg">
-                    <div className="text-sm font-semibold mb-1">Total Trip Duration</div>
-                    <div className="text-2xl font-bold">
+                  <div className="bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-xl sm:rounded-2xl p-3 sm:p-4 shadow-lg">
+                    <div className="text-xs sm:text-sm font-semibold mb-1">Total Trip Duration</div>
+                    <div className="text-lg sm:text-2xl font-bold">
                       {Math.ceil((formData.endDate.getTime() - formData.startDate.getTime()) / (1000 * 60 * 60 * 24))} days
                     </div>
                   </div>
@@ -764,23 +765,23 @@ const MultiStepForm: React.FC<Props> = ({ onSubmit, isLoading }) => {
         );
       case 3:
         return (
-          <div className="w-full max-w-6xl mx-auto">
+          <div className="w-full max-w-6xl mx-auto px-4">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
+              animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1 }}
-              className="text-center mb-8 sm:mb-12"
+              className="text-center mb-6 sm:mb-8 lg:mb-12"
             >
-              <h3 className="text-3xl sm:text-4xl font-bold text-gray-800 mb-4 sm:mb-6">
+              <h3 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-800 mb-3 sm:mb-4 lg:mb-6">
                 What&apos;s your budget range?
               </h3>
-              <p className="text-gray-600 text-lg sm:text-xl leading-relaxed max-w-3xl mx-auto">
+              <p className="text-gray-600 text-base sm:text-lg lg:text-xl leading-relaxed max-w-3xl mx-auto">
                 Choose your spending range to get the best recommendations tailored to your budget
               </p>
             </motion.div>
             
             <motion.div
-              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6"
+              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-6"
               variants={staggerContainer}
               initial="initial"
               animate="animate"
@@ -800,35 +801,35 @@ const MultiStepForm: React.FC<Props> = ({ onSubmit, isLoading }) => {
                   whileTap="tap"
                 >
                   <div className="flex flex-col items-center text-center">
-                    <span className="text-3xl sm:text-4xl mb-3 sm:mb-4">{option.icon}</span>
-                    <h4 className="font-bold text-xl sm:text-2xl mb-2">{option.label}</h4>
-                    <p className="text-xs sm:text-sm opacity-80 mb-2 sm:mb-3">{option.desc}</p>
+                    <span className="text-2xl sm:text-3xl lg:text-4xl mb-2 sm:mb-3 lg:mb-4">{option.icon}</span>
+                    <h4 className="font-bold text-lg sm:text-xl lg:text-2xl mb-1 sm:mb-2">{option.label}</h4>
+                    <p className="text-xs sm:text-sm opacity-80 mb-1 sm:mb-2 lg:mb-3">{option.desc}</p>
                     <div className="text-xs sm:text-sm font-semibold opacity-90">{option.price}</div>
-                </div>
-              </motion.button>
-            ))}
+                  </div>
+                </motion.button>
+              ))}
             </motion.div>
           </div>
         );
       case 4:
         return (
-          <div className="w-full max-w-6xl mx-auto">
+          <div className="w-full max-w-6xl mx-auto px-4">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1 }}
-              className="text-center mb-8 sm:mb-12"
+              className="text-center mb-6 sm:mb-8 lg:mb-12"
             >
-              <h3 className="text-3xl sm:text-4xl font-bold text-gray-800 mb-4 sm:mb-6">
+              <h3 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-800 mb-3 sm:mb-4 lg:mb-6">
                 Where would you like to stay?
               </h3>
-              <p className="text-gray-600 text-lg sm:text-xl leading-relaxed max-w-3xl mx-auto">
+              <p className="text-gray-600 text-base sm:text-lg lg:text-xl leading-relaxed max-w-3xl mx-auto">
                 Choose your preferred accommodation type for the perfect stay
               </p>
             </motion.div>
             
             <motion.div
-              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6"
+              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 lg:gap-6"
               variants={staggerContainer}
               initial="initial"
               animate="animate"
@@ -841,7 +842,7 @@ const MultiStepForm: React.FC<Props> = ({ onSubmit, isLoading }) => {
                 { value: "guesthouse", label: "Guesthouse", icon: <FaUser />, desc: "Local charm" },
                 { value: "camping", label: "Camping", icon: <FaLeaf />, desc: "Nature adventure" }
               ].map((option) => (
-              <motion.button
+                <motion.button
                   key={option.value}
                   variants={itemVariants}
                   className={optionButtonClasses(formData.accommodation === option.value)}
@@ -850,34 +851,34 @@ const MultiStepForm: React.FC<Props> = ({ onSubmit, isLoading }) => {
                   whileTap="tap"
                 >
                   <div className="flex flex-col items-center text-center">
-                    <div className="text-3xl sm:text-4xl mb-3 sm:mb-4">{option.icon}</div>
-                    <h4 className="font-bold text-xl sm:text-2xl mb-2">{option.label}</h4>
+                    <div className="text-2xl sm:text-3xl lg:text-4xl mb-2 sm:mb-3 lg:mb-4">{option.icon}</div>
+                    <h4 className="font-bold text-lg sm:text-xl lg:text-2xl mb-1 sm:mb-2">{option.label}</h4>
                     <p className="text-xs sm:text-sm opacity-80">{option.desc}</p>
                   </div>
-              </motion.button>
-            ))}
+                </motion.button>
+              ))}
             </motion.div>
           </div>
         );
       case 5:
         return (
-          <div className="w-full max-w-6xl mx-auto">
+          <div className="w-full max-w-6xl mx-auto px-4">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
+              animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1 }}
-              className="text-center mb-8 sm:mb-12"
+              className="text-center mb-6 sm:mb-8 lg:mb-12"
             >
-              <h3 className="text-3xl sm:text-4xl font-bold text-gray-800 mb-4 sm:mb-6">
+              <h3 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-800 mb-3 sm:mb-4 lg:mb-6">
                 Who&apos;s coming along?
               </h3>
-              <p className="text-gray-600 text-lg sm:text-xl leading-relaxed max-w-3xl mx-auto">
+              <p className="text-gray-600 text-base sm:text-lg lg:text-xl leading-relaxed max-w-3xl mx-auto">
                 Select your travel group to personalize the experience for everyone
               </p>
             </motion.div>
             
             <motion.div
-              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"
+              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6"
               variants={staggerContainer}
               initial="initial"
               animate="animate"
@@ -897,34 +898,34 @@ const MultiStepForm: React.FC<Props> = ({ onSubmit, isLoading }) => {
                   whileTap="tap"
                 >
                   <div className="flex flex-col items-center text-center">
-                    <div className="text-4xl mb-4">{option.icon}</div>
-                    <h4 className="font-bold text-2xl mb-2">{option.label}</h4>
-                    <p className="text-sm opacity-80">{option.desc}</p>
+                    <div className="text-3xl sm:text-4xl mb-3 sm:mb-4">{option.icon}</div>
+                    <h4 className="font-bold text-lg sm:text-xl lg:text-2xl mb-1 sm:mb-2">{option.label}</h4>
+                    <p className="text-xs sm:text-sm opacity-80">{option.desc}</p>
                   </div>
-              </motion.button>
-            ))}
+                </motion.button>
+              ))}
             </motion.div>
           </div>
         );
       case 6:
         return (
-          <div className="w-full max-w-6xl mx-auto">
+          <div className="w-full max-w-6xl mx-auto px-4">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1 }}
-              className="text-center mb-8 sm:mb-12"
+              className="text-center mb-6 sm:mb-8 lg:mb-12"
             >
-              <h3 className="text-3xl sm:text-4xl font-bold text-gray-800 mb-4 sm:mb-6">
+              <h3 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-800 mb-3 sm:mb-4 lg:mb-6">
                 Any dietary preferences?
               </h3>
-              <p className="text-gray-600 text-lg sm:text-xl leading-relaxed max-w-3xl mx-auto">
+              <p className="text-gray-600 text-base sm:text-lg lg:text-xl leading-relaxed max-w-3xl mx-auto">
                 Help us recommend the best dining options that match your preferences
               </p>
             </motion.div>
             
             <motion.div
-              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6"
               variants={staggerContainer}
               initial="initial"
               animate="animate"
@@ -945,9 +946,9 @@ const MultiStepForm: React.FC<Props> = ({ onSubmit, isLoading }) => {
                   whileTap="tap"
                 >
                   <div className="flex flex-col items-center text-center">
-                    <div className="text-4xl mb-4">{option.icon}</div>
-                    <h4 className="font-bold text-2xl mb-2">{option.label}</h4>
-                    <p className="text-sm opacity-80">{option.desc}</p>
+                    <div className="text-3xl sm:text-4xl mb-3 sm:mb-4">{option.icon}</div>
+                    <h4 className="font-bold text-lg sm:text-xl lg:text-2xl mb-1 sm:mb-2">{option.label}</h4>
+                    <p className="text-xs sm:text-sm opacity-80">{option.desc}</p>
                   </div>
                 </motion.button>
               ))}
@@ -961,33 +962,33 @@ const MultiStepForm: React.FC<Props> = ({ onSubmit, isLoading }) => {
 
   return (
     <LazyMotion features={domAnimation}>
-      <div className="w-full">
-        {/* Enhanced Progress Steps */}
-        <div className="mb-16">
-          <div className="flex items-center justify-between max-w-6xl mx-auto px-4">
+      <div className="w-full min-h-screen flex flex-col">
+        {/* Enhanced Progress Steps - Mobile Optimized */}
+        <div className="mb-6 sm:mb-8 lg:mb-16 px-4">
+          <div className="flex items-center justify-between max-w-6xl mx-auto">
             {/* Desktop Progress Steps */}
-            <div className="hidden md:flex items-center w-full">
+            <div className="hidden lg:flex items-center w-full">
               {steps.map((step, index) => (
                 <div key={step.id} className="flex items-center flex-1">
-      <motion.div
+                  <motion.div
                     initial={{ scale: 0 }}
                     animate={{ scale: 1 }}
                     transition={{ delay: index * 0.1 }}
-                    className={`flex items-center justify-center w-16 h-16 rounded-full border-2 transition-all duration-300 ${
+                    className={`flex items-center justify-center w-12 h-12 lg:w-16 lg:h-16 rounded-full border-2 transition-all duration-300 ${
                       currentStep >= step.id
                         ? "bg-gradient-to-r from-blue-500 to-indigo-600 border-blue-500 text-white shadow-xl"
                         : "bg-white border-gray-300 text-gray-400"
                     }`}
                   >
                     {currentStep > step.id ? (
-                      <FaCheck className="text-lg" />
+                      <FaCheck className="text-sm lg:text-lg" />
                     ) : (
-                      <div className="text-xl">{step.icon}</div>
+                      <div className="text-lg lg:text-xl">{step.icon}</div>
                     )}
                   </motion.div>
                   {index < steps.length - 1 && (
                     <div
-                      className={`flex-1 h-1 mx-6 transition-all duration-300 rounded-full ${
+                      className={`flex-1 h-1 mx-3 lg:mx-6 transition-all duration-300 rounded-full ${
                         currentStep > step.id
                           ? "bg-gradient-to-r from-blue-500 to-indigo-600"
                           : "bg-gray-300"
@@ -996,15 +997,15 @@ const MultiStepForm: React.FC<Props> = ({ onSubmit, isLoading }) => {
                   )}
                 </div>
               ))}
-        </div>
+            </div>
 
             {/* Mobile Progress Steps */}
-            <div className="md:hidden flex items-center justify-center w-full">
-              <div className="flex items-center gap-4">
+            <div className="lg:hidden flex items-center justify-center w-full">
+              <div className="flex items-center gap-3 sm:gap-4">
                 <motion.div
                   initial={{ scale: 0 }}
                   animate={{ scale: 1 }}
-                  className={`flex items-center justify-center w-12 h-12 rounded-full border-2 transition-all duration-300 ${
+                  className={`flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 rounded-full border-2 transition-all duration-300 ${
                     currentStep >= 1
                       ? "bg-gradient-to-r from-blue-500 to-indigo-600 border-blue-500 text-white shadow-xl"
                       : "bg-white border-gray-300 text-gray-400"
@@ -1013,16 +1014,16 @@ const MultiStepForm: React.FC<Props> = ({ onSubmit, isLoading }) => {
                   {currentStep > 1 ? (
                     <FaCheck className="text-sm" />
                   ) : (
-                    <div className="text-lg">{steps[0].icon}</div>
+                    <div className="text-base sm:text-lg">{steps[0].icon}</div>
                   )}
                 </motion.div>
-                <div className="text-sm font-semibold text-gray-600">
+                <div className="text-xs sm:text-sm font-semibold text-gray-600">
                   Step {currentStep} of {steps.length}
                 </div>
                 <motion.div
                   initial={{ scale: 0 }}
                   animate={{ scale: 1 }}
-                  className={`flex items-center justify-center w-12 h-12 rounded-full border-2 transition-all duration-300 ${
+                  className={`flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 rounded-full border-2 transition-all duration-300 ${
                     currentStep >= steps.length
                       ? "bg-gradient-to-r from-blue-500 to-indigo-600 border-blue-500 text-white shadow-xl"
                       : "bg-white border-gray-300 text-gray-400"
@@ -1031,7 +1032,7 @@ const MultiStepForm: React.FC<Props> = ({ onSubmit, isLoading }) => {
                   {currentStep >= steps.length ? (
                     <FaCheck className="text-sm" />
                   ) : (
-                    <div className="text-lg">{steps[steps.length - 1].icon}</div>
+                    <div className="text-base sm:text-lg">{steps[steps.length - 1].icon}</div>
                   )}
                 </motion.div>
               </div>
@@ -1039,8 +1040,8 @@ const MultiStepForm: React.FC<Props> = ({ onSubmit, isLoading }) => {
           </div>
         </div>
 
-        {/* Step Content */}
-        <div className="flex justify-center px-4">
+        {/* Step Content - Full Height Container */}
+        <div className="flex-1 flex items-center justify-center px-4 pb-6 sm:pb-8">
           <AnimatePresence mode="wait">
             <motion.div
               key={currentStep}
@@ -1048,19 +1049,19 @@ const MultiStepForm: React.FC<Props> = ({ onSubmit, isLoading }) => {
               initial="initial"
               animate="animate"
               exit="exit"
-              className="w-full"
-              >
-                {renderStepContent()}
+              className="w-full max-w-6xl mx-auto"
+            >
+              {renderStepContent()}
             </motion.div>
           </AnimatePresence>
         </div>
 
-        {/* Enhanced Navigation Buttons */}
-        <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mt-16 max-w-6xl mx-auto px-4">
+        {/* Enhanced Navigation Buttons - Mobile Optimized */}
+        <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mt-6 sm:mt-8 lg:mt-16 max-w-6xl mx-auto px-4">
           <motion.button
             onClick={handleBack}
             disabled={currentStep === 1}
-            className={`flex items-center gap-3 px-8 py-4 sm:px-10 sm:py-5 rounded-3xl font-bold text-lg sm:text-xl transition-all duration-300 w-full sm:w-auto justify-center ${
+            className={`flex items-center gap-2 sm:gap-3 px-6 sm:px-8 lg:px-10 py-3 sm:py-4 lg:py-5 rounded-2xl sm:rounded-3xl font-bold text-base sm:text-lg lg:text-xl transition-all duration-300 w-full sm:w-auto justify-center ${
               currentStep === 1
                 ? "bg-gray-100 text-gray-400 cursor-not-allowed"
                 : "bg-white text-gray-700 hover:bg-gray-50 hover:shadow-xl border-2 border-gray-200 hover:border-gray-300"
@@ -1068,14 +1069,14 @@ const MultiStepForm: React.FC<Props> = ({ onSubmit, isLoading }) => {
             whileHover={currentStep !== 1 ? { scale: 1.02 } : {}}
             whileTap={currentStep !== 1 ? { scale: 0.98 } : {}}
           >
-            <FaChevronLeft className="text-xl sm:text-2xl" />
+            <FaChevronLeft className="text-lg sm:text-xl lg:text-2xl" />
             Back
           </motion.button>
 
           <motion.button
             onClick={handleNext}
             disabled={!isStepValid() || isLoading}
-            className={`flex items-center gap-3 px-10 py-4 sm:px-12 sm:py-5 rounded-3xl font-bold text-lg sm:text-xl transition-all duration-300 w-full sm:w-auto justify-center ${
+            className={`flex items-center gap-2 sm:gap-3 px-8 sm:px-10 lg:px-12 py-3 sm:py-4 lg:py-5 rounded-2xl sm:rounded-3xl font-bold text-base sm:text-lg lg:text-xl transition-all duration-300 w-full sm:w-auto justify-center ${
               !isStepValid() || isLoading
                 ? "bg-gray-100 text-gray-400 cursor-not-allowed"
                 : "bg-gradient-to-r from-blue-600 to-indigo-600 text-white hover:from-blue-700 hover:to-indigo-700 shadow-xl hover:shadow-2xl"
@@ -1085,22 +1086,22 @@ const MultiStepForm: React.FC<Props> = ({ onSubmit, isLoading }) => {
           >
             {isLoading ? (
               <>
-                <Loader2 className="animate-spin text-xl sm:text-2xl" />
+                <Loader2 className="animate-spin text-lg sm:text-xl lg:text-2xl" />
                 Generating...
               </>
             ) : currentStep === steps.length ? (
               <>
                 Generate Itinerary
-                <FaChevronRight className="text-xl sm:text-2xl" />
+                <FaChevronRight className="text-lg sm:text-xl lg:text-2xl" />
               </>
             ) : (
               <>
                 Next
-                <FaChevronRight className="text-xl sm:text-2xl" />
+                <FaChevronRight className="text-lg sm:text-xl lg:text-2xl" />
               </>
             )}
           </motion.button>
-    </div>
+        </div>
       </div>
     </LazyMotion>
   );
