@@ -286,9 +286,9 @@ export default function Navbar() {
               aria-label="Toggle menu"
             >
               {isOpen ? (
-                <FaTimes className={`h-5 w-5 ${isScrolled || !isHome ? 'text-gray-800' : 'text-white'}`} />
+                <FaTimes className={`h-5 w-5 ${isScrolled || !isHome ? 'text-gray-800' : 'text-gray-800'}`} />
               ) : (
-                <FaBars className={`h-5 w-5 ${isScrolled || !isHome ? 'text-gray-800' : 'text-white'}`} />
+                <FaBars className={`h-5 w-5 ${isScrolled || !isHome ? 'text-gray-800' : 'text-gray-800'}`} />
               )}
             </motion.button>
           </motion.div>
