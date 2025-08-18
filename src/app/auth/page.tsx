@@ -8,7 +8,6 @@ import { FaPlane, FaGlobe, FaShieldAlt, FaRocket } from "react-icons/fa";
 import Link from "next/link";
 
 export default function AuthPage() {
-  const [view, setView] = useState<"sign_in" | "sign_up">("sign_in");
   const [redirectUrl, setRedirectUrl] = useState<string>("");
   const supabase = createClientComponentClient();
 
@@ -171,45 +170,18 @@ export default function AuthPage() {
                       <FaPlane className="w-6 h-6 sm:w-8 sm:h-8 text-white" />
                     </div>
                     <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-2">
-                      {view === "sign_in" ? "Welcome Back" : "Join Roamy AI"}
+                      Welcome to Roamy AI
                     </h2>
                     <p className="text-sm sm:text-base text-gray-600">
-                      {view === "sign_in" 
-                        ? "Sign in to continue planning your next adventure" 
-                        : "Create your account and start planning amazing trips"
-                      }
+                      Sign in or create your account to start planning your next adventure.
                     </p>
-                  </div>
-
-                  {/* Toggle Buttons */}
-                  <div className="flex bg-gray-100 rounded-xl sm:rounded-2xl p-1 mb-6 sm:mb-8">
-                    <button
-                      onClick={() => setView("sign_in")}
-                      className={`flex-1 py-2.5 sm:py-3 px-3 sm:px-4 rounded-lg sm:rounded-xl font-medium text-sm sm:text-base transition-all duration-300 ${
-                        view === "sign_in"
-                          ? "bg-white text-blue-600 shadow-md"
-                          : "text-gray-600 hover:text-gray-900"
-                      }`}
-                    >
-                      Sign In
-                    </button>
-                    <button
-                      onClick={() => setView("sign_up")}
-                      className={`flex-1 py-2.5 sm:py-3 px-3 sm:px-4 rounded-lg sm:rounded-xl font-medium text-sm sm:text-base transition-all duration-300 ${
-                        view === "sign_up"
-                          ? "bg-white text-blue-600 shadow-md"
-                          : "text-gray-600 hover:text-gray-900"
-                      }`}
-                    >
-                      Sign Up
-                    </button>
                   </div>
 
                   {/* Auth Form */}
                   <div className="space-y-4 sm:space-y-6">
                     <Auth
                       supabaseClient={supabase}
-                      view={view}
+                      onlyThirdPartyProviders={true}
                       appearance={{
                         theme: ThemeSupa,
                         variables: {
@@ -229,10 +201,10 @@ export default function AuthPage() {
                         className: {
                           container: "!bg-transparent !p-0",
                           button: "!w-full !py-2.5 sm:!py-3 !px-4 !bg-gradient-to-r !from-blue-600 !to-indigo-600 !text-white !font-semibold !text-sm sm:!text-base !rounded-lg sm:!rounded-xl !shadow-lg hover:!from-blue-700 hover:!to-indigo-700 !transition-all !duration-300",
-                          input: "!w-full !py-2.5 sm:!py-3 !px-3 sm:!px-4 !bg-gray-50 !border-2 !border-gray-200 !rounded-lg sm:!rounded-xl !text-sm sm:!text-base !text-gray-900 !placeholder-gray-500 focus:!border-blue-500 focus:!ring-4 focus:!ring-blue-100 !transition-all !duration-300",
-                          label: "!text-gray-700 !font-medium !text-sm !mb-2 !block",
-                          anchor: "!text-blue-600 hover:!text-blue-700 !font-medium !text-sm sm:!text-base !transition-colors !duration-200",
-                          message: "!text-red-600 !text-xs sm:!text-sm !mt-2",
+                          // input: "!w-full !py-2.5 sm:!py-3 !px-3 sm:!px-4 !bg-gray-50 !border-2 !border-gray-200 !rounded-lg sm:!rounded-xl !text-sm sm:!text-base !text-gray-900 !placeholder-gray-500 focus:!border-blue-500 focus:!ring-4 focus:!ring-blue-100 !transition-all !duration-300",
+                          // label: "!text-gray-700 !font-medium !text-sm !mb-2 !block",
+                          // anchor: "!text-blue-600 hover:!text-blue-700 !font-medium !text-sm sm:!text-base !transition-colors !duration-200",
+                          // message: "!text-red-600 !text-xs sm:!text-sm !mt-2",
                           loader: "!text-blue-600",
                         },
                       }}
