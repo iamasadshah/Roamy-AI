@@ -86,30 +86,6 @@ const staggerContainer = {
   },
 };
 
-const carouselVariants = {
-  enter: (direction: number) => {
-    return {
-      x: direction > 0 ? 1000 : -1000,
-      opacity: 0,
-      scale: 0.9,
-    };
-  },
-  center: {
-    x: 0,
-    opacity: 1,
-    scale: 1,
-    transition: { duration: 0.5, ease: [0.42, 0, 0.58, 1] },
-  },
-  exit: (direction: number) => {
-    return {
-      x: direction < 0 ? 1000 : -1000,
-      opacity: 0,
-      scale: 0.9,
-      transition: { duration: 0.5, ease: [0.42, 0, 0.58, 1] },
-    };
-  },
-};
-
 // Simple fade transition for carousel
 const fadeTransition = {
   initial: { opacity: 0 },

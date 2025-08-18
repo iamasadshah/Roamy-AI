@@ -99,7 +99,7 @@ const About = () => {
           </p>
           <button className="inline-flex items-center px-8 py-3 bg-white text-blue-700 rounded-full font-semibold text-lg shadow-lg hover:bg-blue-50 transition-all duration-300 transform hover:-translate-y-1">
             <Link href={"/plan"}>
-            Let's Explore with Roamy AI</Link>
+            Let&apos;s Explore with Roamy AI</Link>
             <ArrowRight className="ml-3 w-5 h-5" />
           </button>
         </motion.div>
