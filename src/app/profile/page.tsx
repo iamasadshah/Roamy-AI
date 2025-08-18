@@ -482,18 +482,11 @@ export default function ProfilePage() {
               </div>
             </div>
 
-                          <div className="flex gap-2">
-                            <Link
-                              href={`/trip/${trip.id}`}
-                              className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-150 text-sm font-medium"
-                            >
-                              <FaEye className="h-4 w-4" />
-                              View Details
-                            </Link>
+                          <div className="flex justify-start">
                   <PDFDownloadLink
                     document={<TripPDF trip={trip} />}
                               fileName={`${trip.destination}-trip-plan.pdf`}
-                              className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors duration-150 text-sm font-medium"
+                              className="flex items-center font-semibold gap-2 px-12 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors duration-150 text-md font-medium"
                             >
                               <FaDownload className="h-4 w-4" />
                               PDF

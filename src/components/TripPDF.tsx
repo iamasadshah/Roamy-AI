@@ -126,6 +126,32 @@ const styles = StyleSheet.create({
     padding: 8,
     borderRadius: 4,
   },
+  dayDescription: {
+    fontSize: 12,
+    color: "#4b5563",
+    marginBottom: 10,
+    lineHeight: 1.5,
+  },
+  highlightsContainer: {
+    marginBottom: 10,
+  },
+  highlightsTitle: {
+    fontSize: 14,
+    fontWeight: "bold",
+    color: "#1a365d",
+    marginBottom: 8,
+  },
+  highlightText: {
+    fontSize: 12,
+    color: "#374151",
+    marginBottom: 4,
+  },
+  costText: {
+    fontSize: 14,
+    fontWeight: "bold",
+    color: "#1a365d",
+    marginTop: 10,
+  },
   timeBlock: {
     marginBottom: 12,
   },
@@ -136,11 +162,56 @@ const styles = StyleSheet.create({
     marginBottom: 8,
     textTransform: "capitalize",
   },
-  activity: {
+  activityContainer: {
+    marginBottom: 8,
+    paddingLeft: 15,
+    borderLeft: "2 solid #a0aec0",
+  },
+  activityTitle: {
+    fontSize: 13,
+    fontWeight: "bold",
+    color: "#2d3748",
+    marginBottom: 2,
+  },
+  activityDescription: {
+    fontSize: 11,
+    color: "#4a5568",
+    marginBottom: 2,
+  },
+  activityDetail: {
+    fontSize: 10,
+    color: "#6b7280",
+    marginLeft: 5,
+  },
+  dayDescription: {
     fontSize: 12,
-    marginBottom: 4,
-    color: "#374151",
-    paddingLeft: 8,
+    color: "#4a5568",
+    marginBottom: 10,
+  },
+  highlightsContainer: {
+    marginTop: 10,
+    marginBottom: 10,
+    padding: 10,
+    backgroundColor: "#f7fafc",
+    borderRadius: 6,
+  },
+  highlightsTitle: {
+    fontSize: 12,
+    fontWeight: "bold",
+    color: "#2d3748",
+    marginBottom: 5,
+  },
+  highlightText: {
+    fontSize: 11,
+    color: "#4a5568",
+    marginLeft: 5,
+  },
+  costText: {
+    fontSize: 12,
+    fontWeight: "bold",
+    color: "#38a169",
+    marginTop: 10,
+    textAlign: "right",
   },
   footer: {
     position: "absolute",
@@ -157,6 +228,20 @@ const styles = StyleSheet.create({
     width: 120,
     height: 40,
     marginBottom: 10,
+  },
+  infoItem: {
+    marginBottom: 10,
+  },
+  infoLabel: {
+    fontSize: 12,
+    fontWeight: "bold",
+    color: "#2d3748",
+    marginBottom: 3,
+  },
+  infoValue: {
+    fontSize: 11,
+    color: "#4a5568",
+    marginLeft: 5,
   },
 });
 
@@ -216,6 +301,18 @@ const TripPDF = ({ trip }: TripPDFProps) => {
               <Text style={styles.overviewLabel}>Accommodation</Text>
               <Text style={styles.overviewValue}>{trip.accommodation}</Text>
             </View>
+            <View style={styles.overviewItem}>
+              <Text style={styles.overviewLabel}>Duration</Text>
+              <Text style={styles.overviewValue}>
+                {trip.itinerary?.trip_overview?.duration || "N/A"}
+              </Text>
+            </View>
+            <View style={styles.overviewItem}>
+              <Text style={styles.overviewLabel}>Dietary Plan</Text>
+              <Text style={styles.overviewValue}>
+                {trip.itinerary?.trip_overview?.dietary_plan || "N/A"}
+              </Text>
+            </View>
           </View>
         </View>
 
@@ -229,15 +326,69 @@ const TripPDF = ({ trip }: TripPDFProps) => {
               return (
                 <View key={index} style={styles.day}>
                   <Text style={styles.dayTitle}>{day.day_title || `Day ${day.day}`}</Text>
+                  {day.day_description && (
+                    <Text style={styles.dayDescription}>{day.day_description}</Text>
+                  )}
+                  {day.highlights && day.highlights.length > 0 && (
+                    <View style={styles.highlightsContainer}>
+                      <Text style={styles.highlightsTitle}>Highlights:</Text>
+                      {day.highlights.map((highlight, i) => (
+                        <Text key={i} style={styles.highlightText}>
+                          • {highlight}
+                        </Text>
+                      ))}
+                    </View>
+                  )}
+                  {day.total_estimated_cost && (
+                    <Text style={styles.costText}>
+                      Estimated Cost for the Day: {day.total_estimated_cost}
+                    </Text>
+                  )}
 
                   {/* Morning */}
                   {Array.isArray(day.morning) && day.morning.length > 0 && (
                     <View style={styles.timeBlock}>
                       <Text style={styles.timeTitle}>Morning</Text>
-                      {day.morning.map((activity: string | { title?: string; description?: string }, i) => (
-                        <Text key={i} style={styles.activity}>
-                          • {typeof activity === 'string' ? activity : activity.title || activity.description || 'Activity'}
-                        </Text>
+                      {day.morning.map((activity, i) => (
+                        <View key={i} style={styles.activityContainer}>
+                          <Text style={styles.activityTitle}>
+                            {activity.time} - {activity.title}
+                          </Text>
+                          <Text style={styles.activityDescription}>
+                            {activity.description}
+                          </Text>
+                          {activity.location && (
+                            <Text style={styles.activityDetail}>
+                              Location: {activity.location}
+                            </Text>
+                          )}
+                          {activity.duration && (
+                            <Text style={styles.activityDetail}>
+                              Duration: {activity.duration}
+                            </Text>
+                          )}
+                          {activity.cost && (
+                            <Text style={styles.activityDetail}>
+                              Cost: {activity.cost}
+                            </Text>
+                          )}
+                          {activity.special_features &&
+                            activity.special_features.length > 0 && (
+                              <Text style={styles.activityDetail}>
+                                Features: {activity.special_features.join(", ")}
+                              </Text>
+                            )}
+                          {activity.tips && (
+                            <Text style={styles.activityDetail}>
+                              Tips: {activity.tips}
+                            </Text>
+                          )}
+                          {activity.booking_info && (
+                            <Text style={styles.activityDetail}>
+                              Booking: {activity.booking_info}
+                            </Text>
+                          )}
+                        </View>
                       ))}
                     </View>
                   )}
@@ -246,10 +397,46 @@ const TripPDF = ({ trip }: TripPDFProps) => {
                   {Array.isArray(day.afternoon) && day.afternoon.length > 0 && (
                     <View style={styles.timeBlock}>
                       <Text style={styles.timeTitle}>Afternoon</Text>
-                      {day.afternoon.map((activity: string | { title?: string; description?: string }, i) => (
-                        <Text key={i} style={styles.activity}>
-                          • {typeof activity === 'string' ? activity : activity.title || activity.description || 'Activity'}
-                        </Text>
+                      {day.afternoon.map((activity, i) => (
+                        <View key={i} style={styles.activityContainer}>
+                          <Text style={styles.activityTitle}>
+                            {activity.time} - {activity.title}
+                          </Text>
+                          <Text style={styles.activityDescription}>
+                            {activity.description}
+                          </Text>
+                          {activity.location && (
+                            <Text style={styles.activityDetail}>
+                              Location: {activity.location}
+                            </Text>
+                          )}
+                          {activity.duration && (
+                            <Text style={styles.activityDetail}>
+                              Duration: {activity.duration}
+                            </Text>
+                          )}
+                          {activity.cost && (
+                            <Text style={styles.activityDetail}>
+                              Cost: {activity.cost}
+                            </Text>
+                          )}
+                          {activity.special_features &&
+                            activity.special_features.length > 0 && (
+                              <Text style={styles.activityDetail}>
+                                Features: {activity.special_features.join(", ")}
+                              </Text>
+                            )}
+                          {activity.tips && (
+                            <Text style={styles.activityDetail}>
+                              Tips: {activity.tips}
+                            </Text>
+                          )}
+                          {activity.booking_info && (
+                            <Text style={styles.activityDetail}>
+                              Booking: {activity.booking_info}
+                            </Text>
+                          )}
+                        </View>
                       ))}
                     </View>
                   )}
@@ -258,10 +445,90 @@ const TripPDF = ({ trip }: TripPDFProps) => {
                   {Array.isArray(day.evening) && day.evening.length > 0 && (
                     <View style={styles.timeBlock}>
                       <Text style={styles.timeTitle}>Evening</Text>
-                      {day.evening.map((activity: string | { title?: string; description?: string }, i) => (
-                        <Text key={i} style={styles.activity}>
-                          • {typeof activity === 'string' ? activity : activity.title || activity.description || 'Activity'}
-                        </Text>
+                      {day.evening.map((activity, i) => (
+                        <View key={i} style={styles.activityContainer}>
+                          <Text style={styles.activityTitle}>
+                            {activity.time} - {activity.title}
+                          </Text>
+                          <Text style={styles.activityDescription}>
+                            {activity.description}
+                          </Text>
+                          {activity.location && (
+                            <Text style={styles.activityDetail}>
+                              Location: {activity.location}
+                            </Text>
+                          )}
+                          {activity.duration && (
+                            <Text style={styles.activityDetail}>
+                              Duration: {activity.duration}
+                            </Text>
+                          )}
+                          {activity.cost && (
+                            <Text style={styles.activityDetail}>
+                              Cost: {activity.cost}
+                            </Text>
+                          )}
+                          {activity.special_features &&
+                            activity.special_features.length > 0 && (
+                              <Text style={styles.activityDetail}>
+                                Features: {activity.special_features.join(", ")}
+                              </Text>
+                            )}
+                          {activity.tips && (
+                            <Text style={styles.activityDetail}>
+                              Tips: {activity.tips}
+                            </Text>
+                          )}
+                          {activity.booking_info && (
+                            <Text style={styles.activityDetail}>
+                              Booking: {activity.booking_info}
+                            </Text>
+                          )}
+                        </View>
+                      ))}
+                    </View>
+                  )}
+
+                  {/* Meals */}
+                  {Array.isArray(day.meals) && day.meals.length > 0 && (
+                    <View style={styles.timeBlock}>
+                      <Text style={styles.timeTitle}>Meals</Text>
+                      {day.meals.map((meal, i) => (
+                        <View key={i} style={styles.activityContainer}>
+                          <Text style={styles.activityTitle}>
+                            {meal.time} - {meal.restaurant_name} ({meal.cuisine_type})
+                          </Text>
+                          <Text style={styles.activityDescription}>
+                            Location: {meal.location}
+                          </Text>
+                          {meal.cost_range && (
+                            <Text style={styles.activityDetail}>
+                              Cost Range: {meal.cost_range}
+                            </Text>
+                          )}
+                          {meal.must_try_dishes &&
+                            meal.must_try_dishes.length > 0 && (
+                              <Text style={styles.activityDetail}>
+                                Must-try Dishes: {meal.must_try_dishes.join(", ")}
+                              </Text>
+                            )}
+                          {typeof meal.reservation_required === "boolean" && (
+                            <Text style={styles.activityDetail}>
+                              Reservation Required: {meal.reservation_required ? "Yes" : "No"}
+                            </Text>
+                          )}
+                          {meal.special_features &&
+                            meal.special_features.length > 0 && (
+                              <Text style={styles.activityDetail}>
+                                Features: {meal.special_features.join(", ")}
+                              </Text>
+                            )}
+                          {meal.tips && (
+                            <Text style={styles.activityDetail}>
+                              Tips: {meal.tips}
+                            </Text>
+                          )}
+                        </View>
                       ))}
                     </View>
                   )}
@@ -274,6 +541,136 @@ const TripPDF = ({ trip }: TripPDFProps) => {
             </Text>
           )}
         </View>
+
+        {/* Additional Information */}
+        {trip.itinerary?.additional_info && (
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>Additional Information</Text>
+            {trip.itinerary.additional_info.weather_forecast && (
+              <View style={styles.infoItem}>
+                <Text style={styles.infoLabel}>Weather Forecast:</Text>
+                <Text style={styles.infoValue}>
+                  {trip.itinerary.additional_info.weather_forecast}
+                </Text>
+              </View>
+            )}
+            {trip.itinerary.additional_info.packing_tips &&
+              trip.itinerary.additional_info.packing_tips.length > 0 && (
+                <View style={styles.infoItem}>
+                  <Text style={styles.infoLabel}>Packing Tips:</Text>
+                  {trip.itinerary.additional_info.packing_tips.map((tip, i) => (
+                    <Text key={i} style={styles.infoValue}>
+                      • {tip}
+                    </Text>
+                  ))}
+                </View>
+              )}
+            {trip.itinerary.additional_info.local_currency && (
+              <View style={styles.infoItem}>
+                <Text style={styles.infoLabel}>Local Currency:</Text>
+                <Text style={styles.infoValue}>
+                  {trip.itinerary.additional_info.local_currency.code} (Exchange Rate:
+                  {trip.itinerary.additional_info.local_currency.exchangeRate})
+                </Text>
+              </View>
+            )}
+            {trip.itinerary.additional_info.transportation &&
+              trip.itinerary.additional_info.transportation.length > 0 && (
+                <View style={styles.infoItem}>
+                  <Text style={styles.infoLabel}>Transportation:</Text>
+                  {trip.itinerary.additional_info.transportation.map((t, i) => (
+                    <Text key={i} style={styles.infoValue}>
+                      • {t}
+                    </Text>
+                  ))}
+                </View>
+              )}
+            {trip.itinerary.additional_info.emergency && (
+              <View style={styles.infoItem}>
+                <Text style={styles.infoLabel}>Emergency Contacts:</Text>
+                <Text style={styles.infoValue}>
+                  Police: {trip.itinerary.additional_info.emergency.police}
+                </Text>
+                <Text style={styles.infoValue}>
+                  Ambulance:
+                  {trip.itinerary.additional_info.emergency.ambulance}
+                </Text>
+                {trip.itinerary.additional_info.emergency.touristPolice && (
+                  <Text style={styles.infoValue}>
+                    Tourist Police:
+                    {trip.itinerary.additional_info.emergency.touristPolice}
+                  </Text>
+                )}
+              </View>
+            )}
+            {trip.itinerary.additional_info.local_customs &&
+              trip.itinerary.additional_info.local_customs.length > 0 && (
+                <View style={styles.infoItem}>
+                  <Text style={styles.infoLabel}>Local Customs:</Text>
+                  {trip.itinerary.additional_info.local_customs.map((custom, i) => (
+                    <Text key={i} style={styles.infoValue}>
+                      • {custom}
+                    </Text>
+                  ))}
+                </View>
+              )}
+            {trip.itinerary.additional_info.best_times_to_visit &&
+              trip.itinerary.additional_info.best_times_to_visit.length > 0 && (
+                <View style={styles.infoItem}>
+                  <Text style={styles.infoLabel}>Best Times to Visit:</Text>
+                  {trip.itinerary.additional_info.best_times_to_visit.map((time, i) => (
+                    <Text key={i} style={styles.infoValue}>
+                      • {time}
+                    </Text>
+                  ))}
+                </View>
+              )}
+            {trip.itinerary.additional_info.money_saving_tips &&
+              trip.itinerary.additional_info.money_saving_tips.length > 0 && (
+                <View style={styles.infoItem}>
+                  <Text style={styles.infoLabel}>Money Saving Tips:</Text>
+                  {trip.itinerary.additional_info.money_saving_tips.map((tip, i) => (
+                    <Text key={i} style={styles.infoValue}>
+                      • {tip}
+                    </Text>
+                  ))}
+                </View>
+              )}
+            {trip.itinerary.additional_info.cultural_etiquette &&
+              trip.itinerary.additional_info.cultural_etiquette.length > 0 && (
+                <View style={styles.infoItem}>
+                  <Text style={styles.infoLabel}>Cultural Etiquette:</Text>
+                  {trip.itinerary.additional_info.cultural_etiquette.map((etiquette, i) => (
+                    <Text key={i} style={styles.infoValue}>
+                      • {etiquette}
+                    </Text>
+                  ))}
+                </View>
+              )}
+            {trip.itinerary.additional_info.local_phrases &&
+              trip.itinerary.additional_info.local_phrases.length > 0 && (
+                <View style={styles.infoItem}>
+                  <Text style={styles.infoLabel}>Local Phrases:</Text>
+                  {trip.itinerary.additional_info.local_phrases.map((phrase, i) => (
+                    <Text key={i} style={styles.infoValue}>
+                      • {phrase}
+                    </Text>
+                  ))}
+                </View>
+              )}
+            {trip.itinerary.additional_info.must_know_facts &&
+              trip.itinerary.additional_info.must_know_facts.length > 0 && (
+                <View style={styles.infoItem}>
+                  <Text style={styles.infoLabel}>Must-Know Facts:</Text>
+                  {trip.itinerary.additional_info.must_know_facts.map((fact, i) => (
+                    <Text key={i} style={styles.infoValue}>
+                      • {fact}
+                    </Text>
+                  ))}
+                </View>
+              )}
+          </View>
+        )}
 
         {/* Footer */}
         <View style={styles.footer}>
