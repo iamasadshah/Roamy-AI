@@ -193,6 +193,47 @@ export default function ProfilePage() {
     }
   };
 
+  const handleAvatarChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (!user) {
+      toast.error("User not logged in.");
+      return;
+    }
+
+    const file = event.target.files?.[0];
+    if (!file) {
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${user.id}-${Math.random()}.${fileExt}`;
+      const filePath = `${fileName}`;
+
+      const { error: uploadError } = await supabase.storage
+        .from('avatars')
+        .upload(filePath, file, { cacheControl: '3600', upsert: true });
+
+      if (uploadError) throw uploadError;
+
+      const { data: { publicUrl } } = supabase.storage.from('avatars').getPublicUrl(filePath);
+      
+      const { error: updateError } = await supabase.auth.updateUser({
+        data: { avatar_url: publicUrl },
+      });
+
+      if (updateError) throw updateError;
+
+      setProfileData(prev => ({ ...prev, avatar_url: publicUrl }));
+      toast.success("Profile picture updated successfully!");
+    } catch (error) {
+      console.error("Error uploading avatar:", error);
+      toast.error("Failed to update profile picture.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const deleteTrip = async (tripId: string) => {
     try {
       const { error } = await supabase
@@ -283,9 +324,22 @@ export default function ProfilePage() {
                   />
                 </div>
                   </div>
-                  <div className="absolute -bottom-2 -right-2 w-8 h-8 bg-green-500 rounded-full border-4 border-white flex items-center justify-center">
-                    <div className="w-2 h-2 bg-white rounded-full"></div>
-                  </div>
+                  {editingProfile && (
+                    <label
+                      htmlFor="avatar-upload"
+                      className="absolute -bottom-2 -right-2 w-10 h-10 bg-blue-600 rounded-full border-4 border-white flex items-center justify-center cursor-pointer shadow-md hover:bg-blue-700 transition-colors duration-150"
+                      title="Change avatar"
+                    >
+                      <FaEdit className="h-5 w-5 text-white" />
+                      <input
+                        id="avatar-upload"
+                        type="file"
+                        accept="image/*"
+                        onChange={handleAvatarChange}
+                        className="hidden"
+                      />
+                    </label>
+                  )}
                 </div>
                 <h2 className="text-2xl font-bold text-gray-800 mb-2">
                   {profileData.full_name || "User"}
