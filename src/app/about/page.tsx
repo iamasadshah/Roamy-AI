@@ -11,22 +11,51 @@ const About = () => {
   const isInView = useInView(ref, { once: true });
 
   const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.2,
-      },
-    },
-  };
-
-  const itemVariants = {
     hidden: { opacity: 0, y: 20 },
     visible: {
       opacity: 1,
       y: 0,
       transition: {
+        staggerChildren: 0.08,
+        delayChildren: 0.1,
+        ease: [0.42, 0, 0.58, 1],
+      },
+    },
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 30 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        duration: 0.6,
+        ease: [0.42, 0, 0.58, 1],
+      },
+    },
+  };
+
+  const heroVariants = {
+    hidden: { opacity: 0, y: 30 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        duration: 0.7,
+        ease: [0.42, 0, 0.58, 1],
+      },
+    },
+  };
+
+  const statItemVariants = {
+    hidden: { opacity: 0, scale: 0.9, y: 20 },
+    visible: {
+      opacity: 1,
+      scale: 1,
+      y: 0,
+      transition: {
         duration: 0.5,
+        ease: "easeOut",
       },
     },
   };
@@ -39,46 +68,58 @@ const About = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-white relative overflow-hidden py-8">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50 relative overflow-hidden py-0">
       {/* Hero Section */}
-      <div className="relative h-[50vh] sm:h-[60vh] md:h-[70vh] bg-gradient-to-br from-blue-600 to-purple-600">
-        <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-10" />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
-
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-full flex items-center relative z-10">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="text-white max-w-2xl"
-          >
-            <span className="inline-block px-3 py-1.5 sm:px-4 sm:py-2 rounded-full bg-white/10 backdrop-blur-sm text-xs sm:text-sm font-medium mb-4 sm:mb-6">
-              About Roamy AI
-            </span>
-            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-6 sm:mb-8">
-              Revolutionizing Travel with AI
-            </h1>
-            <p className="text-base sm:text-lg md:text-xl text-white/90 leading-relaxed">
-              We&apos;re building the future of travel planning with
-              cutting-edge AI technology and personalized experiences.
-            </p>
-          </motion.div>
-        </div>
+      <div className="relative h-[60vh] md:h-[70vh] flex items-center justify-center text-center px-4 overflow-hidden">
+        <div className="absolute inset-0 bg-black opacity-30"></div>
+        <Image
+          src="/images/world-map.png"
+          alt="World Map"
+          fill
+          priority
+          className="object-cover z-0 opacity-10"
+          sizes="100vw"
+        />
+        <motion.div
+          initial="hidden"
+          animate="visible"
+          variants={heroVariants}
+          className="relative z-10 text-white max-w-3xl mx-auto"
+        >
+          <span className="inline-block px-5 py-2 rounded-full bg-white/20 backdrop-blur-sm text-sm font-medium mb-4 tracking-wide">
+            OUR STORY
+          </span>
+          <h1 className="text-4xl md:text-6xl font-extrabold leading-tight mb-4">
+            Innovating <span className="text-blue-200">Travel</span> with AI
+          </h1>
+          <p className="text-lg md:text-xl text-white/90 mb-8 leading-relaxed">
+            At Roamy AI, we are dedicated to transforming your travel experiences
+            through intelligent planning and personalized itineraries.
+          </p>
+          <button className="inline-flex items-center px-8 py-3 bg-white text-blue-700 rounded-full font-semibold text-lg shadow-lg hover:bg-blue-50 transition-all duration-300 transform hover:-translate-y-1">
+            Explore Our Vision
+            <ArrowRight className="ml-3 w-5 h-5" />
+          </button>
+        </motion.div>
       </div>
 
       {/* Stats Section */}
-      <div className="relative sm:-mt-32 md:-mt-16">
+      <div className="relative -mt-16 md:-mt-24 z-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 sm:gap-6">
+          <motion.div
+            className="grid grid-cols-2 lg:grid-cols-4 bg-white rounded-3xl shadow-xl overflow-hidden divide-x divide-gray-100 border border-gray-100"
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.5 }}
+            variants={containerVariants}
+          >
             {stats.map((stat, index) => (
               <motion.div
                 key={index}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
-                className="bg-white rounded-xl sm:rounded-2xl p-4 sm:p-6 shadow-lg sm:shadow-xl border border-gray-100"
+                variants={statItemVariants}
+                className="p-6 sm:p-8 text-center"
               >
-                <div className="text-2xl sm:text-3xl font-bold text-blue-600 mb-2 sm:mb-3">
+                <div className="text-3xl sm:text-4xl font-bold text-blue-600 mb-2">
                   {stat.value}
                 </div>
                 <div className="text-sm sm:text-base text-gray-600">
@@ -86,61 +127,62 @@ const About = () => {
                 </div>
               </motion.div>
             ))}
-          </div>
+          </motion.div>
         </div>
       </div>
 
       {/* Mission Section */}
-      <div className="py-16 sm:py-20 md:py-24 ">
+      <div className="py-20 md:py-28 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             ref={ref}
             initial="hidden"
             animate={isInView ? "visible" : "hidden"}
             variants={containerVariants}
-            className="grid md:grid-cols-2 gap-12 sm:gap-16 items-center"
+            className="grid md:grid-cols-2 gap-12 lg:gap-16 items-center"
           >
             <motion.div variants={itemVariants}>
-              <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-6 sm:mb-8">
-                Our Mission
+              <span className="inline-block px-5 py-2 rounded-full bg-blue-100 text-blue-800 text-sm font-medium mb-4 tracking-wide">
+                OUR VALUES
+              </span>
+              <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">
+                Empowering Your Wanderlust
               </h2>
-              <p className="text-base sm:text-lg text-gray-600 leading-relaxed mb-8 sm:mb-10">
-                To revolutionize travel planning with AI, ensuring hassle-free
-                and personalized itineraries for every traveler. We believe in
-                making travel accessible, enjoyable, and stress-free for
-                everyone.
+              <p className="text-base md:text-lg text-gray-600 leading-relaxed mb-8">
+                Our core mission is to empower every traveler with the tools and
+                insights needed for unforgettable journeys. We believe in:
               </p>
-              <div className="space-y-4 sm:space-y-6">
+              <div className="space-y-6">
                 {[
                   {
                     icon: Globe,
-                    title: "Global Reach",
-                    desc: "Catering to travelers worldwide with real-time insights",
+                    title: "Seamless Global Exploration",
+                    desc: "Providing effortless access to destinations worldwide with real-time, accurate information.",
                   },
                   {
                     icon: Compass,
-                    title: "Personalized Journeys",
-                    desc: "Tailored experiences based on your preferences",
+                    title: "Hyper-Personalized Journeys",
+                    desc: "Crafting unique itineraries that truly reflect individual preferences and desires.",
                   },
                   {
                     icon: Users,
-                    title: "Community Focus",
-                    desc: "Building a global community of travelers",
+                    title: "Community-Driven Innovation",
+                    desc: "Fostering a vibrant community of travelers, continuously improving through shared experiences and feedback.",
                   },
                 ].map((item, index) => (
                   <motion.div
                     key={index}
                     variants={itemVariants}
-                    className="flex items-start space-x-3 sm:space-x-4 p-3 sm:p-4 rounded-lg sm:rounded-xl bg-white shadow-sm hover:shadow-md transition-shadow"
+                    className="flex items-start p-5 rounded-2xl bg-white shadow-md border border-gray-100 hover:shadow-lg transition-all duration-300"
                   >
-                    <div className="p-2 rounded-lg bg-blue-50 text-blue-600">
-                      <item.icon className="w-5 h-5 sm:w-6 sm:h-6" />
+                    <div className="p-3 rounded-xl bg-blue-50 text-blue-600 mr-4 flex-shrink-0">
+                      <item.icon className="w-6 h-6" />
                     </div>
                     <div>
-                      <h3 className="font-semibold text-gray-900 text-base sm:text-lg">
+                      <h3 className="font-semibold text-gray-900 text-lg mb-1">
                         {item.title}
                       </h3>
-                      <p className="text-sm sm:text-base text-gray-600">
+                      <p className="text-gray-600 text-base">
                         {item.desc}
                       </p>
                     </div>
@@ -151,54 +193,50 @@ const About = () => {
 
             <motion.div
               variants={itemVariants}
-              className="relative mt-8 md:mt-0"
+              className="relative rounded-3xl overflow-hidden shadow-2xl h-96 md:h-auto min-h-[300px]"
             >
-              <div className="relative aspect-square rounded-xl sm:rounded-2xl overflow-hidden shadow-xl sm:shadow-2xl">
-                <Image
-                  src="/images/enhanced-travel.avif"
-                  alt="Travel Planning"
-                  fill
-                  className="object-cover"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
-              </div>
-              <div className="absolute -bottom-6 -right-6 bg-white p-4 sm:p-6 rounded-xl sm:rounded-2xl shadow-lg sm:shadow-xl hidden sm:block">
-                <div className="flex items-center space-x-3 sm:space-x-4">
-                  <div className="p-2 sm:p-3 rounded-full bg-blue-400 "></div>
-                  <div>
-                    <div className="text-xl sm:text-2xl font-bold text-gray-900">
-                      5+ Years
-                    </div>
-                    <div className="text-sm sm:text-base text-gray-600">
-                      Industry Experience
-                    </div>
-                  </div>
-                </div>
-              </div>
+              <Image
+                src="/images/Travel-planing.png"
+                alt="AI Travel Planning"
+                fill
+                priority
+                className="object-cover object-center"
+                sizes="(max-width: 768px) 100vw, 50vw"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
             </motion.div>
           </motion.div>
         </div>
       </div>
 
       {/* CTA Section */}
-      <div className="py-12 sm:py-16 md:py-20 bg-gradient-to-r from-blue-600 to-purple-600">
+      <div className="py-16 md:py-24 bg-gradient-to-r from-blue-700 to-indigo-700 text-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.5 }}
+            variants={containerVariants}
           >
-            <h2 className="text-2xl sm:text-3xl font-bold text-white mb-4 sm:mb-6">
-              Ready to Transform Your Travel Experience?
-            </h2>
-            <p className="text-base sm:text-lg md:text-xl text-white/90 mb-6 sm:mb-8 max-w-2xl mx-auto">
-              Join thousands of travelers who are already experiencing the
-              future of travel planning.
-            </p>
-            <button className="inline-flex items-center px-6 sm:px-8 py-3 sm:py-4 rounded-full bg-white text-blue-600 font-semibold hover:bg-gray-100 transition-colors text-sm sm:text-base">
-              Get Started
-              <ArrowRight className="ml-2 w-4 h-4 sm:w-5 sm:h-5" />
-            </button>
+            <motion.h2
+              variants={itemVariants}
+              className="text-3xl md:text-5xl font-extrabold mb-4"
+            >
+              Ready to Explore the World?
+            </motion.h2>
+            <motion.p
+              variants={itemVariants}
+              className="text-lg md:text-xl opacity-90 mb-8 max-w-3xl mx-auto"
+            >
+              Let Roamy AI craft your perfect adventure with precision and creativity.
+            </motion.p>
+            <motion.button
+              variants={itemVariants}
+              className="inline-flex items-center px-10 py-4 bg-white text-blue-700 rounded-full font-bold text-lg shadow-lg hover:bg-blue-100 transition-all duration-300 transform hover:-translate-y-1 hover:shadow-xl"
+            >
+              Plan Your Journey Now
+              <ArrowRight className="ml-3 w-5 h-5" />
+            </motion.button>
           </motion.div>
         </div>
       </div>
