@@ -4,28 +4,22 @@ import { createClientComponentClient, User } from "@supabase/auth-helpers-nextjs
 import {
   FaUser,
   FaHistory,
-  FaCog,
   FaMapMarkerAlt,
   FaCalendar,
   FaUsers,
   FaHotel,
   FaWallet,
   FaDownload,
-  FaEye,
-  FaTrash,
   FaArrowLeft,
   FaShieldAlt,
-  FaPalette,
-  FaGlobe,
   FaEdit,
   FaSave,
   FaTimes,
+  FaTrash,
 } from "react-icons/fa";
 import Image from "next/image";
 import { toast } from "react-hot-toast";
 import { format } from "date-fns";
-import { PDFDownloadLink } from "@react-pdf/renderer";
-import TripPDF from "@/components/TripPDF";
 import Link from "next/link";
 
 // Simplified Trip interface for better performance
@@ -554,14 +548,13 @@ export default function ProfilePage() {
             </div>
 
                           <div className="flex justify-start">
-                  <PDFDownloadLink
-                    document={<TripPDF trip={trip} />}
-                              fileName={`${trip.destination}-trip-plan.pdf`}
-                              className="flex items-center font-semibold gap-2 px-12 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors duration-150 text-md font-medium"
-                            >
-                              <FaDownload className="h-4 w-4" />
-                              PDF
-                  </PDFDownloadLink>
+                  <button
+                    onClick={() => toast("This Feature is Coming Soon!")}
+                    className="flex items-center font-semibold gap-2 px-12 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors duration-150 text-md font-medium"
+                  >
+                    <FaDownload className="h-4 w-4" />
+                    Download PDF
+                  </button>
                 </div>
               </div>
           ))}
