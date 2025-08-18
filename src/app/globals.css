@@ -895,6 +895,7 @@ body {
     transition-all duration-300;
 }
 
+
 /* Prose styles for generated content */
 .prose {
   @apply text-white/80;

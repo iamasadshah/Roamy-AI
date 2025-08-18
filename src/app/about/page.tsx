@@ -5,6 +5,7 @@ import { Globe, Compass, Users, ArrowRight } from "lucide-react";
 import { useInView } from "framer-motion";
 import { useRef } from "react";
 import Image from "next/image";
+import Link from "next/link";
 
 const About = () => {
   const ref = useRef(null);
@@ -90,14 +91,15 @@ const About = () => {
             OUR STORY
           </span>
           <h1 className="text-4xl md:text-6xl font-extrabold leading-tight mb-4">
-            Innovating <span className="text-blue-200">Travel</span> with AI
+            Innovating <span className="text-blue-700">Travel</span> with AI
           </h1>
-          <p className="text-lg md:text-xl text-white/90 mb-8 leading-relaxed">
+          <p className="text-lg md:text-xl text-blue-700 mb-8 leading-relaxed">
             At Roamy AI, we are dedicated to transforming your travel experiences
             through intelligent planning and personalized itineraries.
           </p>
           <button className="inline-flex items-center px-8 py-3 bg-white text-blue-700 rounded-full font-semibold text-lg shadow-lg hover:bg-blue-50 transition-all duration-300 transform hover:-translate-y-1">
-            Explore Our Vision
+            <Link href={"/plan"}>
+            Let's Explore with Roamy AI</Link>
             <ArrowRight className="ml-3 w-5 h-5" />
           </button>
         </motion.div>
@@ -196,7 +198,7 @@ const About = () => {
               className="relative rounded-3xl overflow-hidden shadow-2xl h-96 md:h-auto min-h-[300px]"
             >
               <Image
-                src="/images/Travel-planing.png"
+                src="/images/enhanced-travel.avif"
                 alt="AI Travel Planning"
                 fill
                 priority
@@ -234,7 +236,8 @@ const About = () => {
               variants={itemVariants}
               className="inline-flex items-center px-10 py-4 bg-white text-blue-700 rounded-full font-bold text-lg shadow-lg hover:bg-blue-100 transition-all duration-300 transform hover:-translate-y-1 hover:shadow-xl"
             >
-              Plan Your Journey Now
+              <Link href={"/plan"}>
+              Plan Your Journey Now</Link>
               <ArrowRight className="ml-3 w-5 h-5" />
             </motion.button>
           </motion.div>

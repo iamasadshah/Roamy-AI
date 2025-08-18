@@ -68,8 +68,8 @@ const fadeInUp = {
     opacity: 1,
     y: 0,
     transition: {
-      duration: 0.4,
-      ease: "easeOut"
+      duration: 0.6,
+      ease: [0.42, 0, 0.58, 1],
     },
   },
 };
@@ -79,9 +79,34 @@ const staggerContainer = {
   visible: {
     opacity: 1,
     transition: {
-      staggerChildren: 0.1,
-      delayChildren: 0.1,
+      staggerChildren: 0.15,
+      delayChildren: 0.2,
+      ease: [0.42, 0, 0.58, 1],
     },
+  },
+};
+
+const carouselVariants = {
+  enter: (direction: number) => {
+    return {
+      x: direction > 0 ? 1000 : -1000,
+      opacity: 0,
+      scale: 0.9,
+    };
+  },
+  center: {
+    x: 0,
+    opacity: 1,
+    scale: 1,
+    transition: { duration: 0.5, ease: [0.42, 0, 0.58, 1] },
+  },
+  exit: (direction: number) => {
+    return {
+      x: direction < 0 ? 1000 : -1000,
+      opacity: 0,
+      scale: 0.9,
+      transition: { duration: 0.5, ease: [0.42, 0, 0.58, 1] },
+    };
   },
 };
 

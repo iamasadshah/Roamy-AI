@@ -32,21 +32,21 @@ const containerVariants = {
   visible: {
     opacity: 1,
     transition: {
-      staggerChildren: 0.1,
-      delayChildren: 0.1,
+      staggerChildren: 0.15,
+      delayChildren: 0.2,
+      ease: [0.42, 0, 0.58, 1],
     },
   },
 };
 
 const itemVariants = {
-  hidden: { opacity: 0, y: 20, scale: 0.98 },
+  hidden: { opacity: 0, y: 30 },
   visible: {
     opacity: 1,
     y: 0,
-    scale: 1,
     transition: {
-      duration: 0.4,
-      ease: "easeOut"
+      duration: 0.6,
+      ease: [0.42, 0, 0.58, 1],
     },
   },
 };
@@ -57,49 +57,60 @@ const fadeInUp = {
     opacity: 1,
     y: 0,
     transition: {
-      duration: 0.4,
-      ease: "easeOut"
-    }
-  }
+      duration: 0.6,
+      ease: [0.42, 0, 0.58, 1],
+    },
+  },
 };
 
 export default function Testimonials() {
   return (
-    <section className="py-16 md:py-24 lg:py-32 bg-gradient-to-b from-blue-50 to-white relative overflow-hidden" id="testimonials">
-      {/* Simple static background - removed heavy animations */}
-      <div className="absolute inset-0">
-        <div className="absolute top-0 left-0 w-96 h-96 bg-blue-100 rounded-full mix-blend-multiply filter blur-3xl opacity-10"></div>
-        <div className="absolute bottom-0 right-0 w-96 h-96 bg-indigo-100 rounded-full mix-blend-multiply filter blur-3xl opacity-10"></div>
-      </div>
+    <section className="py-20 md:py-28 lg:py-32 bg-gradient-to-b from-blue-50 to-white relative overflow-hidden" id="testimonials">
+      {/* Background elements */}
+      <div className="absolute top-0 left-0 right-0 h-64 bg-gradient-to-b from-blue-50 to-transparent -z-10"></div>
+      <div className="absolute bottom-0 left-0 right-0 h-64 bg-gradient-to-t from-blue-50 to-transparent -z-10"></div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
         <motion.div
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, margin: "-100px 0px" }}
-          className="text-center max-w-4xl mx-auto mb-16 md:mb-20"
+          className="text-center max-w-4xl mx-auto mb-16 relative"
         >
           <motion.span 
             variants={fadeInUp}
-            className="inline-block px-6 py-3 rounded-full bg-gradient-to-r from-blue-100 to-indigo-100 text-blue-800 text-sm font-semibold mb-6 shadow-sm border border-blue-200/50"
+            className="inline-block px-5 py-2.5 rounded-full bg-blue-100 text-blue-800 text-sm font-medium mb-5 shadow-sm"
           >
-            Customer Stories
+            CUSTOMER STORIES
           </motion.span>
           <motion.h2 
             variants={fadeInUp}
-            className="text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold text-gray-900 mb-6 leading-tight"
+            className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 mb-6"
           >
-            What Our Travelers{" "}
-            <span className="bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 bg-clip-text text-transparent">
-              Say
-            </span>
+            What Our Travelers <span className="bg-gradient-to-r from-blue-600 to-blue-400 bg-clip-text text-transparent">Say About Us</span>
           </motion.h2>
           <motion.p 
             variants={fadeInUp}
-            className="text-lg md:text-xl text-gray-600 leading-relaxed max-w-3xl mx-auto"
+            className="text-lg text-gray-600 mb-10"
           >
             Join thousands of satisfied travelers who&apos;ve discovered the perfect way to plan their adventures.
           </motion.p>
+
+          {/* Decorative elements */}
+          <motion.div 
+            className="absolute -top-10 -right-10 w-20 h-20 rounded-full bg-blue-100 opacity-50"
+            initial={{ scale: 0.5, opacity: 0 }}
+            whileInView={{ scale: 1, opacity: 0.5 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.5 }}
+          />
+          <motion.div 
+            className="absolute -bottom-5 -left-5 w-16 h-16 rounded-full bg-indigo-100 opacity-50"
+            initial={{ scale: 0.5, opacity: 0 }}
+            whileInView={{ scale: 1, opacity: 0.5 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.7 }}
+          />
         </motion.div>
 
         <motion.div
@@ -107,17 +118,19 @@ export default function Testimonials() {
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, margin: "-100px 0px" }}
-          className="grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-12 mb-16 md:mb-20"
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-12 mb-16 md:mb-20 relative z-10"
         >
           {testimonials.map((testimonial, index) => (
             <motion.div
               key={index}
               variants={itemVariants}
               className="group relative"
+              whileHover={{ y: -10 }}
+              transition={{ type: 'spring', stiffness: 300 }}
             >
-              <div className="bg-white/80 backdrop-blur-sm rounded-3xl p-8 shadow-xl border border-white/30 hover:shadow-2xl transition-all duration-300 hover:-translate-y-2">
+              <div className="bg-white border border-gray-100 rounded-3xl p-8 shadow-sm hover:shadow-xl transition-all duration-500 overflow-hidden group-hover:border-blue-200">
                 {/* Quote Icon */}
-                <div className="absolute top-6 right-6 text-4xl text-blue-100 opacity-60">
+                <div className="absolute top-6 right-6 text-5xl text-blue-100 opacity-40">
                   &ldquo;
                 </div>
                 
@@ -129,7 +142,7 @@ export default function Testimonials() {
                 </div>
                 
                 {/* Testimonial Text */}
-                <p className="text-gray-700 leading-relaxed mb-6 text-base">
+                <p className="text-gray-700 leading-relaxed mb-6 text-base group-hover:text-gray-800 transition-colors duration-300">
                   {testimonial.text}
                 </p>
                 
@@ -139,14 +152,14 @@ export default function Testimonials() {
                     <Image
                       src={testimonial.image}
                       alt={testimonial.name}
-                      width={56}
-                      height={56}
-                      className="rounded-full object-cover"
+                      width={64}
+                      height={64}
+                      className="rounded-full object-cover border-2 border-blue-200 shadow-sm"
                     />
-                    <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-white"></div>
+                    <div className="absolute -bottom-0.5 -right-0.5 w-4 h-4 bg-green-500 rounded-full border-2 border-white"></div>
                   </div>
                   <div>
-                    <h4 className="font-semibold text-gray-900">{testimonial.name}</h4>
+                    <h4 className="font-semibold text-gray-900 text-lg mb-0.5">{testimonial.name}</h4>
                     <p className="text-sm text-gray-600">{testimonial.role}</p>
                   </div>
                 </div>
@@ -160,7 +173,7 @@ export default function Testimonials() {
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, margin: "-100px 0px" }}
-          className="bg-white/80 backdrop-blur-sm rounded-3xl p-8 md:p-12 shadow-xl border border-white/30 max-w-5xl mx-auto"
+          className="bg-white rounded-3xl p-8 md:p-12 shadow-sm border border-gray-100 max-w-5xl mx-auto"
         >
           <motion.h3 
             variants={fadeInUp}
@@ -171,7 +184,7 @@ export default function Testimonials() {
           
           <motion.div
             variants={containerVariants}
-            className="grid grid-cols-1 md:grid-cols-4 gap-6 md:gap-8"
+            className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8"
           >
             {[
               { number: "10K+", label: "Happy Travelers" },
