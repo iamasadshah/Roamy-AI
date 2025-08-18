@@ -206,6 +206,23 @@ export default function ProfilePage() {
 
     setLoading(true);
     try {
+      // Delete old avatar if it exists and is not the default
+      if (profileData.avatar_url && !profileData.avatar_url.includes("default-avatar.png")) {
+        const oldFileName = profileData.avatar_url.split('/').pop();
+        if (oldFileName) {
+          const { error: deleteError } = await supabase.storage
+            .from('avatars')
+            .remove([oldFileName]);
+
+          if (deleteError) {
+            console.error("Error deleting old avatar:", deleteError);
+            toast.error("Failed to delete old profile picture.");
+            setLoading(false);
+            return;
+          }
+        }
+      }
+
       const fileExt = file.name.split('.').pop();
       const fileName = `${user.id}-${Math.random()}.${fileExt}`;
       const filePath = `${fileName}`;
