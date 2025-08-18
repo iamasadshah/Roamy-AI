@@ -257,7 +257,7 @@ export default function ProfilePage() {
             <div className="flex items-center gap-4">
               <div className="hidden md:flex items-center gap-2 text-sm text-gray-500">
                 <FaShieldAlt className="h-4 w-4 text-blue-500" />
-                <span>Premium Member</span>
+                <span>Roamy AI Member</span>
               </div>
             </div>
           </div>
@@ -302,7 +302,6 @@ export default function ProfilePage() {
                 {[
                   { id: "profile", label: "Profile", icon: FaUser, color: "blue" },
                   { id: "trips", label: "My Trips", icon: FaHistory, color: "green" },
-                  { id: "settings", label: "Settings", icon: FaCog, color: "purple" },
                 ].map((item) => {
                   const Icon = item.icon;
                   const isActive = activeTab === item.id;
@@ -508,105 +507,7 @@ export default function ProfilePage() {
               </div>
             )}
 
-            {/* Settings Tab */}
-            {activeTab === "settings" && (
-              <div className="space-y-8">
-                {/* Account Security */}
-                <div className="bg-white/90 backdrop-blur-lg rounded-3xl p-8 shadow-xl border border-white/30">
-                  <div className="flex items-center gap-4 mb-6">
-                    <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center">
-                      <FaShieldAlt className="text-white h-6 w-6" />
-                    </div>
-                    <div>
-                      <h4 className="text-xl font-bold text-gray-800">Account Security</h4>
-                      <p className="text-gray-600 text-sm">Manage your account security settings</p>
-                    </div>
-                  </div>
-                  
-                  <div className="space-y-4">
-                    <div className="flex items-center justify-between p-4 bg-gray-50 rounded-xl">
-                      <div>
-                        <p className="text-sm text-gray-600">Two-Factor Authentication</p>
-                        <p className="text-gray-800 font-medium">Not enabled</p>
-                      </div>
-                      <button className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors duration-150 text-sm font-medium">
-                        Enable
-                      </button>
-                    </div>
-                    
-                    <div className="flex items-center justify-between p-4 bg-gray-50 rounded-xl">
-                      <div>
-                        <p className="text-sm text-gray-600">Password</p>
-                        <p className="text-gray-800 font-medium">Last changed recently</p>
-                      </div>
-                      <button className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors duration-150 text-sm font-medium">
-                        Change
-                      </button>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Preferences */}
-                <div className="bg-white/90 backdrop-blur-lg rounded-3xl p-8 shadow-xl border border-white/30">
-                  <div className="flex items-center gap-4 mb-6">
-                    <div className="w-12 h-12 bg-gradient-to-r from-purple-500 to-pink-600 rounded-xl flex items-center justify-center">
-                      <FaPalette className="text-white h-6 w-6" />
-                    </div>
-                    <div>
-                      <h4 className="text-xl font-bold text-gray-800">Preferences</h4>
-                      <p className="text-gray-600 text-sm">Customize your experience</p>
-                    </div>
-                  </div>
-                  
-                  <div className="space-y-4">
-                    <div className="flex items-center justify-between p-4 bg-gray-50 rounded-xl">
-                      <div>
-                        <p className="text-sm text-gray-600">Email Notifications</p>
-                        <p className="text-gray-800 font-medium">Enabled</p>
-                      </div>
-                      <div className="w-12 h-6 bg-blue-500 rounded-full relative">
-                        <div className="w-5 h-5 bg-white rounded-full absolute right-0.5 top-0.5"></div>
-                      </div>
-                    </div>
-                    
-                    <div className="flex items-center justify-between p-4 bg-gray-50 rounded-xl">
-                      <div>
-                        <p className="text-sm text-gray-600">Language</p>
-                        <p className="text-gray-800 font-medium">English</p>
-                      </div>
-                      <button className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors duration-150 text-sm font-medium">
-                        Change
-                      </button>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Data & Privacy */}
-                <div className="bg-white/90 backdrop-blur-lg rounded-3xl p-8 shadow-xl border border-white/30">
-                  <div className="flex items-center gap-4 mb-6">
-                    <div className="w-12 h-12 bg-gradient-to-r from-orange-500 to-red-600 rounded-xl flex items-center justify-center">
-                      <FaGlobe className="text-white h-6 w-6" />
-                    </div>
-                    <div>
-                      <h4 className="text-xl font-bold text-gray-800">Data & Privacy</h4>
-                      <p className="text-gray-600 text-sm">Manage your data and privacy</p>
-                    </div>
-                  </div>
-                  
-                  <div className="space-y-4">
-                    <button className="w-full p-4 bg-gray-50 rounded-xl text-left hover:bg-gray-100 transition-colors duration-150">
-                      <p className="text-sm text-gray-600">Download My Data</p>
-                      <p className="text-gray-800 font-medium">Get a copy of your data</p>
-                    </button>
-                    
-                    <button className="w-full p-4 bg-gray-50 rounded-xl text-left hover:bg-gray-100 transition-colors duration-150">
-                      <p className="text-sm text-gray-600">Delete Account</p>
-                      <p className="text-red-600 font-medium">Permanently delete your account</p>
-              </button>
-            </div>
-                </div>
-        </div>
-      )}
+            
     </div>
         </div>
       </div>
