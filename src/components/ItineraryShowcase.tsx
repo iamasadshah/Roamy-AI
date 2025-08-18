@@ -5,6 +5,7 @@ import Image from "next/image";
 import { useState } from "react";
 import { FaChevronLeft, FaChevronRight, FaMapMarkerAlt, FaCalendarAlt, FaStar } from "react-icons/fa";
 import { Card } from "@/components/ui/card";
+import Link from "next/link";
 
 const sampleItineraries = [
   {
@@ -247,7 +248,9 @@ export default function ItineraryShowcase() {
                         <button 
                           className="w-full bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 hover:from-blue-700 hover:via-indigo-700 hover:to-purple-700 text-white font-semibold py-4 px-6 rounded-xl transition-all duration-300 transform hover:scale-[1.02] shadow-lg hover:shadow-xl active:scale-95"
                         >
-                          Customize This Itinerary
+                          <Link href={"/plan"}>
+                          Create My Itinerary
+                          </Link>
                         </button>
                       </div>
                     </div>
