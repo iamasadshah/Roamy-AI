@@ -65,7 +65,7 @@ export default function AuthPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 relative overflow-hidden">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 relative overflow-hidden py-8">
       {/* Background Elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-0 right-0 w-48 h-48 sm:w-64 sm:h-64 md:w-80 md:h-80 lg:w-96 lg:h-96 bg-blue-100 rounded-full mix-blend-multiply filter blur-3xl opacity-20"></div>
@@ -237,13 +237,13 @@ export default function AuthPage() {
                         },
                       }}
                       theme="light"
-                      providers={["google", "github"]}
+                      providers={["google"]}
                       redirectTo={redirectUrl}
                     />
                   </div>
 
                   {/* Footer */}
-                  <div className="mt-6 sm:mt-8 pt-4 sm:pt-6 border-t border-gray-200">
+                  <div className=" sm:pt-6 border-t border-gray-200">
                     <p className="text-center text-xs sm:text-sm text-gray-500">
                       By continuing, you agree to our{" "}
                       <Link href="/terms" className="text-blue-600 hover:text-blue-700 font-medium">
