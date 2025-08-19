@@ -83,15 +83,20 @@ export default function PlanPage() {
 
       const plan = await generateTripPlan(formData);
       if (!plan || !plan.trip_overview) {
-        throw new Error("Invalid plan data received");
+        throw new Error("Itinerary generation failed: Missing trip overview data.");
       }
       setTripPlan(plan);
       toast.success("Trip itinerary generated successfully!");
     } catch (error) {
-      const errorMessage =
-        error instanceof Error ? error.message : "Failed to generate itinerary";
+      let errorMessage: string;
+      if (error instanceof Error) {
+        errorMessage = `Error generating itinerary: ${error.message}`;
+      } else if (typeof error === 'string') {
+        errorMessage = `Error generating itinerary: ${error}`;
+      } else {
+        errorMessage = "An unexpected error occurred during itinerary generation.";
+      }
       toast.error(errorMessage);
-      console.error("Error generating trip plan:", error);
     } finally {
       setIsLoading(false);
     }

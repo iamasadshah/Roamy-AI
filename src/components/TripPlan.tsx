@@ -47,25 +47,7 @@ export default function TripPlan({
     setIsDownloadingPDF(true);
     html2pdf(content, {
       margin : 10,
-      filename : `Trip to ${plan?.trip_overview.destination}`,
-      jsPDF : {
-        unit : "mm",
-        format : "a4",
-        orientation : "portrait",
-        compress: true,
-      },
-      html2canvas: {
-        allowTaint: true,
-        useCORS: true,
-        scale: 1.5, // Reduced scale for better compatibility
-        // dpi: 300, // Removed dpi to prevent canvas size issues
-        imageTimeout: 15000, // Increase timeout for images
-        ignoreElements: (element: HTMLElement) => {
-          // Ignore all link and style elements to avoid cross-origin issues
-          return element.tagName === 'LINK' || element.tagName === 'STYLE';
-        }
-      },
-      pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }, // Avoid breaking elements across pages
+      filename : `Trip to ${plan?.trip_overview.destination}`, 
     }).then(() => {
       setIsDownloadingPDF(false);
     });
