@@ -1,10 +1,8 @@
 import { TravelItinerary } from "@/types/itinerary";
 import StructuredItinerary from "./StructuredItinerary";
-import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
-import { useRouter } from "next/navigation";
-import { toast } from "react-hot-toast";
 import { motion, LazyMotion, domAnimation } from "framer-motion";
 import { Save, RefreshCw, Heart, Calendar, MapPin, Users, DollarSign } from "lucide-react";
+
 
 interface TripPlanProps {
   plan: TravelItinerary | null;
@@ -38,122 +36,16 @@ export default function TripPlan({
   isLoading,
   onGenerateNew,
 }: TripPlanProps) {
-  const router = useRouter();
-  const supabase = createClientComponentClient();
 
-  const handleSaveTrip = async () => {
-    if (!plan) return;
-
-    try {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-
-      if (!user) {
-        toast.custom(
-          (t) => (
-            <div
-              className={`${
-                t.visible ? "animate-enter" : "animate-leave"
-              } max-w-md w-full bg-white shadow-lg rounded-lg pointer-events-auto flex ring-1 ring-black ring-opacity-5`}
-            >
-              <div className="flex-1 w-0 p-4">
-                <div className="flex items-start">
-                  <div className="flex-shrink-0 pt-0.5">
-                    <svg
-                      className="h-10 w-10 text-blue-500"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
-                      />
-                    </svg>
-                  </div>
-                  <div className="ml-3 flex-1">
-                    <p className="text-sm font-medium text-gray-900">
-                      Sign In Required
-                    </p>
-                    <p className="mt-1 text-sm text-gray-500">
-                      Please sign in to save your trip.
-                    </p>
-                  </div>
-                </div>
-              </div>
-              <div className="flex border-l border-gray-200">
-                <button
-                  onClick={() => {
-                    toast.dismiss(t.id);
-                    router.push("/auth");
-                  }}
-                  className="w-full border border-transparent rounded-none rounded-r-lg p-4 flex items-center justify-center text-sm font-medium text-blue-600 hover:text-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                >
-                  Sign In
-                </button>
-              </div>
-            </div>
-          ),
-          {
-            duration: 5000,
-            position: "bottom-right",
-          }
-        );
-        return;
-      }
-
-      // Parse dates properly
-      const parseDate = (dateStr: string) => {
-        try {
-          const parsedDate = new Date(dateStr);
-          if (!isNaN(parsedDate.getTime())) {
-            return parsedDate.toISOString().split("T")[0];
-          }
-        } catch {
-          // If parsing fails, use today's date
-          console.warn(
-            `Could not parse date: ${dateStr}, using today's date instead`
-          );
-          return new Date().toISOString().split("T")[0];
-        }
-      };
-
-      const [startDate, endDate] = plan.trip_overview.dates
-        .split(" - ")
-        .map(parseDate);
-
-      const tripData = {
-        user_id: user.id,
-        destination: plan.trip_overview.destination,
-        start_date: startDate,
-        end_date: endDate,
-        budget: plan.trip_overview.budget_level,
-        accommodation: plan.trip_overview.accommodation,
-        travelers: plan.trip_overview.travelers,
-        itinerary: plan,
-      };
-
-      const { error } = await supabase.from("trips").insert([tripData]);
-
-      if (error) {
-        console.error("Supabase error:", error);
-        throw new Error(error.message);
-      }
-
-      toast.success("Trip saved successfully!");
-      router.push("/profile");
-    } catch (error) {
-      console.error("Error saving trip:", error);
-      toast.error(
-        error instanceof Error
-          ? `Failed to save trip: ${error.message}`
-          : "Failed to save trip. Please try again."
-      );
-    }
-  };
+  // use html2pdf to download the itinerary as a PDF
+  const handleDownloadPDF  =  () => {
+    const html2pdf = require("html2pdf.js");
+    const content = document.querySelector("#trip-plan-container");
+    html2pdf(content, {
+      margin : 10,
+      filename: `trip-plan-${plan?.trip_overview.destination}.pdf`,
+    })
+  }
 
   if (isLoading) {
     return (
@@ -199,6 +91,7 @@ export default function TripPlan({
         variants={containerVariants}
         initial="initial"
         animate="animate"
+        id = "trip-plan-container"
       >
         {/* Enhanced Header */}
         <motion.div 
@@ -290,16 +183,18 @@ export default function TripPlan({
           variants={staggerContainer}
           initial="initial"
           animate="animate"
+          data-html2canvas-ignore
         >
           <motion.button
             variants={itemVariants}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            onClick={handleSaveTrip}
+            onClick={handleDownloadPDF}
+
             className="flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-2xl font-semibold text-lg hover:from-blue-700 hover:to-indigo-700 transition-all duration-300 shadow-lg hover:shadow-xl"
           >
             <Save className="h-5 w-5" />
-            Save to Profile
+            Save to Acess Offline
           </motion.button>
           
           <motion.button
