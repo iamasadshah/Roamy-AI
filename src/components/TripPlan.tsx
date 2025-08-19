@@ -189,8 +189,6 @@ export default function TripPlan({
         >
           <motion.button
             variants={itemVariants}
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
             onClick={handleDownloadPDF}
             disabled={isDownloadingPDF}
             className="flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-2xl font-semibold text-lg hover:from-blue-700 cursor-pointer hover:to-indigo-700 transition-all duration-300 shadow-lg hover:shadow-xl"

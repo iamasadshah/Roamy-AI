@@ -12,6 +12,7 @@ const nextConfig = withPWA({
   images: {
     domains: ['images.unsplash.com'],
   },
+  
 });
 
 module.exports = nextConfig;
