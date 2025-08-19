@@ -113,6 +113,7 @@ interface ProfileData {
 
 export default function ProfilePage() {
   const [user, setUser] = useState<User | null>(null);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [savedTrips, setSavedTrips] = useState<Trip[]>([]);
   const [loading, setLoading] = useState(true);
   const [editingProfile, setEditingProfile] = useState(false);

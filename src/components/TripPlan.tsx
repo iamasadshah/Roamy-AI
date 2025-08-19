@@ -40,12 +40,18 @@ export default function TripPlan({
   const [isDownloadingPDF, setIsDownloadingPDF] = useState(false);
 
   // use html2pdf to download the itinerary as a PDF
-  const handleDownloadPDF  =  () => {
-    const html2pdf = require("html2pdf.js");
+  const handleDownloadPDF  =  async () => {
+    setIsDownloadingPDF(true);
+    const html2pdf = (await import("html2pdf.js")).default;
     const content = document.querySelector("#trip-plan-container");
 
-    setIsDownloadingPDF(true);
-    html2pdf(content, {
+    if (!content) {
+      console.error("Trip plan container not found for PDF download.");
+      setIsDownloadingPDF(false);
+      return;
+    }
+
+    html2pdf(content as HTMLElement, {
       margin : 10,
       filename : `Trip to ${plan?.trip_overview.destination}`, 
     }).then(() => {
