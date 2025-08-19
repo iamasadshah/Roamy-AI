@@ -43,7 +43,7 @@ export default function TripPlan({
     const content = document.querySelector("#trip-plan-container");
     html2pdf(content, {
       margin : 10,
-      filename: `trip-plan-${plan?.trip_overview.destination}.pdf`,
+      filename : `Trip to ${plan?.trip_overview.destination}`,
     })
   }
 
@@ -191,7 +191,7 @@ export default function TripPlan({
             whileTap={{ scale: 0.95 }}
             onClick={handleDownloadPDF}
 
-            className="flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-2xl font-semibold text-lg hover:from-blue-700 hover:to-indigo-700 transition-all duration-300 shadow-lg hover:shadow-xl"
+            className="flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-2xl font-semibold text-lg hover:from-blue-700 cursor-pointer hover:to-indigo-700 transition-all duration-300 shadow-lg hover:shadow-xl"
           >
             <Save className="h-5 w-5" />
             Save to Acess Offline
