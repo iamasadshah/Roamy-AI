@@ -2,24 +2,12 @@
 import { useState, useEffect } from "react";
 import { createClientComponentClient, User } from "@supabase/auth-helpers-nextjs";
 import {
-  FaUser,
-  FaHistory,
-  FaMapMarkerAlt,
-  FaCalendar,
-  FaUsers,
-  FaHotel,
-  FaWallet,
-  FaDownload,
-  FaArrowLeft,
-  FaShieldAlt,
   FaEdit,
   FaSave,
   FaTimes,
-  FaTrash,
 } from "react-icons/fa";
 import Image from "next/image";
 import { toast } from "react-hot-toast";
-import { format } from "date-fns";
 import Link from "next/link";
 
 // Simplified Trip interface for better performance
@@ -121,22 +109,17 @@ interface ProfileData {
   full_name: string;
   avatar_url: string;
   bio: string;
-  location: string;
-  phone: string;
 }
 
 export default function ProfilePage() {
   const [user, setUser] = useState<User | null>(null);
   const [savedTrips, setSavedTrips] = useState<Trip[]>([]);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState("profile");
   const [editingProfile, setEditingProfile] = useState(false);
   const [profileData, setProfileData] = useState<ProfileData>({
     full_name: "",
     avatar_url: "",
     bio: "",
-    location: "",
-    phone: "",
   });
   const supabase = createClientComponentClient();
 
@@ -150,8 +133,6 @@ export default function ProfilePage() {
             full_name: user.user_metadata?.full_name || "",
             avatar_url: user.user_metadata?.avatar_url || "",
             bio: user.user_metadata?.bio || "",
-            location: user.user_metadata?.location || "",
-            phone: user.user_metadata?.phone || "",
           });
           
           // Load saved trips
@@ -163,7 +144,10 @@ export default function ProfilePage() {
         }
       } catch (error) {
         console.error("Error loading profile:", error);
-        toast.error("Failed to load profile");
+        toast.error("Failed to load profile", {
+          position: "bottom-right",
+          duration: 3000,
+        });
       } finally {
         setLoading(false);
       }
@@ -179,17 +163,26 @@ export default function ProfilePage() {
       
       if (error) throw error;
       
-      toast.success("Profile updated successfully!");
+      toast.success("Profile updated successfully!", {
+        position: "bottom-right",
+        duration: 3000,
+      });
       setEditingProfile(false);
     } catch (error) {
       console.error("Error updating profile:", error);
-      toast.error("Failed to update profile");
+      toast.error("Failed to update profile", {
+        position: "bottom-right",
+        duration: 3000,
+      });
     }
   };
 
   const handleAvatarChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
     if (!user) {
-      toast.error("User not logged in.");
+      toast.error("User not logged in", {
+        position: "bottom-right",
+        duration: 3000,
+      });
       return;
     }
 
@@ -198,22 +191,22 @@ export default function ProfilePage() {
       return;
     }
 
-    setLoading(true);
+    // Show preview immediately
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const result = e.target?.result as string;
+      setProfileData(prev => ({ ...prev, avatar_url: result }));
+    };
+    reader.readAsDataURL(file);
+
     try {
       // Delete old avatar if it exists and is not the default
-      if (profileData.avatar_url && !profileData.avatar_url.includes("default-avatar.png")) {
+      if (profileData.avatar_url && !profileData.avatar_url.includes("default-avatar.png") && !profileData.avatar_url.startsWith("data:")) {
         const oldFileName = profileData.avatar_url.split('/').pop();
         if (oldFileName) {
-          const { error: deleteError } = await supabase.storage
+          await supabase.storage
             .from('avatars')
             .remove([oldFileName]);
-
-          if (deleteError) {
-            console.error("Error deleting old avatar:", deleteError);
-            toast.error("Failed to delete old profile picture.");
-            setLoading(false);
-            return;
-          }
         }
       }
 
@@ -235,32 +228,23 @@ export default function ProfilePage() {
 
       if (updateError) throw updateError;
 
+      // Update with final URL
       setProfileData(prev => ({ ...prev, avatar_url: publicUrl }));
-      toast.success("Profile picture updated successfully!");
+      toast.success("Profile picture updated successfully!", {
+        position: "bottom-right",
+        duration: 3000,
+      });
     } catch (error) {
       console.error("Error uploading avatar:", error);
-      toast.error("Failed to update profile picture.");
-    } finally {
-      setLoading(false);
+      toast.error("Failed to update profile picture", {
+        position: "bottom-right",
+        duration: 3000,
+      });
+      // Revert to original on error
+      setProfileData(prev => ({ ...prev, avatar_url: user?.user_metadata?.avatar_url || "" }));
     }
   };
 
-  const deleteTrip = async (tripId: string) => {
-    try {
-      const { error } = await supabase
-        .from("trips")
-        .delete()
-        .eq("id", tripId);
-      
-      if (error) throw error;
-      
-      setSavedTrips(prev => prev.filter(trip => trip.id !== tripId));
-      toast.success("Trip deleted successfully!");
-    } catch (error) {
-      console.error("Error deleting trip:", error);
-      toast.error("Failed to delete trip");
-    }
-  };
 
   // Professional loading component - optimized for fast loading
   if (loading) {
@@ -289,204 +273,115 @@ export default function ProfilePage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
-      {/* Ultra-light static background */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-0 right-0 w-64 h-64 bg-blue-100 rounded-full mix-blend-multiply filter blur-2xl opacity-10"></div>
-        <div className="absolute bottom-0 left-0 w-64 h-64 bg-indigo-100 rounded-full mix-blend-multiply filter blur-2xl opacity-10"></div>
-      </div>
-
-      {/* Header */}
-      <div className="relative z-10 pt-6 pb-8">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between mb-8">
-            <Link href="/">
-              <button className="flex items-center gap-3 text-gray-600 hover:text-gray-900 transition-colors duration-150 px-4 py-2 rounded-xl hover:bg-white/50 backdrop-blur-sm">
-                <FaArrowLeft className="h-5 w-5" />
-                <span className="font-medium">Back to Home</span>
-              </button>
-            </Link>
-            <div className="flex items-center gap-4">
-              <div className="hidden md:flex items-center gap-2 text-sm text-gray-500">
-                <FaShieldAlt className="h-4 w-4 text-blue-500" />
-                <span>Roamy AI Member</span>
-              </div>
-            </div>
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 flex items-center justify-center p-3 sm:p-4 md:p-6 lg:p-8 lg:py-20">
+      <div className="w-full max-w-xs sm:max-w-sm md:max-w-md mx-auto">
+        {/* Main Profile Card */}
+        <div className="bg-white rounded-2xl sm:rounded-3xl shadow-2xl overflow-hidden transform transition-all duration-300 hover:shadow-3xl">
+          
+          {/* Red Header Section */}
+          <div className="bg-gradient-to-r from-indigo-600 to-indigo-800 h-28 sm:h-32 md:h-36 lg:h-40 relative">
+            <div className="absolute inset-0 bg-black bg-opacity-10"></div>
           </div>
-        </div>
-      </div>
 
-      {/* Main Content */}
-      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-12">
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-          {/* Sidebar */}
-          <div className="lg:col-span-1">
-            <div className="bg-white/90 backdrop-blur-lg rounded-3xl p-8 shadow-xl border border-white/30">
-              {/* Profile Header */}
-              <div className="text-center mb-8">
-                <div className="relative w-32 h-32 mx-auto mb-6">
-                  <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-full p-1">
-                    <div className="w-full h-full rounded-full overflow-hidden bg-white p-1">
+          {/* Profile Content */}
+          <div className="relative px-4 pb-6 sm:px-6 sm:pb-8 md:px-8 md:pb-10">
+            
+            {/* Profile Avatar */}
+            <div className="flex justify-center -mt-12 sm:-mt-16 md:-mt-18 lg:-mt-20 mb-3 sm:mb-4">
+              <div className="relative">
+                <div className="w-20 h-20 sm:w-24 sm:h-24 md:w-28 md:h-28 lg:w-32 lg:h-32 rounded-full border-3 sm:border-4 border-white shadow-xl overflow-hidden bg-gray-100">
                   <Image
-                        src={profileData.avatar_url || "/images/default-avatar.png"}
-                    alt="Profile"
+                    src={profileData.avatar_url || "/images/default-avatar.png"}
+                    alt="Profile Avatar"
                     fill
-                    className="rounded-full object-cover"
+                    className="object-cover object-center"
+                    style={{ borderRadius: '50%' }}
+                    priority
                   />
                 </div>
-                  </div>
-                  {editingProfile && (
-                    <label
-                      htmlFor="avatar-upload"
-                      className="absolute -bottom-2 -right-2 w-10 h-10 bg-blue-600 rounded-full border-4 border-white flex items-center justify-center cursor-pointer shadow-md hover:bg-blue-700 transition-colors duration-150"
-                      title="Change avatar"
-                    >
-                      <FaEdit className="h-5 w-5 text-white" />
-                      <input
-                        id="avatar-upload"
-                        type="file"
-                        accept="image/*"
-                        onChange={handleAvatarChange}
-                        className="hidden"
-                      />
-                    </label>
-                  )}
-                </div>
-                <h2 className="text-2xl font-bold text-gray-800 mb-2">
-                  {profileData.full_name || "User"}
-                </h2>
-                <p className="text-gray-600 text-sm mb-4">{user.email}</p>
-                <div className="inline-flex items-center gap-2 px-4 py-2 bg-blue-50 text-blue-700 rounded-full text-sm font-medium">
-                  <FaShieldAlt className="h-4 w-4" />
-                  <span>Premium Member</span>
-                </div>
+                {editingProfile && (
+                  <label
+                    htmlFor="avatar-upload"
+                    className="absolute bottom-0 right-0 w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 bg-blue-600 rounded-full flex items-center justify-center cursor-pointer hover:bg-blue-700 transition-colors shadow-lg"
+                  >
+                    <FaEdit className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-white" />
+                    <input
+                      id="avatar-upload"
+                      type="file"
+                      accept="image/*"
+                      onChange={handleAvatarChange}
+                      className="hidden"
+                    />
+                  </label>
+                )}
               </div>
+            </div>
 
-              {/* Navigation */}
-              <nav className="space-y-3">
-                {[
-                  { id: "profile", label: "Profile", icon: FaUser, color: "blue" },
-                ].map((item) => {
-                  const Icon = item.icon;
-                  const isActive = activeTab === item.id;
-                  return (
+            {/* Profile Information */}
+            <div className="text-center">
+              {editingProfile ? (
+                <div className="space-y-3 sm:space-y-4 mb-5 sm:mb-6">
+                  <input
+                    type="text"
+                    value={profileData.full_name}
+                    onChange={(e) => setProfileData({...profileData, full_name: e.target.value})}
+                    className="w-full text-center text-lg sm:text-xl md:text-2xl font-bold bg-gray-50 border border-gray-200 rounded-lg px-3 py-2 sm:px-4 sm:py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    placeholder="Your Name"
+                  />
+                  <textarea
+                    value={profileData.bio}
+                    onChange={(e) => setProfileData({...profileData, bio: e.target.value})}
+                    rows={3}
+                    className="w-full text-center text-sm sm:text-base bg-gray-50 border border-gray-200 rounded-lg px-3 py-2 sm:px-4 sm:py-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+                    placeholder="Tell us about yourself..."
+                  />
+                </div>
+              ) : (
+                <>
+                  <h1 className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold text-gray-900 mb-1 sm:mb-2 px-2 leading-tight">
+                    {profileData.full_name || "Ndife Samuel"}
+                  </h1>
+                  
+                  {/* accent line */}
+                  <div className="w-12 sm:w-16 h-0.5 sm:h-1 bg-indigo-600 mx-auto rounded-full mb-4 sm:mb-6"></div>
+                  
+                  <p className="text-gray-700 text-xs sm:text-sm md:text-base leading-relaxed px-3 sm:px-4 md:px-6 break-words hyphens-auto">
+                    {profileData.bio || "I choose the product design track because I love solving visual problems using UI/UX designs."}
+                  </p>
+                </>
+              )}
+            </div>
+
+            {/* Action Buttons */}
+            <div className="mt-6 sm:mt-8 flex justify-center">
+              {!editingProfile ? (
                 <button
-                      key={item.id}
-                      onClick={() => setActiveTab(item.id)}
-                      className={`w-full flex items-center gap-4 px-6 py-4 rounded-2xl transition-all duration-150 font-medium ${
-                        isActive
-                          ? `bg-gradient-to-r from-${item.color}-500 to-${item.color}-600 text-white shadow-lg`
-                          : "text-gray-700 hover:bg-gray-50 hover:text-gray-900"
-                      }`}
-                    >
-                      <Icon className={`h-5 w-5 ${isActive ? 'text-white' : 'text-gray-500'}`} />
-                      {item.label}
+                  onClick={() => setEditingProfile(true)}
+                  className="flex items-center gap-2 bg-gradient-to-r from-blue-600 to-blue-700 text-white px-4 py-2.5 sm:px-6 sm:py-3 rounded-full text-sm sm:text-base font-medium hover:from-blue-700 hover:to-blue-800 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105"
+                >
+                  <FaEdit className="w-3 h-3 sm:w-4 sm:h-4" />
+                  Edit Profile
                 </button>
-                  );
-                })}
-              </nav>
+              ) : (
+                <div className="flex gap-2 sm:gap-3">
+                  <button
+                    onClick={handleSaveProfile}
+                    className="flex items-center gap-1.5 sm:gap-2 bg-gradient-to-r from-green-600 to-green-700 text-white px-4 py-2 sm:px-5 sm:py-2.5 rounded-full text-sm sm:text-base font-medium hover:from-green-700 hover:to-green-800 transition-all duration-200 shadow-lg"
+                  >
+                    <FaSave className="w-3 h-3 sm:w-4 sm:h-4" />
+                    Save
+                  </button>
+                  <button
+                    onClick={() => setEditingProfile(false)}
+                    className="flex items-center gap-1.5 sm:gap-2 bg-gradient-to-r from-gray-500 to-gray-600 text-white px-4 py-2 sm:px-5 sm:py-2.5 rounded-full text-sm sm:text-base font-medium hover:from-gray-600 hover:to-gray-700 transition-all duration-200 shadow-lg"
+                  >
+                    <FaTimes className="w-3 h-3 sm:w-4 sm:h-4" />
+                    Cancel
+                  </button>
+                </div>
+              )}
             </div>
           </div>
-
-          {/* Main Content Area */}
-          <div className="lg:col-span-3">
-            {/* Profile Tab */}
-            {activeTab === "profile" && (
-    <div className="space-y-8">
-                <div className="bg-white/90 backdrop-blur-lg rounded-3xl p-8 shadow-xl border border-white/30">
-                  <div className="flex items-center justify-between mb-6">
-                    <h3 className="text-2xl font-bold text-gray-800">Profile Information</h3>
-                    {!editingProfile ? (
-                      <button
-                        onClick={() => setEditingProfile(true)}
-                        className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-150"
-                      >
-                        <FaEdit className="h-4 w-4" />
-                        Edit Profile
-                      </button>
-                    ) : (
-                      <div className="flex gap-2">
-                        <button
-                          onClick={handleSaveProfile}
-                          className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors duration-150"
-                        >
-                          <FaSave className="h-4 w-4" />
-                          Save
-                        </button>
-                        <button
-                          onClick={() => setEditingProfile(false)}
-                          className="flex items-center gap-2 px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors duration-150"
-                        >
-                          <FaTimes className="h-4 w-4" />
-                          Cancel
-                        </button>
-              </div>
-            )}
-      </div>
-
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Full Name</label>
-                      {editingProfile ? (
-              <input
-                type="text"
-                value={profileData.full_name}
-                          onChange={(e) => setProfileData({...profileData, full_name: e.target.value})}
-                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                        />
-                      ) : (
-                        <p className="text-gray-900 font-medium">{profileData.full_name || "Not set"}</p>
-                      )}
-            </div>
-
-            <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Location</label>
-                      {editingProfile ? (
-              <input
-                type="text"
-                value={profileData.location}
-                          onChange={(e) => setProfileData({...profileData, location: e.target.value})}
-                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                        />
-                      ) : (
-                        <p className="text-gray-900 font-medium">{profileData.location || "Not set"}</p>
-                      )}
-            </div>
-
-            <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Phone</label>
-                      {editingProfile ? (
-              <input
-                type="tel"
-                value={profileData.phone}
-                          onChange={(e) => setProfileData({...profileData, phone: e.target.value})}
-                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                        />
-                      ) : (
-                        <p className="text-gray-900 font-medium">{profileData.phone || "Not set"}</p>
-                      )}
-            </div>
-
-                    <div className="md:col-span-2">
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Bio</label>
-                      {editingProfile ? (
-                        <textarea
-                          value={profileData.bio}
-                          onChange={(e) => setProfileData({...profileData, bio: e.target.value})}
-                          rows={3}
-                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                        />
-                      ) : (
-                        <p className="text-gray-900">{profileData.bio || "No bio added yet"}</p>
-                      )}
-            </div>
-            </div>
-            </div>
-          </div>
-        )}
-
-            
-    </div>
         </div>
       </div>
     </div>
