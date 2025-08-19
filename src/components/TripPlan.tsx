@@ -2,6 +2,7 @@ import { TravelItinerary } from "@/types/itinerary";
 import StructuredItinerary from "./StructuredItinerary";
 import { motion, LazyMotion, domAnimation } from "framer-motion";
 import { Save, RefreshCw, Heart, Calendar, MapPin, Users, DollarSign } from "lucide-react";
+import { useState } from "react";
 
 
 interface TripPlanProps {
@@ -36,11 +37,14 @@ export default function TripPlan({
   isLoading,
   onGenerateNew,
 }: TripPlanProps) {
+  const [isDownloadingPDF, setIsDownloadingPDF] = useState(false);
 
   // use html2pdf to download the itinerary as a PDF
   const handleDownloadPDF  =  () => {
     const html2pdf = require("html2pdf.js");
     const content = document.querySelector("#trip-plan-container");
+
+    setIsDownloadingPDF(true);
     html2pdf(content, {
       margin : 10,
       filename : `Trip to ${plan?.trip_overview.destination}`,
@@ -48,9 +52,14 @@ export default function TripPlan({
         unit : "mm",
         format : "a4",
         orientation : "portrait",
-      }
-      
-    })
+      },
+      html2canvas: {
+        allowTaint: true,
+        useCORS: true,
+      },
+    }).then(() => {
+      setIsDownloadingPDF(false);
+    });
   }
 
   if (isLoading) {
@@ -196,11 +205,18 @@ export default function TripPlan({
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             onClick={handleDownloadPDF}
-
+            disabled={isDownloadingPDF}
             className="flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-2xl font-semibold text-lg hover:from-blue-700 cursor-pointer hover:to-indigo-700 transition-all duration-300 shadow-lg hover:shadow-xl"
           >
-            <Save className="h-5 w-5" />
-            Save to Acess Offline
+            {isDownloadingPDF ? (
+              <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              </svg>
+            ) : (
+              <Save className="h-5 w-5" />
+            )}
+            {isDownloadingPDF ? "Saving..." : "Save to Acess Offline"}
           </motion.button>
           
           <motion.button
