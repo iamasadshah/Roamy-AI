@@ -52,11 +52,20 @@ export default function TripPlan({
         unit : "mm",
         format : "a4",
         orientation : "portrait",
+        compress: true,
       },
       html2canvas: {
         allowTaint: true,
         useCORS: true,
+        scale: 1.5, // Reduced scale for better compatibility
+        // dpi: 300, // Removed dpi to prevent canvas size issues
+        imageTimeout: 15000, // Increase timeout for images
+        ignoreElements: (element: HTMLElement) => {
+          // Ignore all link and style elements to avoid cross-origin issues
+          return element.tagName === 'LINK' || element.tagName === 'STYLE';
+        }
       },
+      pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }, // Avoid breaking elements across pages
     }).then(() => {
       setIsDownloadingPDF(false);
     });
@@ -71,10 +80,6 @@ export default function TripPlan({
         animate="animate"
       >
         <div className="text-center space-y-6 p-12 bg-white/95 backdrop-blur-sm rounded-3xl shadow-2xl border border-white/30">
-          <div className="relative">
-            <div className="w-16 h-16 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin mx-auto mb-6"></div>
-            <div className="absolute inset-0 rounded-full border-4 border-blue-100 animate-pulse"></div>
-          </div>
           <h3 className="text-2xl font-bold text-gray-800 mb-4">
             AI Processing Your Itinerary
           </h3>
