@@ -145,9 +145,10 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 - [Tailwind CSS](https://tailwindcss.com/)
 - [Google Gemini](https://deepmind.google/technologies/gemini/)
 - [Framer Motion](https://www.framer.com/motion/)
-
+- [Supabase](https://www.supabase.com)
 ---
 
 <div align="center">
   <p>Built with ❤️ by Asad Shah</p>
 </div>
+
