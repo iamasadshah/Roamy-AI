@@ -2,7 +2,7 @@
 
 import React, { useCallback, useMemo, useState } from "react";
 import { motion, AnimatePresence, LazyMotion, domAnimation } from "framer-motion";
-import { FaGlobe, FaSearch, FaWallet, FaHotel, FaBed, FaUmbrellaBeach, FaHome, FaUser, FaUserFriends, FaLeaf, FaHeart, FaUsers } from "react-icons/fa";
+import { FaGlobe, FaSearch, FaHotel, FaBed, FaUmbrellaBeach, FaHome, FaUser, FaUserFriends, FaLeaf, FaHeart, FaUsers } from "react-icons/fa";
 import { Loader2 } from "lucide-react";
 import type { FormData } from "@/types/itinerary";
 
