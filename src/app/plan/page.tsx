@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { Toaster, toast } from "react-hot-toast";
 import { motion, AnimatePresence, LazyMotion, domAnimation } from "framer-motion";
-import MultiStepForm from "@/components/MultiStepForm";
+import ChatPlanForm from "@/components/ChatPlanForm";
 import TripPlan from "@/components/TripPlan";
 import { generateTripPlan } from "@/utils/gemini";
 import { FormData, TravelItinerary } from "@/types/itinerary";
@@ -320,14 +320,14 @@ export default function PlanPage() {
                   >
                     <div className="bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 px-8 py-8 lg:px-12 lg:py-10">
                       <h2 className="text-3xl md:text-4xl font-bold text-white text-center mb-3">
-                        Tell Us About Your Trip
+                        Plan with Chat
                       </h2>
                       <p className="text-blue-100 text-center text-lg lg:text-xl max-w-2xl mx-auto leading-relaxed">
-                        Fill out the form below to get your personalized AI-generated itinerary
+                        Answer a few quick questions in a chat-style flow to generate your itinerary
                       </p>
                     </div>
-                    <div className="p-8 lg:p-12">
-                      <MultiStepForm onSubmit={handleSubmit} isLoading={isLoading} />
+                    <div className="p-4 lg:p-8">
+                      <ChatPlanForm onSubmit={handleSubmit} isLoading={isLoading} />
                     </div>
                   </motion.div>
                 )}
