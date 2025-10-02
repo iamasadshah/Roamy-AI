@@ -1,14 +1,16 @@
 "use client";
 
-import React, { useCallback, useMemo, useState } from "react";
+import React, { useCallback, useMemo, useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence, LazyMotion, domAnimation } from "framer-motion";
-import { FaGlobe, FaSearch, FaHotel, FaBed, FaUmbrellaBeach, FaHome, FaUser, FaUserFriends, FaLeaf, FaHeart, FaUsers } from "react-icons/fa";
+import { FaGlobe, FaSearch, FaWallet, FaHotel, FaBed, FaUmbrellaBeach, FaHome, FaUser, FaUserFriends, FaLeaf, FaHeart, FaUsers } from "react-icons/fa";
 import { Loader2 } from "lucide-react";
 import type { FormData } from "@/types/itinerary";
+import Image from "next/image";
 
 interface Props {
   onSubmit: (data: FormData) => void;
   isLoading: boolean;
+  resultContent?: React.ReactNode;
 }
 
 // Small helper types for chat rendering
@@ -113,7 +115,7 @@ const DestinationInput = ({ value, onChange }: { value: string; onChange: (value
   );
 };
 
-const ChatPlanForm: React.FC<Props> = ({ onSubmit, isLoading }) => {
+const ChatPlanForm: React.FC<Props> = ({ onSubmit, isLoading, resultContent }) => {
   const [formData, setFormData] = useState<FormData>({
     destination: "",
     startDate: "",
@@ -132,6 +134,28 @@ const ChatPlanForm: React.FC<Props> = ({ onSubmit, isLoading }) => {
       </div>
     ) }
   ]);
+
+  // Persistent history (messages, formData, currentStep)
+  const STORAGE_KEY = "chat_plan_state_v1";
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        if (parsed?.messages && parsed?.formData && typeof parsed?.currentStep === "number") {
+          setMessages(parsed.messages);
+          setFormData(parsed.formData);
+          setCurrentStep(parsed.currentStep);
+        }
+      }
+    } catch {}
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+  useEffect(() => {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify({ messages, formData, currentStep }));
+    } catch {}
+  }, [messages, formData, currentStep]);
 
   const todayStr = () => new Date().toISOString().split("T")[0];
   const getMaxEndDate = (start: string) => {
@@ -214,11 +238,21 @@ const ChatPlanForm: React.FC<Props> = ({ onSubmit, isLoading }) => {
   const Bubble = ({ role, children, time }: { role: "bot" | "user"; children: React.ReactNode; time?: number }) => (
     <div className={`flex ${role === "user" ? "justify-end" : "justify-start"} items-end gap-2`}>
       {role === "bot" && (
-        <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-700 text-sm shrink-0">AI</div>
+        <div className="w-8 h-8 rounded-full overflow-hidden bg-blue-100 flex items-center justify-center text-blue-700 text-sm shrink-0">
+          <Image src="/favicon.png" alt="Bot" width={32} height={32} />
+        </div>
       )}
-      <div className={`${role === "user" ? "bg-blue-600 text-white" : "bg-white border"} max-w-[90%] md:max-w-[70%] rounded-2xl px-4 py-3 shadow-sm`}>{children}
-        {time && (
-          <div className={`mt-1 text-[10px] ${role === "user" ? "text-blue-100" : "text-gray-400"}`}>{new Date(time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</div>
+      <div className="relative">
+        <div className={`${role === "user" ? "bg-blue-600 text-white" : "bg-white border"} max-w-[90vw] sm:max-w-[75vw] md:max-w-[60vw] rounded-2xl px-4 py-3 shadow-sm`}>{children}
+          {time && (
+            <div className={`mt-1 text-[10px] ${role === "user" ? "text-blue-100" : "text-gray-400"}`}>{new Date(time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</div>
+          )}
+        </div>
+        {/* Tail */}
+        {role === "bot" ? (
+          <motion.div initial={{ opacity: 0, x: -4 }} animate={{ opacity: 1, x: 0 }} className="absolute -left-2 bottom-2 w-3 h-3 bg-white border border-gray-200 rotate-45" />
+        ) : (
+          <motion.div initial={{ opacity: 0, x: 4 }} animate={{ opacity: 1, x: 0 }} className="absolute -right-2 bottom-2 w-3 h-3 bg-blue-600 rotate-45" />
         )}
       </div>
       {role === "user" && (
@@ -244,10 +278,14 @@ const ChatPlanForm: React.FC<Props> = ({ onSubmit, isLoading }) => {
             </button>
             <div className="text-xs text-gray-500">Step {currentStep + 1} of 6</div>
           </div>
-          <div className="space-y-3 sm:space-y-4 p-3 sm:p-4 md:p-6">
+          <div className="space-y-3 sm:space-y-4 p-3 sm:p-4 md:p-6" onKeyDown={(e) => {
+            if (e.key === 'Enter') {
+              if (currentStep === 1 && dateValid && !isLoading) nextFromDates();
+            }
+          }}>
             <div>
               {messages.map((m) => (
-                <motion.div key={m.id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
+                <motion.div key={m.id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.2 }}>
                   <Bubble role={m.role} time={m.time}>{m.content}</Bubble>
                 </motion.div>
               ))}
@@ -416,6 +454,15 @@ const ChatPlanForm: React.FC<Props> = ({ onSubmit, isLoading }) => {
                       </button>
                     ))}
                   </div>
+                </Bubble>
+              </motion.div>
+            )}
+
+            {/* Inject result content from parent into chat as a bot message when available */}
+            {resultContent && (
+              <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.25 }}>
+                <Bubble role="bot" time={Date.now()}>
+                  {resultContent}
                 </Bubble>
               </motion.div>
             )}

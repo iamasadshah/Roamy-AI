@@ -267,71 +267,36 @@ export default function PlanPage() {
         <div className="relative z-10">
           <div id="plan-trip" className="py-8 md:py-16 lg:py-20 relative">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-              <AnimatePresence mode="wait">
-                {isLoading ? (
-                  <motion.div 
-                    key="loading"
-                    variants={scaleIn}
-                    initial="initial"
-                    animate="animate"
-                    exit="exit"
-                    className="flex flex-col items-center justify-center p-16 lg:p-20 bg-white/95 backdrop-blur-sm rounded-3xl shadow-2xl border border-white/30"
-                  >
-                    <div className="relative mb-8">
-                      <Loader2 className="h-20 w-20 text-blue-600 animate-spin" />
-                      <div className="absolute inset-0 rounded-full border-4 border-blue-100 animate-pulse"></div>
-                    </div>
-                    <h3 className="text-3xl font-bold text-gray-800 mb-4 text-center">Crafting Your Perfect Itinerary</h3>
-                    <p className="text-gray-600 text-xl max-w-2xl text-center leading-relaxed">
-                      Our advanced AI is analyzing your preferences and creating a personalized travel plan just for you.
-                    </p>
-                    <div className="mt-8 flex items-center gap-3 text-lg text-gray-500">
-                      <div className="flex space-x-2">
-                        <div className="w-3 h-3 bg-blue-400 rounded-full animate-bounce"></div>
-                        <div className="w-3 h-3 bg-blue-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
-                        <div className="w-3 h-3 bg-blue-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
-                      </div>
-                      <span className="font-medium">This may take a moment...</span>
-                    </div>
-                  </motion.div>
-                ) : tripPlan ? (
-                  <motion.div
-                    key="trip-plan"
-                    variants={fadeInUp}
-                    initial="initial"
-                    animate="animate"
-                    exit="exit"
-                    className="w-full"
-                  >
-                    <TripPlan
-                      plan={tripPlan}
-                      isLoading={isLoading}
-                      onGenerateNew={handleGenerateNew}
-                    />
-                  </motion.div>
-                ) : (
-                  <motion.div
-                    key="form"
-                    variants={scaleIn}
-                    initial="initial"
-                    animate="animate"
-                    exit="exit"
-                    className="bg-white/95 backdrop-blur-sm rounded-3xl shadow-2xl border border-white/30 overflow-hidden max-w-5xl mx-auto"
-                  >
-                    <div className="bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 px-8 py-8 lg:px-12 lg:py-10">
-                      <h2 className="text-3xl md:text-4xl font-bold text-white text-center mb-3">
-                        Plan with Chat
-                      </h2>
-                      <p className="text-blue-100 text-center text-lg lg:text-xl max-w-2xl mx-auto leading-relaxed">
-                        Answer a few quick questions in a chat-style flow to generate your itinerary
-                      </p>
-                    </div>
-                    <div className="p-4 lg:p-8">
-                      <ChatPlanForm onSubmit={handleSubmit} isLoading={isLoading} />
-                    </div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
+              <motion.div
+                key="chat-card"
+                variants={scaleIn}
+                initial="initial"
+                animate="animate"
+                exit="exit"
+                className="bg-white/95 backdrop-blur-sm rounded-3xl shadow-2xl border border-white/30 overflow-hidden max-w-5xl mx-auto"
+              >
+                <div className="bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 px-8 py-8 lg:px-12 lg:py-10">
+                  <h2 className="text-3xl md:text-4xl font-bold text-white text-center mb-3">
+                    Plan with Chat
+                  </h2>
+                  <p className="text-blue-100 text-center text-lg lg:text-xl max-w-2xl mx-auto leading-relaxed">
+                    Answer a few quick questions in a chat-style flow to generate your itinerary
+                  </p>
+                </div>
+                <div className="p-4 lg:p-8">
+                  <ChatPlanForm
+                    onSubmit={handleSubmit}
+                    isLoading={isLoading}
+                    resultContent={tripPlan ? (
+                      <TripPlan
+                        plan={tripPlan}
+                        isLoading={isLoading}
+                        onGenerateNew={handleGenerateNew}
+                      />
+                    ) : undefined}
+                  />
+                </div>
+              </motion.div>
             </div>
           </div>
         </div>
