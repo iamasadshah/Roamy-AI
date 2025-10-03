@@ -55,7 +55,10 @@ const DestinationInput = ({ value, onChange }: { value: string; onChange: (value
         const url = `https://nominatim.openstreetmap.org/search?format=jsonv2&q=${encodeURIComponent(q)}&addressdetails=1&limit=8`;
         const res = await fetch(url, { headers: { 'Accept': 'application/json' } });
         const data: PlaceSuggestion[] = await res.json();
-        if (active) setSuggestions(data || []);
+        if (active) {
+          const filtered = (data || []).filter((d) => ["city","town","village"].includes((d.type || "").toLowerCase()));
+          setSuggestions(filtered);
+        }
       } catch {
         if (active) setSuggestions([]);
       } finally {
