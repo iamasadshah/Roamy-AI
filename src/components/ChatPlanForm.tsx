@@ -25,21 +25,72 @@ const countries = [
   "Afghanistan","Albania","Algeria","Andorra","Angola","Antigua and Barbuda","Argentina","Armenia","Australia","Austria","Azerbaijan","Bahamas","Bahrain","Bangladesh","Barbados","Belarus","Belgium","Belize","Benin","Bhutan","Bolivia","Bosnia and Herzegovina","Botswana","Brazil","Brunei","Bulgaria","Burkina Faso","Burundi","Cabo Verde","Cambodia","Cameroon","Canada","Central African Republic","Chad","Chile","China","Colombia","Comoros","Congo","Costa Rica","Croatia","Cuba","Cyprus","Czech Republic","Democratic Republic of the Congo","Denmark","Djibouti","Dominica","Dominican Republic","East Timor","Ecuador","Egypt","El Salvador","Equatorial Guinea","Eritrea","Estonia","Eswatini","Ethiopia","Fiji","Finland","France","Gabon","Gambia","Georgia","Germany","Ghana","Greece","Grenada","Guatemala","Guinea","Guinea-Bissau","Guyana","Haiti","Honduras","Hungary","Iceland","India","Indonesia","Iran","Iraq","Ireland","Italy","Ivory Coast","Jamaica","Japan","Jordan","Kazakhstan","Kenya","Kiribati","Kuwait","Kyrgyzstan","Laos","Latvia","Lebanon","Lesotho","Liberia","Libya","Liechtenstein","Lithuania","Luxembourg","Madagascar","Malawi","Malaysia","Maldives","Mali","Malta","Marshall Islands","Mauritania","Mauritius","Mexico","Micronesia","Moldova","Monaco","Mongolia","Montenegro","Morocco","Mozambique","Myanmar","Namibia","Nauru","Nepal","Netherlands","New Zealand","Nicaragua","Niger","Nigeria","North Korea","North Macedonia","Norway","Oman","Pakistan","Palau","Palestine","Panama","Papua New Guinea","Paraguay","Peru","Philippines","Poland","Portugal","Qatar","Romania","Russia","Saudi Arabia","Serbia","Singapore","Slovakia","Slovenia","South Africa","South Korea","Spain","Sri Lanka","Sweden","Switzerland","Taiwan","Thailand","Turkey","Ukraine","United Arab Emirates","United Kingdom","United States","Uruguay","Venezuela","Vietnam","Yemen",
 ];
 
-// Destination picker (duplicated from MultiStepForm, adjusted to standalone)
+// Destination picker with real-time suggestions (Nominatim OSM)
+type PlaceSuggestion = {
+  place_id: string;
+  display_name: string;
+  lat: string;
+  lon: string;
+  type?: string;
+};
+
 const DestinationInput = ({ value, onChange }: { value: string; onChange: (value: string) => void; }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [suggestions, setSuggestions] = useState<PlaceSuggestion[]>([]);
+  const [highlight, setHighlight] = useState<number>(-1);
 
-  const filteredCountries = useMemo(() => {
-    const search = (searchTerm || value).toLowerCase();
-    return countries.filter((country) => country.toLowerCase().includes(search));
+  // Fetch suggestions as user types
+  useEffect(() => {
+    const q = (searchTerm || value).trim();
+    if (q.length < 2) {
+      setSuggestions([]);
+      return;
+    }
+    let active = true;
+    setLoading(true);
+    const timeout = setTimeout(async () => {
+      try {
+        const url = `https://nominatim.openstreetmap.org/search?format=jsonv2&q=${encodeURIComponent(q)}&addressdetails=1&limit=8`;
+        const res = await fetch(url, { headers: { 'Accept': 'application/json' } });
+        const data: PlaceSuggestion[] = await res.json();
+        if (active) setSuggestions(data || []);
+      } catch {
+        if (active) setSuggestions([]);
+      } finally {
+        if (active) setLoading(false);
+      }
+    }, 300);
+    return () => { active = false; clearTimeout(timeout); };
   }, [searchTerm, value]);
 
-  const handleSelect = useCallback((country: string) => {
-    onChange(country);
+  const handleSelect = useCallback((label: string) => {
+    onChange(label);
     setSearchTerm("");
     setIsOpen(false);
+    setHighlight(-1);
   }, [onChange]);
+
+  const onKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (!isOpen) return;
+    if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      setHighlight((h) => Math.min((suggestions.length || 0) - 1, h + 1));
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      setHighlight((h) => Math.max(-1, h - 1));
+    } else if (e.key === 'Enter') {
+      e.preventDefault();
+      if (highlight >= 0 && suggestions[highlight]) {
+        handleSelect(suggestions[highlight].display_name);
+      } else if (suggestions.length > 0) {
+        handleSelect(suggestions[0].display_name);
+      }
+    } else if (e.key === 'Escape') {
+      setIsOpen(false);
+    }
+  };
 
   return (
     <div className="relative w-full">
@@ -47,10 +98,12 @@ const DestinationInput = ({ value, onChange }: { value: string; onChange: (value
         <input
           type="text"
           className="w-full p-4 rounded-2xl bg-white/95 text-gray-800 placeholder-gray-500 backdrop-blur-sm border-2 border-gray-200 pr-12 text-base font-medium focus:ring-4 focus:ring-blue-400/20 focus:border-blue-500 transition-all duration-300 shadow-lg hover:shadow-xl"
-          placeholder="Search for your destination..."
+          placeholder="Search for your destination (city, region, country)..."
           value={value || searchTerm}
-          onChange={(e) => { setSearchTerm(e.target.value); setIsOpen(true); }}
+          onChange={(e) => { setSearchTerm(e.target.value); setIsOpen(true); setHighlight(-1); }}
           onFocus={() => { setIsOpen(true); }}
+          onKeyDown={onKeyDown}
+          autoComplete="off"
         />
       </div>
 
@@ -77,35 +130,40 @@ const DestinationInput = ({ value, onChange }: { value: string; onChange: (value
                   <input
                     type="text"
                     className="w-full pl-9 pr-4 py-3 bg-white border-2 border-gray-200 rounded-xl text-gray-800 placeholder-gray-500 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-400/20 transition-all text-base font-medium shadow-lg"
-                    placeholder="Type to search countries..."
+                    placeholder="Type a city, region, or country..."
                     value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
+                    onChange={(e) => { setSearchTerm(e.target.value); setHighlight(-1); }}
                     autoFocus
+                    onKeyDown={onKeyDown}
                   />
                 </div>
               </div>
 
               <div className="flex-1 overflow-y-auto p-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                  {filteredCountries.length > 0 ? (
-                    filteredCountries.map((country) => (
+                {loading ? (
+                  <div className="p-10 text-center text-gray-500">Searching…</div>
+                ) : suggestions.length > 0 ? (
+                  <div className="grid grid-cols-1 gap-3">
+                    {suggestions.map((s, idx) => (
                       <button
-                        key={country}
-                        className="flex items-center p-4 text-left text-gray-700 hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50 hover:border-blue-300 border-2 border-transparent rounded-xl transition-all shadow-sm hover:shadow-lg"
-                        onClick={() => handleSelect(country)}
+                        key={s.place_id}
+                        className={`flex items-center p-4 text-left text-gray-700 border-2 rounded-xl transition-all shadow-sm hover:shadow-lg ${highlight === idx ? 'border-blue-300 bg-blue-50' : 'border-transparent hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50 hover:border-blue-300'}`}
+                        onClick={() => handleSelect(s.display_name)}
+                        onMouseEnter={() => setHighlight(idx)}
                       >
-                        <FaGlobe className="text-blue-500 mr-3" />
-                        <span className="flex-1 truncate font-semibold">{country}</span>
+                        <FaGlobe className="text-blue-500 mr-3 shrink-0" />
+                        <span className="flex-1 truncate font-semibold">{s.display_name}</span>
                         <span className="text-blue-500 ml-2">→</span>
                       </button>
-                    ))
-                  ) : (
-                    <div className="col-span-2 p-10 text-center text-gray-500">
-                      <FaSearch className="mx-auto mb-4 text-4xl text-gray-300" />
-                      No countries found matching your search
-                    </div>
-                  )}
-                </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="p-10 text-center text-gray-500">
+                    <FaSearch className="mx-auto mb-4 text-4xl text-gray-300" />
+                    Start typing to search places
+                  </div>
+                )}
+                <div className="mt-6 text-xs text-gray-400 text-center">Data © OpenStreetMap contributors</div>
               </div>
             </motion.div>
           </motion.div>
