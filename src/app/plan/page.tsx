@@ -2,17 +2,18 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { Toaster, toast } from "react-hot-toast";
-import { motion, AnimatePresence, LazyMotion, domAnimation } from "framer-motion";
+import { motion, LazyMotion, domAnimation, AnimatePresence } from "framer-motion";
 import ChatPlanForm from "@/components/ChatPlanForm";
 import TripPlan from "@/components/TripPlan";
 import { generateTripPlan } from "@/utils/gemini";
 import { FormData, TravelItinerary } from "@/types/itinerary";
-import { Loader2, Sparkles, Plus, Save, Trash2, ArrowLeft, Globe, Clock, Star } from "lucide-react";
+import { ArrowLeft, Sparkles, Globe, Clock, Star } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { supabase, type SavedPlan } from "@/utils/supabaseClient";
 
-// Performance optimized animation variants
+// Minimal animation variants for small UI motions
+
 const fadeInUp = {
   initial: { opacity: 0, y: 30 },
   animate: { opacity: 1, y: 0 },
@@ -39,6 +40,7 @@ export default function PlanPage() {
   const [tripPlan, setTripPlan] = useState<TravelItinerary | null>(null);
   const [savedPlans, setSavedPlans] = useState<SavedPlan[]>([]);
   const [saving, setSaving] = useState(false);
+  const [isVisible, setIsVisible] = useState(false);
 
   // Load saved plans from Supabase
   const loadSavedPlans = useCallback(async () => {
@@ -57,6 +59,13 @@ export default function PlanPage() {
   useEffect(() => {
     loadSavedPlans();
   }, [loadSavedPlans]);
+
+  // Show scroll-to-top button when scrolled down a bit
+  useEffect(() => {
+    const onScroll = () => setIsVisible(window.scrollY > 50);
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
 
   // Memoized submit handler for better performance
   const handleSubmit = useCallback(async (formData: FormData) => {
@@ -151,6 +160,8 @@ export default function PlanPage() {
       toast.error('Invalid saved plan payload');
     }
   }, []);
+
+  // Sidebar + header only; no scroll-to-top button needed
 
   // No page scroll management; ChatPlanForm handles UX internally.
 
