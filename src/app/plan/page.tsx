@@ -7,9 +7,10 @@ import ChatPlanForm from "@/components/ChatPlanForm";
 import TripPlan from "@/components/TripPlan";
 import { generateTripPlan } from "@/utils/gemini";
 import { FormData, TravelItinerary } from "@/types/itinerary";
-import { Loader2, ArrowLeft, Sparkles, Globe, Clock, Star } from "lucide-react";
+import { Loader2, Sparkles, Plus, Save, Trash2, ArrowLeft, Globe, Clock, Star } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { supabase, type SavedPlan } from "@/utils/supabaseClient";
 
 // Performance optimized animation variants
 const fadeInUp = {
@@ -36,18 +37,26 @@ const scaleIn = {
 export default function PlanPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [tripPlan, setTripPlan] = useState<TravelItinerary | null>(null);
-  const [isVisible, setIsVisible] = useState(false);
+  const [savedPlans, setSavedPlans] = useState<SavedPlan[]>([]);
+  const [saving, setSaving] = useState(false);
 
-  // Performance optimized scroll handler
-  const handleScroll = useCallback(() => {
-    const scrolled = window.scrollY > 50;
-    setIsVisible(scrolled);
+  // Load saved plans from Supabase
+  const loadSavedPlans = useCallback(async () => {
+    if (!supabase) return;
+    const { data, error } = await supabase
+      .from('saved_plans')
+      .select('*')
+      .order('created_at', { ascending: false });
+    if (error) {
+      console.error(error);
+      return;
+    }
+    setSavedPlans(data as SavedPlan[]);
   }, []);
 
   useEffect(() => {
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, [handleScroll]);
+    loadSavedPlans();
+  }, [loadSavedPlans]);
 
   // Memoized submit handler for better performance
   const handleSubmit = useCallback(async (formData: FormData) => {
@@ -104,24 +113,50 @@ export default function PlanPage() {
 
   const handleGenerateNew = useCallback(() => {
     setTripPlan(null);
-    // Smooth scroll to form section
-    const formSection = document.getElementById("plan-trip");
-    if (formSection) {
-      formSection.scrollIntoView({ 
-        behavior: "smooth", 
-        block: "start" 
-      });
+  }, []);
+
+  const handleSavePlan = useCallback(async () => {
+    if (!supabase) {
+      toast.error("Supabase is not configured. Set NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY.");
+      return;
+    }
+    if (!tripPlan) return;
+    setSaving(true);
+    try {
+      const name = tripPlan.trip_overview?.destination || `Trip to ${(tripPlan as any).destination || 'Destination'}`;
+      const payload = {
+        name,
+        destination: (tripPlan as any).destination || null,
+        start_date: (tripPlan as any).start_date || null,
+        end_date: (tripPlan as any).end_date || null,
+        plan: tripPlan,
+      };
+      const { error } = await supabase.from('saved_plans').insert(payload);
+      if (error) throw error;
+      toast.success('Plan saved');
+      await loadSavedPlans();
+    } catch (e: any) {
+      toast.error(e?.message || 'Failed to save plan');
+    } finally {
+      setSaving(false);
+    }
+  }, [tripPlan, loadSavedPlans]);
+
+  const handleLoadSaved = useCallback((sp: SavedPlan) => {
+    try {
+      const parsed = sp.plan as TravelItinerary;
+      setTripPlan(parsed);
+      toast.success('Loaded saved plan');
+    } catch {
+      toast.error('Invalid saved plan payload');
     }
   }, []);
 
-  // Scroll to top on component mount
-  useEffect(() => {
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  }, []);
+  // No page scroll management; ChatPlanForm handles UX internally.
 
   return (
     <LazyMotion features={domAnimation}>
-      <main className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 relative overflow-hidden">
+      <main className="min-h-screen bg-white">
         <Toaster 
           position="top-center" 
           toastOptions={{
