@@ -232,7 +232,7 @@ IMPORTANT: Make the itinerary comprehensive, practical, and engaging with real-w
       itinerary.additional_info.weather_forecast = destinationData.weather.forecast;
       itinerary.additional_info.local_currency = {
         code: destinationData.currency.code,
-        exchangeRate: parseFloat(destinationData.currency.exchangeRate)
+        exchangeRate: destinationData.currency.exchangeRate
       };
       itinerary.additional_info.emergency = {
         police: destinationData.emergency.police,

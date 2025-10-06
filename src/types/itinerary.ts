@@ -2,7 +2,7 @@ export interface TripOverview {
   destination: string;
   dates: string;
   duration: string;
-  budget_level: 'Budget' | 'Mid-range' | 'Luxury';
+  budget_level: string;
   accommodation: string;
   travelers: string;
   dietary_plan: string;

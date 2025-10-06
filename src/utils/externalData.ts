@@ -17,7 +17,7 @@ interface DestinationData {
   };
   currency: {
     code: string;
-    exchangeRate: string;
+    exchangeRate: number;
   };
   emergency: {
     police: string;
@@ -112,24 +112,23 @@ export async function getDestinationData(destination: string): Promise<Destinati
     const country = extractCountry(destination);
     const currencyCode = currencyCodes[country];
     
-    // Get currency data
-    let formattedRate: string;
+    // Get currency data as a numeric rate (how many target currency units per 1 USD)
+    let numericRate: number;
     if (currencyCode === 'USD') {
-      formattedRate = 'Same currency (USD)';
+      numericRate = 1;
     } else {
       try {
         const exchangeResponse = await axios.get(`/api/exchange-rate?currency=${currencyCode}`);
-        
-        if (!exchangeResponse.data || !exchangeResponse.data.rate) {
+        const rate = exchangeResponse.data?.rate;
+        if (typeof rate !== 'number' || !isFinite(rate)) {
           console.error('Failed to get exchange rate:', exchangeResponse.data);
-          formattedRate = `Exchange rate unavailable for ${currencyCode}`;
+          numericRate = NaN;
         } else {
-          const rate = exchangeResponse.data.rate;
-          formattedRate = `1 USD = ${rate.toFixed(2)} ${currencyCode}`;
+          numericRate = rate;
         }
       } catch (error) {
         console.error('Error fetching exchange rate:', error);
-        formattedRate = `Exchange rate unavailable for ${currencyCode}`;
+        numericRate = NaN;
       }
     }
 
@@ -146,7 +145,7 @@ export async function getDestinationData(destination: string): Promise<Destinati
       },
       currency: {
         code: currencyCode,
-        exchangeRate: formattedRate
+        exchangeRate: numericRate
       },
       emergency
     };

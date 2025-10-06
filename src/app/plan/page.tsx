@@ -1,330 +1,137 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
-import { Toaster, toast } from "react-hot-toast";
-import { motion, LazyMotion, domAnimation, AnimatePresence } from "framer-motion";
+import React, { useCallback, useMemo, useState } from "react";
 import ChatPlanForm from "@/components/ChatPlanForm";
-import TripPlan from "@/components/TripPlan";
-import { generateTripPlan } from "@/utils/gemini";
-import { FormData, TravelItinerary } from "@/types/itinerary";
-import { Sparkles, Plus, Save } from "lucide-react";
-import Link from "next/link";
-import { Button } from "@/components/ui/button";
-import { supabase, type SavedPlan } from "@/utils/supabaseClient";
-
-// Minimal animation variants for small UI motions
-const scaleIn = {
-  initial: { opacity: 0, scale: 0.9 },
-  animate: { opacity: 1, scale: 1 },
-  exit: { opacity: 0, scale: 0.9 }
-};
+import StructuredItinerary from "@/components/StructuredItinerary";
+import type { FormData, TravelItinerary } from "@/types/itinerary";
+import { motion } from "framer-motion";
 
 export default function PlanPage() {
   const [isLoading, setIsLoading] = useState(false);
-  const [tripPlan, setTripPlan] = useState<TravelItinerary | null>(null);
-  const [savedPlans, setSavedPlans] = useState<SavedPlan[]>([]);
-  const [saving, setSaving] = useState(false);
+  const [plan, setPlan] = useState<TravelItinerary | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
-  // Load saved plans from Supabase
-  const loadSavedPlans = useCallback(async () => {
-    if (!supabase) return;
-    const { data, error } = await supabase
-      .from('saved_plans')
-      .select('*')
-      .order('created_at', { ascending: false });
-    if (error) {
-      console.error(error);
-      return;
-    }
-    setSavedPlans(data as SavedPlan[]);
-  }, []);
-
-  useEffect(() => {
-    loadSavedPlans();
-  }, [loadSavedPlans]);
-
-  // Memoized submit handler for better performance
-  const handleSubmit = useCallback(async (formData: FormData) => {
+  const submitPlan = useCallback(async (data: FormData) => {
     setIsLoading(true);
-    setTripPlan(null);
-
+    setError(null);
     try {
-      // Validate form data before sending to API
-      if (!formData.destination || !formData.startDate || !formData.endDate) {
-        throw new Error("Please fill in all required fields");
+      const res = await fetch("/api/plan", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+      const json = await res.json();
+      if (!res.ok) {
+        throw new Error(json?.error || "Failed to generate plan");
       }
-
-      // Validate dates
-      const startDate = new Date(formData.startDate);
-      const endDate = new Date(formData.endDate);
-      
-      if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
-        throw new Error("Invalid date format");
-      }
-
-      if (startDate < new Date()) {
-        throw new Error("Start date cannot be in the past");
-      }
-
-      if (endDate <= startDate) {
-        throw new Error("End date must be after start date");
-      }
-
-      const daysDiff = Math.ceil((endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24));
-      if (daysDiff > 10) {
-        throw new Error("Travel planning is limited to 10 days maximum");
-      }
-
-      const plan = await generateTripPlan(formData);
-      if (!plan || !plan.trip_overview) {
-        throw new Error("Itinerary generation failed: Missing trip overview data.");
-      }
-      setTripPlan(plan);
-      toast.success("Trip itinerary generated successfully!");
-    } catch (error) {
-      let errorMessage: string;
-      if (error instanceof Error) {
-        errorMessage = `Error generating itinerary: ${error.message}`;
-      } else if (typeof error === 'string') {
-        errorMessage = `Error generating itinerary: ${error}`;
-      } else {
-        errorMessage = "An unexpected error occurred during itinerary generation.";
-      }
-      toast.error(errorMessage);
+      setPlan(json.itinerary as TravelItinerary);
+    } catch (e: any) {
+      setError(e?.message || "Something went wrong");
     } finally {
       setIsLoading(false);
     }
   }, []);
 
-  const handleGenerateNew = useCallback(() => {
-    setTripPlan(null);
-  }, []);
+  const downloadAsText = useCallback(() => {
+    if (!plan) return;
 
-  const handleSavePlan = useCallback(async () => {
-    if (!supabase) {
-      toast.error("Supabase is not configured. Set NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY.");
-      return;
-    }
-    if (!tripPlan) return;
-    setSaving(true);
-    try {
-      const name = tripPlan.trip_overview?.destination || `Trip to ${(tripPlan as any).destination || 'Destination'}`;
-      const payload = {
-        name,
-        destination: (tripPlan as any).destination || null,
-        start_date: (tripPlan as any).start_date || null,
-        end_date: (tripPlan as any).end_date || null,
-        plan: tripPlan,
+    const lines: string[] = [];
+    lines.push(`Destination: ${plan.trip_overview.destination}`);
+    lines.push(`Dates: ${plan.trip_overview.dates}`);
+    lines.push(`Duration: ${plan.trip_overview.duration}`);
+    lines.push(`Budget: ${plan.trip_overview.budget_level}`);
+    lines.push(`Accommodation: ${plan.trip_overview.accommodation}`);
+    lines.push(`Travelers: ${plan.trip_overview.travelers}`);
+    lines.push(`Dietary Plan: ${plan.trip_overview.dietary_plan}`);
+    lines.push("");
+    lines.push("Itinerary:");
+    for (const day of plan.itinerary) {
+      lines.push("");
+      lines.push(`Day ${day.day}: ${day.day_title}`);
+      lines.push(day.day_description);
+      lines.push(`Highlights: ${(day.highlights || []).join(", ")}`);
+      lines.push(`Estimated Cost: ${day.total_estimated_cost}`);
+      const section = (title: string, acts: any[]) => {
+        if (!Array.isArray(acts) || acts.length === 0) return;
+        lines.push("");
+        lines.push(`${title}`);
+        for (const a of acts) {
+          lines.push(`- ${a.time} • ${a.title} • ${a.location} • ${a.duration}${a.cost ? ` • ${a.cost}` : ""}`);
+          if (a.description) lines.push(`  ${a.description}`);
+        }
       };
-      const { error } = await supabase.from('saved_plans').insert(payload);
-      if (error) throw error;
-      toast.success('Plan saved');
-      await loadSavedPlans();
-    } catch (e: any) {
-      toast.error(e?.message || 'Failed to save plan');
-    } finally {
-      setSaving(false);
+      section("Morning", day.morning);
+      section("Afternoon", day.afternoon);
+      section("Evening", day.evening);
+      if (Array.isArray(day.meals) && day.meals.length > 0) {
+        lines.push("");
+        lines.push("Meals");
+        for (const m of day.meals) {
+          lines.push(`- ${m.time} • ${m.restaurant_name} • ${m.cuisine_type} • ${m.location} • ${m.cost_range}`);
+          if (Array.isArray(m.must_try_dishes) && m.must_try_dishes.length) {
+            lines.push(`  Must-try: ${m.must_try_dishes.join(", ")}`);
+          }
+        }
+      }
     }
-  }, [tripPlan, loadSavedPlans]);
+    lines.push("");
+    lines.push("Additional Info:");
+    lines.push(`Weather: ${plan.additional_info.weather_forecast}`);
+    if (Array.isArray(plan.additional_info.packing_tips))
+      lines.push(`Packing Tips: ${plan.additional_info.packing_tips.join("; ")}`);
+    if (plan.additional_info.local_currency)
+      lines.push(`Currency: ${plan.additional_info.local_currency.code} • 1 USD = ${plan.additional_info.local_currency.exchangeRate} ${plan.additional_info.local_currency.code}`);
+    if (Array.isArray(plan.additional_info.transportation))
+      lines.push(`Transportation: ${plan.additional_info.transportation.join("; ")}`);
+    if (plan.additional_info.emergency)
+      lines.push(`Emergency: Police ${plan.additional_info.emergency.police}, Ambulance ${plan.additional_info.emergency.ambulance}${plan.additional_info.emergency.touristPolice ? ", Tourist Police " + plan.additional_info.emergency.touristPolice : ""}`);
 
-  const handleLoadSaved = useCallback((sp: SavedPlan) => {
-    try {
-      const parsed = sp.plan as TravelItinerary;
-      setTripPlan(parsed);
-      toast.success('Loaded saved plan');
-    } catch {
-      toast.error('Invalid saved plan payload');
-    }
-  }, []);
+    const blob = new Blob([lines.join("\n")], { type: "text/plain;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `RoamyAI_${plan.trip_overview.destination.replace(/\s+/g, "_")}.txt`;
+    document.body.appendChild(a);
+    a.click();
+    URL.revokeObjectURL(url);
+    document.body.removeChild(a);
+  }, [plan]);
 
-  // Sidebar + header only; no scroll-to-top button needed
-
-  // No page scroll management; ChatPlanForm handles UX internally.
+  const resultContent = useMemo(() => {
+    if (!plan) return null;
+    return (
+      <div className="space-y-4">
+        <div className="flex items-center justify-between">
+          <h3 className="text-lg font-bold text-gray-800">Your Personalized Itinerary</h3>
+          <button
+            onClick={downloadAsText}
+            className="px-3 py-1.5 rounded-lg bg-blue-600 text-white text-sm font-semibold hover:bg-blue-700"
+          >
+            Download as .txt
+          </button>
+        </div>
+        <StructuredItinerary itinerary={plan} />
+      </div>
+    );
+  }, [plan, downloadAsText]);
 
   return (
-    <LazyMotion features={domAnimation}>
-      <main className="min-h-screen bg-white">
-        <Toaster 
-          position="top-center" 
-          toastOptions={{
-            style: {
-              background: 'rgba(255, 255, 255, 0.95)',
-              color: '#1f2937',
-              borderRadius: '16px',
-              padding: '16px 24px',
-              boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
-              fontSize: '14px',
-              fontWeight: '500',
-              backdropFilter: 'blur(10px)',
-              border: '1px solid rgba(255, 255, 255, 0.2)'
-            },
-            success: {
-              iconTheme: {
-                primary: '#10b981',
-                secondary: '#fff',
-              },
-            },
-            error: {
-              iconTheme: {
-                primary: '#ef4444',
-                secondary: '#fff',
-              },
-            },
-          }}
-        />
-
-        {/* Simple static background elements - removed heavy animations */}
-        <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          <div className="absolute top-0 right-0 w-96 h-96 bg-blue-100 rounded-full mix-blend-multiply filter blur-3xl opacity-10"></div>
-          <div className="absolute bottom-0 left-0 w-96 h-96 bg-indigo-100 rounded-full mix-blend-multiply filter blur-3xl opacity-10"></div>
-          <div className="absolute top-1/2 left-0 w-64 h-64 bg-purple-100 rounded-full mix-blend-multiply filter blur-3xl opacity-10"></div>
-          <div className="absolute top-1/3 right-1/4 w-80 h-80 bg-green-100 rounded-full mix-blend-multiply filter blur-3xl opacity-10"></div>
-        </div>
-
-        {/* Enhanced Header with Smooth Animations */}
-        <motion.div 
-          className="relative z-10 pt-6 pb-8 md:pt-8 md:pb-12"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.8 }}
+    <main className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 py-6 sm:py-10">
+      <div className="max-w-6xl mx-auto px-2 sm:px-4">
+        <motion.h1
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="text-2xl sm:text-3xl font-extrabold text-gray-900 mb-4 sm:mb-6"
         >
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex items-center justify-between mb-8">
-              <motion.div
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.6 }}
-              >
-                <Link href="/">
-                  <Button 
-                    variant="ghost" 
-                    className="flex items-center gap-3 text-gray-700 hover:text-gray-900 hover:bg-white/60 backdrop-blur-sm transition-all duration-300 px-6 py-3 rounded-xl border border-gray-200/50 hover:border-gray-300/50 hover:shadow-lg"
-                  >
-                    <ArrowLeft className="h-5 w-5" />
-                    <span className="font-medium">Back to Home</span>
-                  </Button>
-                </Link>
-              </motion.div>
-              
-              <motion.div 
-                className="hidden md:flex items-center gap-3 text-sm text-gray-600 bg-white/60 backdrop-blur-sm px-4 py-2 rounded-full border border-white/20"
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.6, delay: 0.2 }}
-              >
-                <Sparkles className="h-4 w-4 text-blue-500" />
-                <span className="font-medium">AI-Powered Planning</span>
-              </motion.div>
-            </div>
-            
-            <div className="text-center max-w-5xl mx-auto">
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.1 }}
-                className="inline-flex items-center px-6 py-3 rounded-full bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200/50 text-blue-700 text-sm font-semibold mb-8 shadow-lg backdrop-blur-sm"
-              >
-                <span className="relative flex h-3 w-3 mr-3">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
-                  <span className="relative inline-flex rounded-full h-3 w-3 bg-blue-600"></span>
-                </span>
-                Create Your Perfect Itinerary
-              </motion.div>
-
-              <motion.h1 
-                className="text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold text-gray-900 mb-8 leading-tight tracking-tight"
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8, delay: 0.2 }}
-              >
-                <span className="block mb-2">Plan Your Dream</span>
-                <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600">
-                  Travel Experience
-                </span>
-              </motion.h1>
-
-              <motion.p 
-                className="text-lg md:text-xl lg:text-2xl text-gray-600 max-w-4xl mx-auto leading-relaxed mb-12 font-medium"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.3 }}
-              >
-                Let our advanced AI create a personalized itinerary tailored to your preferences, budget, and travel style. 
-                Get ready for an unforgettable journey crafted just for you!
-              </motion.p>
-
-              {/* Enhanced Feature Highlights */}
-              <motion.div 
-                className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto mb-16"
-                variants={staggerContainer}
-                initial="initial"
-                animate="animate"
-              >
-                {[
-                  { icon: Globe, title: "Smart Destinations", desc: "AI-curated locations", color: "blue" },
-                  { icon: Clock, title: "Perfect Timing", desc: "Optimized schedules", color: "indigo" },
-                  { icon: Star, title: "Personalized Plans", desc: "Tailored experiences", color: "purple" }
-                ].map((feature) => (
-                  <motion.div
-                    key={feature.title}
-                    variants={fadeInUp}
-                    className="group relative p-6 bg-white/70 backdrop-blur-sm rounded-2xl border border-white/30 shadow-xl hover:shadow-2xl transition-all duration-500 hover:scale-105"
-                  >
-                    <div className="absolute inset-0 bg-gradient-to-br from-white/50 to-transparent rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                    <div className="relative z-10 flex flex-col items-center text-center">
-                      <div className={`p-4 rounded-full bg-gradient-to-br from-${feature.color}-100 to-${feature.color}-200 mb-4 group-hover:scale-110 transition-transform duration-300`}>
-                        <feature.icon className={`h-8 w-8 text-${feature.color}-600`} />
-                      </div>
-                      <h3 className="text-lg font-bold text-gray-800 mb-2">{feature.title}</h3>
-                      <p className="text-gray-600 text-sm">{feature.desc}</p>
-                    </div>
-                  </motion.div>
-                ))}
-              </motion.div>
-            </div>
+          RoamyAI Planner
+        </motion.h1>
+        {error && (
+          <div className="mb-4 p-3 bg-red-50 border border-red-200 text-red-700 rounded-lg">
+            {error}
           </div>
-        </motion.div>
-
-        {/* Enhanced Main Content */}
-        <div className="relative z-10">
-          <div id="plan-trip" className="py-8 md:py-16 lg:py-20 relative">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-              <motion.div
-                key="chat-card"
-                variants={scaleIn}
-                initial="initial"
-                animate="animate"
-                exit="exit"
-                className="bg-white/95 backdrop-blur-sm rounded-3xl shadow-2xl border border-white/30 overflow-hidden max-w-5xl mx-auto"
-              >
-                <div className="bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 px-8 py-8 lg:px-12 lg:py-10">
-                  <h2 className="text-3xl md:text-4xl font-bold text-white text-center mb-3">
-                    Plan with Chat
-                  </h2>
-                  <p className="text-blue-100 text-center text-lg lg:text-xl max-w-2xl mx-auto leading-relaxed">
-                    Answer a few quick questions in a chat-style flow to generate your itinerary
-                  </p>
-                </div>
-                <div className="p-4 lg:p-8">
-                  <ChatPlanForm
-                    onSubmit={handleSubmit}
-                    isLoading={isLoading}
-                    resultContent={tripPlan ? (
-                      <TripPlan
-                        plan={tripPlan}
-                        isLoading={isLoading}
-                        onGenerateNew={handleGenerateNew}
-                      />
-                    ) : undefined}
-                  />
-                </div>
-              </motion.div>
-            </div>
-          </div>
-        </div>
-
-        {/* Footer and scroll-to-top removed for a clean app shell */}
-      </main>
-    </LazyMotion>
+        )}
+        <ChatPlanForm onSubmit={submitPlan} isLoading={isLoading} resultContent={resultContent} />
+      </div>
+    </main>
   );
 }
