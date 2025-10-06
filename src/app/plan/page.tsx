@@ -7,28 +7,12 @@ import ChatPlanForm from "@/components/ChatPlanForm";
 import TripPlan from "@/components/TripPlan";
 import { generateTripPlan } from "@/utils/gemini";
 import { FormData, TravelItinerary } from "@/types/itinerary";
-import { ArrowLeft, Sparkles, Globe, Clock, Star } from "lucide-react";
+import { Sparkles, Plus, Save } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { supabase, type SavedPlan } from "@/utils/supabaseClient";
 
 // Minimal animation variants for small UI motions
-
-const fadeInUp = {
-  initial: { opacity: 0, y: 30 },
-  animate: { opacity: 1, y: 0 },
-  exit: { opacity: 0, y: -30 }
-};
-
-const staggerContainer = {
-  animate: {
-    transition: {
-      staggerChildren: 0.1,
-      delayChildren: 0.1
-    }
-  }
-};
-
 const scaleIn = {
   initial: { opacity: 0, scale: 0.9 },
   animate: { opacity: 1, scale: 1 },
@@ -40,7 +24,6 @@ export default function PlanPage() {
   const [tripPlan, setTripPlan] = useState<TravelItinerary | null>(null);
   const [savedPlans, setSavedPlans] = useState<SavedPlan[]>([]);
   const [saving, setSaving] = useState(false);
-  const [isVisible, setIsVisible] = useState(false);
 
   // Load saved plans from Supabase
   const loadSavedPlans = useCallback(async () => {
@@ -59,13 +42,6 @@ export default function PlanPage() {
   useEffect(() => {
     loadSavedPlans();
   }, [loadSavedPlans]);
-
-  // Show scroll-to-top button when scrolled down a bit
-  useEffect(() => {
-    const onScroll = () => setIsVisible(window.scrollY > 50);
-    window.addEventListener('scroll', onScroll, { passive: true });
-    return () => window.removeEventListener('scroll', onScroll);
-  }, []);
 
   // Memoized submit handler for better performance
   const handleSubmit = useCallback(async (formData: FormData) => {
@@ -347,57 +323,7 @@ export default function PlanPage() {
           </div>
         </div>
 
-        {/* Enhanced Footer Section */}
-        <div className="relative z-10 py-16 lg:py-20 mt-16">
-          <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.4 }}
-              className="bg-white/80 backdrop-blur-sm rounded-3xl p-10 lg:p-12 border border-white/30 shadow-2xl"
-            >
-              <h3 className="text-3xl lg:text-4xl font-bold text-gray-800 mb-6">
-                Ready to Start Your Journey?
-              </h3>
-              <p className="text-gray-600 mb-8 max-w-3xl mx-auto text-lg leading-relaxed">
-                Get instant access to AI-powered travel planning that adapts to your style, budget, and preferences. 
-                Create memories that last a lifetime.
-              </p>
-              <div className="flex flex-col sm:flex-row justify-center gap-6">
-                <Link href="/">
-                  <Button 
-                    variant="outline"
-                    className="px-10 py-4 text-lg font-semibold rounded-xl border-2 border-gray-200 hover:border-blue-500 hover:text-blue-600 hover:bg-blue-50 transition-all duration-300 shadow-lg hover:shadow-xl"
-                  >
-                    Explore More Features
-                  </Button>
-                </Link>
-                <Link href="/about">
-                  <Button 
-                    className="px-10 py-4 text-lg font-semibold rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 transition-all duration-300 shadow-lg hover:shadow-xl"
-                  >
-                    Learn About Roamy AI
-                  </Button>
-                </Link>
-              </div>
-            </motion.div>
-          </div>
-        </div>
-
-        {/* Smooth Scroll to Top Button */}
-        <AnimatePresence>
-          {isVisible && (
-            <motion.button
-              initial={{ opacity: 0, scale: 0 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0 }}
-              onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-              className="fixed bottom-8 right-8 z-50 p-4 bg-white/90 backdrop-blur-sm rounded-full shadow-2xl border border-white/30 hover:bg-white transition-all duration-300 hover:scale-110"
-            >
-              <ArrowLeft className="h-6 w-6 text-gray-700 rotate-90" />
-            </motion.button>
-          )}
-        </AnimatePresence>
+        {/* Footer and scroll-to-top removed for a clean app shell */}
       </main>
     </LazyMotion>
   );
