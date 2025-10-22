@@ -1,5 +1,3 @@
-@import url("https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap");
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -16,6 +14,8 @@
   --text-secondary: #4a5568;
   --background-primary: var(--white);
   --background-secondary: #ffffff;
+  --font-sans-stack: var(--font-inter), -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-serif-stack: var(--font-playfair), "Times New Roman", serif;
 }
 
 [data-theme="dark"] {
@@ -37,7 +37,7 @@ html,
 body {
   max-width: 100vw;
   overflow-x: hidden;
-  font-family: "Inter", sans-serif;
+  font-family: var(--font-sans-stack);
   background-color: var(--background-primary);
   color: var(--text-primary);
 }
@@ -48,7 +48,7 @@ h3,
 h4,
 h5,
 h6 {
-  font-family: "Playfair Display", serif;
+  font-family: var(--font-serif-stack);
 }
 
 body {
@@ -90,7 +90,7 @@ body {
 
 /* Supabase Auth UI Custom Styles */
 [data-supabase-auth-ui] {
-  font-family: 'Inter', sans-serif !important;
+  font-family: var(--font-sans-stack) !important;
 }
 
 [data-supabase-auth-ui] button[type="submit"] {

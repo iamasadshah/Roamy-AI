@@ -1,5 +1,6 @@
-import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import type { Metadata, Viewport } from "next";
+import { Geist, Geist_Mono, Inter, Playfair_Display } from "next/font/google";
+import Script from "next/script";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
 import { Toaster } from "react-hot-toast";
@@ -14,10 +15,66 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+const inter = Inter({
+  variable: "--font-inter",
+  subsets: ["latin"],
+  display: "swap",
+});
+
+const playfair = Playfair_Display({
+  variable: "--font-playfair",
+  subsets: ["latin"],
+  display: "swap",
+});
+
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.roamy.ai";
+const sharedTitle = "Roamy AI | Intelligent Travel Planning Assistant";
+const sharedDescription =
+  "Create lightning-fast, AI-powered travel itineraries tailored to your style, budget, and schedule with Roamy AI.";
+const ogImage = "/images/Travel-planing.png";
+
 export const metadata: Metadata = {
-  title: "Roamy AI",
-  description: "Your Smart Travel Buddy!",
+  metadataBase: new URL(siteUrl),
+  applicationName: "Roamy AI",
+  title: {
+    default: sharedTitle,
+    template: "%s | Roamy AI",
+  },
+  description: sharedDescription,
+  keywords: [
+    "AI travel planner",
+    "travel itinerary generator",
+    "personalized trips",
+    "vacation planning app",
+    "Roamy AI",
+  ],
   manifest: "/manifest.json",
+  category: "travel",
+  alternates: {
+    canonical: "/",
+  },
+  openGraph: {
+    title: sharedTitle,
+    description: sharedDescription,
+    url: siteUrl,
+    siteName: "Roamy AI",
+    type: "website",
+    locale: "en_US",
+    images: [
+      {
+        url: ogImage,
+        width: 1280,
+        height: 720,
+        alt: "Roamy AI travel planning dashboard preview",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: sharedTitle,
+    description: sharedDescription,
+    images: [ogImage],
+  },
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
@@ -27,21 +84,45 @@ export const metadata: Metadata = {
     telephone: false,
   },
   icons: {
-    apple: [{ url: "/favicon.png", sizes: "180x180", type: "image/png" }],
-    other: [
-      { url: "/favicon.png", sizes: "16x16", type: "image/png" },
+    icon: [
       { url: "/favicon.png", sizes: "32x32", type: "image/png" },
-      { url: "/favicon.png", sizes: "96x96", type: "image/png" },
+      { url: "/favicon.png", sizes: "16x16", type: "image/png" },
     ],
+    shortcut: ["/favicon.png"],
+    apple: [{ url: "/favicon.png", sizes: "180x180", type: "image/png" }],
   },
 };
 
-export const viewport = {
+export const viewport: Viewport = {
   themeColor: "#0a4d93",
   width: "device-width",
   initialScale: 1,
-  maximumScale: 1,
-  userScalable: false,
+};
+
+const structuredData = {
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  name: "Roamy AI",
+  url: siteUrl,
+  description: sharedDescription,
+  logo: `${siteUrl}/favicon.png`,
+  sameAs: [
+    "https://www.linkedin.com/company/roamy-ai",
+    "https://x.com/RoamyAI",
+  ],
+  contactPoint: {
+    "@type": "ContactPoint",
+    contactType: "customer support",
+    email: "support@roamy.ai",
+    availableLanguage: ["English"],
+  },
+  offers: {
+    "@type": "Offer",
+    url: `${siteUrl}/plan`,
+    price: "0",
+    priceCurrency: "USD",
+    category: "travel",
+  },
 };
 
 export default function RootLayout({
@@ -54,18 +135,15 @@ export default function RootLayout({
       lang="en"
       className="scroll-smooth"
     >
-      <head>
-        <meta name="apple-mobile-web-app-capable" content="yes" />
-        <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-        <meta name="apple-mobile-web-app-title" content="Roamy AI" />
-        <meta name="format-detection" content="telephone=no" />
-        <meta name="mobile-web-app-capable" content="yes" />
-        <link rel="apple-touch-icon" href="/favicon.png" />
-        <link rel="manifest" href="/manifest.json" />
-      </head>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} ${inter.variable} ${playfair.variable} antialiased`}
       >
+        <Script
+          id="roamy-ai-ld-json"
+          type="application/ld+json"
+          strategy="afterInteractive"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+        />
         <Toaster position="top-center" />
         <Navbar />
         {children}
