@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import { cookies } from "next/headers";
 import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
-import PlannerWorkspace from "@/components/PlannerWorkspace";
 import type { Database, TripsRow } from "@/types/supabase";
+import PlannerShell from "@/components/PlannerShell";
 
 export const metadata: Metadata = {
   title: "Plan a Trip",
@@ -26,11 +26,11 @@ export default async function PlanPage() {
         .select("*")
         .eq("user_id", session.user.id)
         .order("created_at", { ascending: false })
-        .limit(30)
+        .limit(12)
     : { data: [] as TripsRow[] };
 
   return (
-    <PlannerWorkspace
+    <PlannerShell
       initialTrips={tripsData ?? []}
       userId={session?.user.id ?? null}
     />

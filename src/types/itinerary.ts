@@ -88,6 +88,7 @@ export type FormData = {
   accommodation: string;
   travelers: string;
   dietaryPlan: string;
+  notes?: string;
 }
 
 export interface Trip {

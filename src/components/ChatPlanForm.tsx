@@ -321,7 +321,7 @@ const ChatPlanForm: React.FC<Props> = ({ onSubmit, isLoading, resultContent }) =
         >
           {children}
           {time && (
-            <div className={`mt-1 text-[10px] ${role === "user" ? "text-blue-100" : "text-gray-400"}`}>{new Date(time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</div>
+            <div className={`mt-1 text-[10px] ${role === "user" ? "text-blue-100/80" : "text-gray-400"}`}>{new Date(time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</div>
           )}
         </div>
         {/* Tail */}
@@ -358,7 +358,7 @@ const ChatPlanForm: React.FC<Props> = ({ onSubmit, isLoading, resultContent }) =
               <h2 className="mt-1 text-lg font-semibold text-gray-800">New Travel Session</h2>
             </div>
           </div>
-          <div className="flex items-center gap-3 text-xs text-gray-500">
+        <div className="flex items-center gap-3 text-xs text-gray-500">
             <div className="hidden items-center gap-1 sm:flex">
               {timeline.map((label, idx) => (
                 <span
@@ -369,7 +369,7 @@ const ChatPlanForm: React.FC<Props> = ({ onSubmit, isLoading, resultContent }) =
                 />
               ))}
             </div>
-            <span className="rounded-full border border-white/60 px-3 py-1 font-semibold text-gray-600 shadow-sm">
+            <span className="rounded-full border border-slate-200 px-3 py-1 font-semibold text-gray-600 shadow-sm">
               Step {currentStep + 1} of 6
             </span>
           </div>
@@ -392,7 +392,7 @@ const ChatPlanForm: React.FC<Props> = ({ onSubmit, isLoading, resultContent }) =
             ))}
             {botTyping && (
               <div className="flex justify-start">
-                <div className="flex items-center gap-1 rounded-2xl border border-white/40 bg-white px-4 py-2 shadow-sm">
+                <div className="flex items-center gap-1 rounded-2xl border border-slate-200 bg-white px-4 py-2 shadow-sm">
                   <span className="h-2 w-2 animate-bounce rounded-full bg-gray-400" style={{ animationDelay: '0ms' }} />
                   <span className="h-2 w-2 animate-bounce rounded-full bg-gray-400" style={{ animationDelay: '120ms' }} />
                   <span className="h-2 w-2 animate-bounce rounded-full bg-gray-400" style={{ animationDelay: '240ms' }} />
@@ -410,9 +410,9 @@ const ChatPlanForm: React.FC<Props> = ({ onSubmit, isLoading, resultContent }) =
           </div>
         </div>
 
-        <div className="border-t border-white/60 bg-white/80 px-4 py-5 backdrop-blur">
+        <div className="border-t border-slate-200 bg-white/90 px-4 py-5">
           <div className="mx-auto flex w-full max-w-3xl flex-col gap-4">
-            <div className="flex items-center justify-between rounded-2xl border border-white/70 bg-white px-4 py-3 text-xs text-gray-500 shadow-sm">
+            <div className="flex items-center justify-between rounded-2xl border border-slate-200 bg-white px-4 py-3 text-xs text-gray-500 shadow-sm">
               <div className="flex items-center gap-2">
                 <span className="inline-flex h-2 w-2 rounded-full bg-blue-500" />
                 Roamy is waiting for your reply
