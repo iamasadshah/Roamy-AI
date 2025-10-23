@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useCallback, useState, useEffect } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { motion, AnimatePresence, LazyMotion, domAnimation } from "framer-motion";
 import { FaGlobe, FaSearch, FaHotel, FaBed, FaUmbrellaBeach, FaHome, FaUser, FaUserFriends, FaLeaf, FaHeart, FaUsers } from "react-icons/fa";
 import { Loader2 } from "lucide-react";
@@ -180,14 +180,15 @@ const ChatPlanForm: React.FC<Props> = ({ onSubmit, isLoading, resultContent }) =
     dietaryPlan: "",
   });
   const [currentStep, setCurrentStep] = useState(0);
-  const [messages, setMessages] = useState<ChatMessage[]>([
+  const [messages, setMessages] = useState<ChatMessage[]>(() => [
     { id: "m0", role: "bot", time: Date.now(), content: (
       <div>
-        <div className="font-semibold">Hi! I can craft your perfect trip.</div>
-        <div>First, where would you like to go?</div>
+        <div className="font-semibold">Hi there, I&apos;m Roamy.</div>
+        <div>Let&apos;s craft your perfect getaway. Where would you like to travel?</div>
       </div>
     ) }
   ]);
+  const scrollRef = useRef<HTMLDivElement>(null);
 
   // Persistent history (messages, formData, currentStep)
   const STORAGE_KEY = "chat_plan_state_v1";
@@ -223,6 +224,13 @@ const ChatPlanForm: React.FC<Props> = ({ onSubmit, isLoading, resultContent }) =
   const pushUser = (content: React.ReactNode) => setMessages((prev) => [...prev, { id: `u-${prev.length}`, role: "user", content, time: Date.now() }]);
 
   const [botTyping, setBotTyping] = useState(false);
+
+  useEffect(() => {
+    scrollRef.current?.scrollTo({
+      top: scrollRef.current.scrollHeight,
+      behavior: "smooth",
+    });
+  }, [messages, botTyping, resultContent]);
 
   const nextFromDestination = (val: string) => {
     setFormData((p) => ({ ...p, destination: val }));
@@ -288,71 +296,136 @@ const ChatPlanForm: React.FC<Props> = ({ onSubmit, isLoading, resultContent }) =
 
   const dateValid = formData.startDate && formData.endDate && new Date(formData.endDate) > new Date(formData.startDate) && ((new Date(formData.endDate).getTime() - new Date(formData.startDate).getTime()) / (1000*60*60*24)) <= 10 && new Date(formData.startDate) >= new Date(todayStr());
 
+  const timeline = useMemo(() => [
+    "Destination",
+    "Dates",
+    "Budget",
+    "Stay",
+    "Travelers",
+    "Dietary",
+  ], []);
+
   const Bubble = ({ role, children, time }: { role: "bot" | "user"; children: React.ReactNode; time?: number }) => (
     <div className={`flex ${role === "user" ? "justify-end" : "justify-start"} items-end gap-2`}>
       {role === "bot" && (
-        <div className="w-8 h-8 rounded-full overflow-hidden bg-blue-100 flex items-center justify-center text-blue-700 text-sm shrink-0">
+        <div className="w-8 h-8 shrink-0 overflow-hidden rounded-full bg-blue-100 flex items-center justify-center text-blue-700 text-sm">
           <Image src="/favicon.png" alt="Bot" width={32} height={32} />
         </div>
       )}
       <div className="relative">
-        <div className={`${role === "user" ? "bg-blue-600 text-white" : "bg-white border"} max-w-[90vw] sm:max-w-[75vw] md:max-w-[60vw] rounded-2xl px-4 py-3 shadow-sm`}>{children}
+        <div
+          className={`
+            ${role === "user" ? "bg-gradient-to-br from-blue-600 to-indigo-600 text-white" : "bg-white/90 border border-white/40"} 
+            max-w-[90vw] sm:max-w-[70vw] md:max-w-[55vw] rounded-2xl px-4 py-3 shadow-sm backdrop-blur
+          `}
+        >
+          {children}
           {time && (
             <div className={`mt-1 text-[10px] ${role === "user" ? "text-blue-100" : "text-gray-400"}`}>{new Date(time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</div>
           )}
         </div>
         {/* Tail */}
         {role === "bot" ? (
-          <motion.div initial={{ opacity: 0, x: -4 }} animate={{ opacity: 1, x: 0 }} className="absolute -left-2 bottom-2 w-3 h-3 bg-white border border-gray-200 rotate-45" />
+          <motion.div initial={{ opacity: 0, x: -4 }} animate={{ opacity: 1, x: 0 }} className="absolute -left-2 bottom-2 h-3 w-3 rotate-45 border border-gray-200 bg-white" />
         ) : (
-          <motion.div initial={{ opacity: 0, x: 4 }} animate={{ opacity: 1, x: 0 }} className="absolute -right-2 bottom-2 w-3 h-3 bg-blue-600 rotate-45" />
+          <motion.div initial={{ opacity: 0, x: 4 }} animate={{ opacity: 1, x: 0 }} className="absolute -right-2 bottom-2 h-3 w-3 rotate-45 bg-indigo-600" />
         )}
       </div>
       {role === "user" && (
-        <div className="w-8 h-8 rounded-full bg-indigo-600 text-white flex items-center justify-center text-sm shrink-0">You</div>
+        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-indigo-600 text-sm text-white">You</div>
       )}
     </div>
   );
 
   return (
     <LazyMotion features={domAnimation}>
-      <div className="w-full max-w-full sm:max-w-2xl md:max-w-3xl lg:max-w-4xl mx-auto px-2 sm:px-4">
-        <div className="bg-white/95 backdrop-blur-sm rounded-2xl sm:rounded-3xl border border-white/30 shadow-2xl flex flex-col">
-          {/* Top bar with Back navigation */}
-          <div className="flex items-center justify-between p-2 sm:p-3 border-b border-white/40 bg-white/60 backdrop-blur-sm sticky top-0 z-10">
-            <button
-              type="button"
-              className={`px-3 py-1.5 rounded-lg text-sm font-semibold ${currentStep > 0 ? "bg-gray-100 hover:bg-gray-200 text-gray-700" : "bg-gray-50 text-gray-400 cursor-not-allowed"}`}
-              disabled={currentStep === 0}
-              onClick={() => { setCurrentStep((s) => Math.max(0, s - 1)); }}
-              aria-label="Go back to previous step"
-            >
-              Back
-            </button>
-            <div className="text-xs text-gray-500">Step {currentStep + 1} of 6</div>
+      <div className="flex h-full flex-col bg-gradient-to-br from-white/95 via-white to-blue-50/60">
+        <div className="flex items-center justify-between border-b border-white/40 px-4 py-4 backdrop-blur">
+          <div className="flex items-center gap-3">
+            <div className="relative">
+              <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-blue-100 text-blue-600">
+                <Image src="/favicon.png" alt="Roamy AI" width={32} height={32} />
+              </div>
+              <span className="absolute -bottom-1 -right-1 flex h-3 w-3">
+                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-green-400 opacity-75" />
+                <span className="relative inline-flex h-3 w-3 rounded-full bg-green-500" />
+              </span>
+            </div>
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-[0.3em] text-blue-500">
+                Roamy AI Planner
+              </p>
+              <h2 className="mt-1 text-lg font-semibold text-gray-800">New Travel Session</h2>
+            </div>
           </div>
-          <div className="space-y-3 sm:space-y-4 p-3 sm:p-4 md:p-6" onKeyDown={(e) => {
+          <div className="flex items-center gap-3 text-xs text-gray-500">
+            <div className="hidden items-center gap-1 sm:flex">
+              {timeline.map((label, idx) => (
+                <span
+                  key={label}
+                  className={`h-1.5 w-6 rounded-full transition ${
+                    idx <= currentStep ? "bg-blue-600" : "bg-gray-200"
+                  }`}
+                />
+              ))}
+            </div>
+            <span className="rounded-full border border-white/60 px-3 py-1 font-semibold text-gray-600 shadow-sm">
+              Step {currentStep + 1} of 6
+            </span>
+          </div>
+        </div>
+
+        <div
+          ref={scrollRef}
+          className="flex-1 space-y-4 overflow-y-auto px-4 py-6 sm:px-6 md:px-10"
+          onKeyDown={(e) => {
             if (e.key === 'Enter') {
               if (currentStep === 1 && dateValid && !isLoading) nextFromDates();
             }
-          }}>
-            <div>
-              {messages.map((m) => (
-                <motion.div key={m.id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.2 }}>
-                  <Bubble role={m.role} time={m.time}>{m.content}</Bubble>
-                </motion.div>
-              ))}
-              {botTyping && (
-                <div className="flex justify-start">
-                  <div className="flex items-center gap-1 bg-white border rounded-2xl px-4 py-2">
-                    <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
-                    <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '120ms' }} />
-                    <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '240ms' }} />
-                  </div>
+          }}
+        >
+          <div className="mx-auto flex w-full max-w-3xl flex-col space-y-4">
+            {messages.map((m) => (
+              <motion.div key={m.id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.2 }}>
+                <Bubble role={m.role} time={m.time}>{m.content}</Bubble>
+              </motion.div>
+            ))}
+            {botTyping && (
+              <div className="flex justify-start">
+                <div className="flex items-center gap-1 rounded-2xl border border-white/40 bg-white px-4 py-2 shadow-sm">
+                  <span className="h-2 w-2 animate-bounce rounded-full bg-gray-400" style={{ animationDelay: '0ms' }} />
+                  <span className="h-2 w-2 animate-bounce rounded-full bg-gray-400" style={{ animationDelay: '120ms' }} />
+                  <span className="h-2 w-2 animate-bounce rounded-full bg-gray-400" style={{ animationDelay: '240ms' }} />
                 </div>
+              </div>
+            )}
+            {resultContent && (
+              <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.25 }}>
+                <Bubble role="bot" time={Date.now()}>
+                  {resultContent}
+                </Bubble>
+              </motion.div>
+            )}
+            <div className="h-2" />
+          </div>
+        </div>
+
+        <div className="border-t border-white/60 bg-white/80 px-4 py-5 backdrop-blur">
+          <div className="mx-auto flex w-full max-w-3xl flex-col gap-4">
+            <div className="flex items-center justify-between rounded-2xl border border-white/70 bg-white px-4 py-3 text-xs text-gray-500 shadow-sm">
+              <div className="flex items-center gap-2">
+                <span className="inline-flex h-2 w-2 rounded-full bg-blue-500" />
+                Roamy is waiting for your reply
+              </div>
+              {currentStep > 0 && (
+                <button
+                  onClick={() => setCurrentStep((s) => Math.max(0, s - 1))}
+                  className="rounded-full border border-gray-200 px-3 py-1 font-semibold text-gray-600 transition hover:border-blue-300 hover:text-blue-600"
+                >
+                  Back a step
+                </button>
               )}
             </div>
-            <div />
 
             {currentStep === 0 && (
               <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
@@ -368,30 +441,30 @@ const ChatPlanForm: React.FC<Props> = ({ onSubmit, isLoading, resultContent }) =
               <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
                 <Bubble role="bot">
                   <div className="my-2 flex items-center justify-center">
-                    <div className="h-px bg-gray-200 w-full" />
+                    <div className="h-px w-full bg-gray-200" />
                     <div className="px-2 text-xs text-gray-400">Step 2 • Dates</div>
-                    <div className="h-px bg-gray-200 w-full" />
+                    <div className="h-px w-full bg-gray-200" />
                   </div>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
                     <div>
-                      <label className="block text-sm font-semibold text-gray-700 mb-2" htmlFor="arrival-date">Arrival Date</label>
+                      <label className="mb-2 block text-sm font-semibold text-gray-700" htmlFor="arrival-date">Arrival Date</label>
                       <input
                         type="date"
                         value={formData.startDate}
                         onChange={(e) => setFormData((p) => ({ ...p, startDate: e.target.value }))}
-                        className="w-full p-3 border-2 border-gray-300 rounded-xl text-sm sm:text-base"
+                        className="w-full rounded-xl border-2 border-gray-200 bg-white px-3 py-3 text-sm shadow-sm transition focus:border-blue-500 focus:outline-none focus:ring-4 focus:ring-blue-400/20"
                         min={todayStr()}
                         id="arrival-date"
                         aria-label="Arrival date"
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-semibold text-gray-700 mb-2" htmlFor="departure-date">Departure Date</label>
+                      <label className="mb-2 block text-sm font-semibold text-gray-700" htmlFor="departure-date">Departure Date</label>
                       <input
                         type="date"
                         value={formData.endDate}
                         onChange={(e) => setFormData((p) => ({ ...p, endDate: e.target.value }))}
-                        className="w-full p-3 border-2 border-gray-300 rounded-xl text-sm sm:text-base"
+                        className="w-full rounded-xl border-2 border-gray-200 bg-white px-3 py-3 text-sm shadow-sm transition focus:border-blue-500 focus:outline-none focus:ring-4 focus:ring-blue-400/20"
                         min={formData.startDate || todayStr()}
                         max={getMaxEndDate(formData.startDate)}
                         id="departure-date"
@@ -400,8 +473,8 @@ const ChatPlanForm: React.FC<Props> = ({ onSubmit, isLoading, resultContent }) =
                     </div>
                   </div>
                   <div className="mt-3 flex justify-end">
-                    <button disabled={!dateValid || isLoading} onClick={nextFromDates} className={`px-5 py-2 rounded-xl font-semibold ${dateValid ? "bg-blue-600 text-white" : "bg-gray-200 text-gray-500"}`}>
-                      Next
+                    <button disabled={!dateValid || isLoading} onClick={nextFromDates} className={`rounded-xl px-5 py-2 font-semibold transition ${dateValid ? "bg-blue-600 text-white hover:bg-blue-700" : "bg-gray-200 text-gray-500"}`}>
+                      Continue
                     </button>
                   </div>
                 </Bubble>
@@ -412,9 +485,9 @@ const ChatPlanForm: React.FC<Props> = ({ onSubmit, isLoading, resultContent }) =
               <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
                 <Bubble role="bot">
                   <div className="my-2 flex items-center justify-center">
-                    <div className="h-px bg-gray-200 w-full" />
+                    <div className="h-px w-full bg-gray-200" />
                     <div className="px-2 text-xs text-gray-400">Step 3 • Budget</div>
-                    <div className="h-px bg-gray-200 w-full" />
+                    <div className="h-px w-full bg-gray-200" />
                   </div>
                   <div className="grid grid-cols-2 gap-3">
                     {[
@@ -423,9 +496,9 @@ const ChatPlanForm: React.FC<Props> = ({ onSubmit, isLoading, resultContent }) =
                       { value: "luxury", label: "Luxury", icon: "👑" },
                       { value: "ultra-luxury", label: "Ultra Luxury", icon: "⭐" },
                     ].map((o) => (
-                      <button key={o.value} className={`p-3 sm:p-4 rounded-xl border-2 ${formData.budget === o.value ? "bg-blue-600 text-white border-blue-600" : "bg-white border-gray-200"}`} onClick={() => nextFromBudget(o.value, o.label)}>
-                        <div className="text-2xl mb-1">{o.icon}</div>
-                        <div className="font-semibold">{o.label}</div>
+                      <button key={o.value} className={`rounded-xl border-2 p-3 text-left transition ${formData.budget === o.value ? "border-blue-600 bg-blue-600/10 text-blue-700 shadow-sm" : "border-gray-200 bg-white hover:border-blue-300"}`} onClick={() => nextFromBudget(o.value, o.label)}>
+                        <div className="text-2xl">{o.icon}</div>
+                        <div className="mt-1 font-semibold">{o.label}</div>
                       </button>
                     ))}
                   </div>
@@ -437,11 +510,11 @@ const ChatPlanForm: React.FC<Props> = ({ onSubmit, isLoading, resultContent }) =
               <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
                 <Bubble role="bot">
                   <div className="my-2 flex items-center justify-center">
-                    <div className="h-px bg-gray-200 w-full" />
+                    <div className="h-px w-full bg-gray-200" />
                     <div className="px-2 text-xs text-gray-400">Step 4 • Stay</div>
-                    <div className="h-px bg-gray-200 w-full" />
+                    <div className="h-px w-full bg-gray-200" />
                   </div>
-                  <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                  <div className="grid grid-cols-2 gap-3 md:grid-cols-3">
                     {[
                       { value: "hotel", label: "Hotel", icon: <FaHotel /> },
                       { value: "hostel", label: "Hostel", icon: <FaBed /> },
@@ -450,9 +523,9 @@ const ChatPlanForm: React.FC<Props> = ({ onSubmit, isLoading, resultContent }) =
                       { value: "guesthouse", label: "Guesthouse", icon: <FaUser /> },
                       { value: "camping", label: "Camping", icon: <FaLeaf /> },
                     ].map((o) => (
-                      <button key={o.value} className={`p-3 sm:p-4 rounded-xl border-2 flex flex-col items-center ${formData.accommodation === o.value ? "bg-blue-600 text-white border-blue-600" : "bg-white border-gray-200"}`} onClick={() => nextFromAccommodation(o.value, o.label)}>
-                        <div className="text-2xl mb-1">{o.icon}</div>
-                        <div className="font-semibold">{o.label}</div>
+                      <button key={o.value} className={`flex flex-col items-center rounded-xl border-2 p-3 transition ${formData.accommodation === o.value ? "border-blue-600 bg-blue-600/10 text-blue-700 shadow-sm" : "border-gray-200 bg-white hover:border-blue-300"}`} onClick={() => nextFromAccommodation(o.value, o.label)}>
+                        <div className="text-2xl">{o.icon}</div>
+                        <div className="mt-1 font-semibold">{o.label}</div>
                       </button>
                     ))}
                   </div>
@@ -464,20 +537,20 @@ const ChatPlanForm: React.FC<Props> = ({ onSubmit, isLoading, resultContent }) =
               <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
                 <Bubble role="bot">
                   <div className="my-2 flex items-center justify-center">
-                    <div className="h-px bg-gray-200 w-full" />
+                    <div className="h-px w-full bg-gray-200" />
                     <div className="px-2 text-xs text-gray-400">Step 5 • Travelers</div>
-                    <div className="h-px bg-gray-200 w-full" />
+                    <div className="h-px w-full bg-gray-200" />
                   </div>
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                  <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
                     {[
                       { value: "solo", label: "Solo", icon: <FaUser /> },
                       { value: "couple", label: "Couple", icon: <FaHeart /> },
                       { value: "family", label: "Family", icon: <FaUsers /> },
                       { value: "friends", label: "Friends", icon: <FaUserFriends /> },
                     ].map((o) => (
-                      <button key={o.value} className={`p-3 sm:p-4 rounded-xl border-2 flex flex-col items-center ${formData.travelers === o.value ? "bg-blue-600 text-white border-blue-600" : "bg-white border-gray-200"}`} onClick={() => nextFromTravelers(o.value, o.label)}>
-                        <div className="text-2xl mb-1">{o.icon}</div>
-                        <div className="font-semibold">{o.label}</div>
+                      <button key={o.value} className={`flex flex-col items-center rounded-xl border-2 p-3 transition ${formData.travelers === o.value ? "border-blue-600 bg-blue-600/10 text-blue-700 shadow-sm" : "border-gray-200 bg-white hover:border-blue-300"}`} onClick={() => nextFromTravelers(o.value, o.label)}>
+                        <div className="text-2xl">{o.icon}</div>
+                        <div className="mt-1 font-semibold">{o.label}</div>
                       </button>
                     ))}
                   </div>
@@ -489,11 +562,11 @@ const ChatPlanForm: React.FC<Props> = ({ onSubmit, isLoading, resultContent }) =
               <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
                 <Bubble role="bot">
                   <div className="my-2 flex items-center justify-center">
-                    <div className="h-px bg-gray-200 w-full" />
+                    <div className="h-px w-full bg-gray-200" />
                     <div className="px-2 text-xs text-gray-400">Step 6 • Dietary</div>
-                    <div className="h-px bg-gray-200 w-full" />
+                    <div className="h-px w-full bg-gray-200" />
                   </div>
-                  <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                  <div className="grid grid-cols-2 gap-3 md:grid-cols-3">
                     {[
                       { value: "none", label: "No Preference" },
                       { value: "vegetarian", label: "Vegetarian" },
@@ -502,7 +575,7 @@ const ChatPlanForm: React.FC<Props> = ({ onSubmit, isLoading, resultContent }) =
                       { value: "kosher", label: "Kosher" },
                       { value: "gluten-free", label: "Gluten-free" },
                     ].map((o) => (
-                      <button key={o.value} className={`p-3 sm:p-4 rounded-xl border-2 ${formData.dietaryPlan === o.value ? "bg-blue-600 text-white border-blue-600" : "bg-white border-gray-200"}`} onClick={() => finishWithDiet(o.value, o.label)}>
+                      <button key={o.value} className={`rounded-xl border-2 p-3 transition ${formData.dietaryPlan === o.value ? "border-blue-600 bg-blue-600/10 text-blue-700 shadow-sm" : "border-gray-200 bg-white hover:border-blue-300"}`} onClick={() => finishWithDiet(o.value, o.label)}>
                         <div className="font-semibold">{o.label}</div>
                       </button>
                     ))}
@@ -511,23 +584,14 @@ const ChatPlanForm: React.FC<Props> = ({ onSubmit, isLoading, resultContent }) =
               </motion.div>
             )}
 
-            {/* Inject result content from parent into chat as a bot message when available */}
-            {resultContent && (
-              <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.25 }}>
-                <Bubble role="bot" time={Date.now()}>
-                  {resultContent}
-                </Bubble>
-              </motion.div>
-            )}
-          </div>
-
-          <div className="p-3 sm:p-4 border-t bg-white/70 flex items-center justify-between sticky bottom-0" style={{ paddingBottom: "calc(env(safe-area-inset-bottom) + 0.5rem)" }}>
-            <div className="text-sm text-gray-500">Fill the steps in chat to generate your itinerary.</div>
-            {isLoading && (
-              <div className="flex items-center gap-2 text-gray-600">
-                <Loader2 className="h-4 w-4 animate-spin" /> Generating...
-              </div>
-            )}
+            <div className="flex flex-col gap-2 text-xs text-gray-500 sm:flex-row sm:items-center sm:justify-between">
+              <span className="order-2 sm:order-1">Answer the prompts above to continue.</span>
+              {isLoading && (
+                <div className="order-1 flex items-center gap-2 rounded-full border border-blue-200 bg-blue-50 px-3 py-1 text-blue-600 sm:order-2">
+                  <Loader2 className="h-4 w-4 animate-spin" /> Preparing your itinerary…
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </div>

@@ -117,10 +117,25 @@ export async function getDestinationData(destination: string): Promise<Destinati
     if (currencyCode === 'USD') {
       numericRate = 1;
     } else {
+      const exchangeApiKey = process.env.NEXT_PUBLIC_EXCHANGERATE_API;
+      if (!exchangeApiKey) {
+        throw new Error('Exchange rate API key not configured');
+      }
+
       try {
-        const exchangeResponse = await axios.get(`/api/exchange-rate?currency=${currencyCode}`);
-        const rate = exchangeResponse.data?.rate;
-        if (typeof rate !== 'number' || !isFinite(rate)) {
+        const exchangeResponse = await axios.get(
+          `https://api.freecurrencyapi.com/v1/latest`,
+          {
+            params: {
+              apikey: exchangeApiKey,
+              base_currency: 'USD',
+              currencies: currencyCode,
+            },
+          }
+        );
+
+        const rate = exchangeResponse.data?.data?.[currencyCode];
+        if (typeof rate !== 'number' || !Number.isFinite(rate)) {
           console.error('Failed to get exchange rate:', exchangeResponse.data);
           numericRate = NaN;
         } else {

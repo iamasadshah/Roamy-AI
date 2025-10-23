@@ -74,12 +74,12 @@ export default function TripPlan({
   if (isLoading) {
     return (
       <motion.div
-        className="w-full"
+        className="flex h-full items-center justify-center"
         variants={containerVariants}
         initial="initial"
         animate="animate"
       >
-        <div className="text-center space-y-6 rounded-3xl border border-white/30 bg-white/95 p-10 shadow-2xl">
+        <div className="w-full max-w-lg space-y-6 rounded-3xl border border-white/30 bg-white/95 p-10 text-center shadow-2xl">
           <h3 className="text-2xl font-bold text-gray-800 mb-4">
             AI Processing Your Itinerary
           </h3>
@@ -107,7 +107,7 @@ export default function TripPlan({
   return (
     <LazyMotion features={domAnimation}>
       <motion.div
-        className="w-full space-y-8"
+        className="flex h-full flex-col space-y-8 overflow-y-auto pr-1"
         variants={containerVariants}
         initial="initial"
         animate="animate"

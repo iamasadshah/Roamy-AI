@@ -264,13 +264,13 @@ const PlannerWorkspace = ({ initialTrips, userId }: PlannerWorkspaceProps) => {
 
   return (
     <div className="min-h-[calc(100vh-5rem)] bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
-      <div className="flex min-h-[calc(100vh-5rem)]">
+      <div className="flex min-h-[calc(100vh-5rem)] overflow-hidden">
         <aside className="hidden w-72 shrink-0 flex-col border-r border-white/40 bg-white/60 backdrop-blur md:flex">
-          <div className="p-4 border-b border-white/60 bg-white/70">
+          <div className="border-b border-white/60 bg-white/70 p-4">
             <button
               type="button"
               onClick={handleStartNew}
-              className="flex w-full items-center justify-center gap-2 rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow hover:bg-blue-700"
+              className="flex w-full items-center justify-center gap-2 rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow transition hover:bg-blue-700"
             >
               <Plus className="h-4 w-4" />
               New itinerary
@@ -285,75 +285,101 @@ const PlannerWorkspace = ({ initialTrips, userId }: PlannerWorkspaceProps) => {
           </nav>
         </aside>
 
-        <main className="flex-1 overflow-y-auto">
-          <div className="w-full px-4 py-6 md:px-8 lg:px-12">
-            <div className="mb-4 flex flex-col gap-3 md:hidden">
-              <div className="flex w-full items-center gap-2">
-                <button
-                  type="button"
-                  onClick={handleStartNew}
-                  className="inline-flex items-center gap-2 rounded-xl bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow hover:bg-blue-700"
-                >
-                  <Plus className="h-4 w-4" />
-                  New
-                </button>
-                <span className="text-sm font-semibold text-gray-700">Saved trips</span>
+        <main className="flex-1 overflow-hidden">
+          <header className="sticky top-0 z-20 border-b border-white/40 bg-white/70 px-4 py-4 backdrop-blur md:px-8 lg:px-12">
+            <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-[0.3em] text-blue-500">
+                  Plan Workspace
+                </p>
+                <h1 className="mt-1 text-2xl font-semibold text-gray-900">Roamy Trip Studio</h1>
               </div>
-              <div className="flex gap-3 overflow-x-auto pb-1">
-                {trips.length ? (
-                  trips.map((trip) => (
-                    <div key={trip.id} className="min-w-[220px]">
-                      {renderTripButton(trip)}
-                    </div>
-                  ))
+              <div className="flex items-center gap-2 text-xs text-gray-500">
+                Saved automatically
+                <span className="h-1.5 w-1.5 rounded-full bg-green-500" />
+                {userId ? (
+                  <span className="rounded-full bg-blue-100/70 px-2 py-1 font-semibold text-blue-700">
+                    {userId.slice(0, 6)}…
+                  </span>
                 ) : (
-                  <div className="min-w-[220px] rounded-2xl border border-dashed border-blue-200 bg-white/70 p-4 text-xs text-gray-500">
-                    Generate your first itinerary to populate this list.
-                  </div>
+                  <span className="rounded-full bg-gray-200 px-2 py-1 font-semibold text-gray-600">
+                    Guest
+                  </span>
                 )}
               </div>
             </div>
+          </header>
 
-            {error && (
-              <div className="mb-4 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
-                {error}
+          <div className="flex h-full flex-col overflow-hidden">
+            <div className="w-full flex-1 overflow-y-auto px-4 pb-8 pt-4 md:px-8 lg:px-12">
+              <div className="mb-4 flex flex-col gap-3 md:hidden">
+                <div className="flex w-full items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={handleStartNew}
+                    className="inline-flex items-center gap-2 rounded-xl bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow transition hover:bg-blue-700"
+                  >
+                    <Plus className="h-4 w-4" />
+                    New
+                  </button>
+                  <span className="text-sm font-semibold text-gray-700">Saved trips</span>
+                </div>
+                <div className="flex gap-3 overflow-x-auto pb-1">
+                  {trips.length ? (
+                    trips.map((trip) => (
+                      <div key={trip.id} className="min-w-[220px]">
+                        {renderTripButton(trip)}
+                      </div>
+                    ))
+                  ) : (
+                    <div className="min-w-[220px] rounded-2xl border border-dashed border-blue-200 bg-white/70 p-4 text-xs text-gray-500">
+                      Generate your first itinerary to populate this list.
+                    </div>
+                  )}
+                </div>
               </div>
-            )}
 
-            <div className="flex flex-col gap-6 lg:grid lg:grid-cols-[minmax(0,1fr)_380px] lg:items-start">
-              <section className="overflow-hidden rounded-[28px] border border-white/30 bg-white/90 shadow-xl">
-                <ChatPlanForm
-                  key={conversationKey}
-                  onSubmit={handleGenerate}
-                  isLoading={isGenerating}
-                  resultContent={planSummary}
-                />
-              </section>
+              {error && (
+                <div className="mb-4 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700 shadow-sm">
+                  {error}
+                </div>
+              )}
 
-              <section className="space-y-4 rounded-[28px] border border-white/40 bg-white/90 p-4 shadow-xl backdrop-blur">
-                {isGenerating || activePlan ? (
-                  <TripPlan
-                    plan={activePlan}
+              <div className="flex flex-col gap-6 lg:grid lg:grid-cols-[minmax(0,1fr)_380px] lg:items-start">
+                <section className="flex min-h-[520px] flex-col overflow-hidden rounded-[28px] border border-white/30 bg-white/90 shadow-xl lg:h-[70vh]">
+                  <ChatPlanForm
+                    key={conversationKey}
+                    onSubmit={handleGenerate}
                     isLoading={isGenerating}
-                    onGenerateNew={handleStartNew}
+                    resultContent={planSummary}
                   />
-                ) : (
-                  <div className="flex flex-col items-center justify-center gap-4 p-8 text-center text-gray-500">
-                    <div className="inline-flex h-12 w-12 items-center justify-center rounded-full bg-blue-100 text-blue-600">
-                      <Download className="h-5 w-5" />
+                </section>
+
+                <section className="flex min-h-[520px] flex-col space-y-4 overflow-hidden rounded-[28px] border border-white/40 bg-white/90 p-4 shadow-xl backdrop-blur lg:h-[70vh]">
+                  {isGenerating || activePlan ? (
+                    <TripPlan
+                      plan={activePlan}
+                      isLoading={isGenerating}
+                      onGenerateNew={handleStartNew}
+                    />
+                  ) : (
+                    <div className="flex flex-col items-center justify-center gap-4 p-8 text-center text-gray-500">
+                      <div className="inline-flex h-12 w-12 items-center justify-center rounded-full bg-blue-100 text-blue-600">
+                        <Download className="h-5 w-5" />
+                      </div>
+                      <div className="space-y-2">
+                        <h3 className="text-lg font-semibold text-gray-900">
+                          Generate an itinerary to view details
+                        </h3>
+                        <p className="text-sm text-gray-600">
+                          Chat with Roamy AI to craft a custom trip plan. Once ready, you can view,
+                          refine, and download the full PDF here.
+                        </p>
+                      </div>
                     </div>
-                    <div className="space-y-2">
-                      <h3 className="text-lg font-semibold text-gray-900">
-                        Generate an itinerary to view details
-                      </h3>
-                      <p className="text-sm text-gray-600">
-                        Chat with Roamy AI to craft a custom trip plan. Once ready, you can view,
-                        refine, and download the full PDF here.
-                      </p>
-                    </div>
-                  </div>
-                )}
-              </section>
+                  )}
+                </section>
+              </div>
             </div>
           </div>
         </main>
