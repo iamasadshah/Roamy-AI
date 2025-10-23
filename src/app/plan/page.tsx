@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { cookies } from "next/headers";
 import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
 import type { Database, TripsRow } from "@/types/supabase";
-import PlannerShell from "@/components/PlannerShell";
+import PlanChatShell from "@/components/PlanChatShell";
 
 export const metadata: Metadata = {
   title: "Plan a Trip",
@@ -30,7 +30,7 @@ export default async function PlanPage() {
     : { data: [] as TripsRow[] };
 
   return (
-    <PlannerShell
+    <PlanChatShell
       initialTrips={tripsData ?? []}
       userId={session?.user.id ?? null}
     />
