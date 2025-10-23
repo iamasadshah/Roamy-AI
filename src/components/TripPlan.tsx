@@ -1,3 +1,5 @@
+"use client";
+
 import { TravelItinerary } from "@/types/itinerary";
 import StructuredItinerary from "./StructuredItinerary";
 import { motion, LazyMotion, domAnimation } from "framer-motion";

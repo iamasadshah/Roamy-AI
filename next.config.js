@@ -17,9 +17,6 @@ const nextConfig = {
   images: {
     formats: ["image/avif", "image/webp"],
   },
-  experimental: {
-    optimizePackageImports: ["framer-motion", "lucide-react", "react-icons"],
-  },
   async headers() {
     return [
       {
