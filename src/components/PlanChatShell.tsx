@@ -127,15 +127,24 @@ const shouldStickToBottom = useRef(true);
     }
   };
 
-  useEffect(() => {
-    if (!scrollRef.current) return;
-    if (shouldStickToBottom.current) {
-      scrollRef.current.scrollTo({
-        top: scrollRef.current.scrollHeight,
-        behavior: "smooth",
-      });
-    }
-  }, [messages, isResponding, isGeneratingPlan]);
+useEffect(() => {
+  const scrollContainer = scrollRef.current;
+  if (!scrollContainer) return;
+
+  // Always scroll to bottom when new message arrives (like ChatGPT)
+  const scrollToBottom = () => {
+    scrollContainer.scrollTo({
+      top: scrollContainer.scrollHeight,
+      behavior: "smooth",
+    });
+  };
+
+  // Smooth scroll after a short delay (wait for images/wizards to render)
+  const timeout = setTimeout(scrollToBottom, 100);
+
+  return () => clearTimeout(timeout);
+}, [messages]);
+
 
   const handleScroll = () => {
     if (!scrollRef.current) return;
@@ -407,7 +416,7 @@ const shouldStickToBottom = useRef(true);
             </div>
           </div>
 
-          <div className="flex-none w-full border-t border-slate-200 bg-white/95 px-3 py-4 backdrop-blur sm:px-6">
+          <div className="fixed bottom-0 left-0 w-full border-t border-slate-200 bg-white/95 px-3 py-4 backdrop-blur sm:px-6 z-50">
             <div className="mx-auto flex w-full max-w-3xl items-center gap-3 rounded-full border border-slate-200 bg-white px-3 py-2 shadow sm:px-4">
               <MessageCircle className="h-5 w-5 text-blue-600" />
               <input
