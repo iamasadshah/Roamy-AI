@@ -61,11 +61,12 @@ export default function PlanChatShell({ initialTrips, userId }: PlannerProps) {
   const [input, setInput] = useState("");
   const [isResponding, setIsResponding] = useState(false);
   const [isGeneratingPlan, setIsGeneratingPlan] = useState(false);
-  const supabaseClient = supabase;
-  const scrollRef = useRef<HTMLDivElement | null>(null);
-  const shouldStickToBottom = useRef(true);
+const supabaseClient = supabase;
+const scrollRef = useRef<HTMLDivElement | null>(null);
+const shouldStickToBottom = useRef(true);
 
   const appendMessage = useCallback((message: ChatMessage) => {
+    shouldStickToBottom.current = true;
     setMessages((prev) => [...prev, message]);
   }, []);
 
@@ -96,17 +97,16 @@ export default function PlanChatShell({ initialTrips, userId }: PlannerProps) {
     setIsResponding(true);
 
     try {
-      const response = await fetch("/api/travel-chat", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          messages: [...textHistoryForLLM, { role: "user", content: trimmed }],
+      const response = await requestWithRetry(() =>
+        fetch("/api/travel-chat", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            messages: [...textHistoryForLLM, { role: "user", content: trimmed }],
+          }),
         }),
-      });
+      );
       const data = await response.json();
-      if (!response.ok) {
-        throw new Error(data?.error || "Failed to get a response from Roamy");
-      }
       appendMessage({
         id: nanoid(),
         type: "text",
@@ -148,15 +148,14 @@ export default function PlanChatShell({ initialTrips, userId }: PlannerProps) {
     setActiveWizardId(null);
 
     try {
-      const response = await fetch("/api/plan", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
+      const response = await requestWithRetry(() =>
+        fetch("/api/plan", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        }),
+      );
       const data = await response.json();
-      if (!response.ok) {
-        throw new Error(data?.error || "Failed to generate itinerary");
-      }
 
       const itinerary = data.itinerary as TravelItinerary;
       appendMessage({
@@ -242,70 +241,90 @@ export default function PlanChatShell({ initialTrips, userId }: PlannerProps) {
   };
 
   return (
-    <div className="flex min-h-[calc(100vh-5rem)] bg-slate-100">
-      <aside className="hidden w-[260px] flex-col border-r border-slate-200 bg-white p-4 xl:w-[300px] lg:flex">
-        <div className="flex items-center justify-between">
-          <h2 className="text-sm font-semibold text-slate-900">Roamy AI</h2>
-          <button
-            type="button"
-            onClick={resetConversation}
-            className="inline-flex items-center gap-1 rounded-full border border-slate-200 px-3 py-1 text-xs font-semibold text-slate-600 transition hover:border-blue-300 hover:text-blue-600"
-          >
-            <Plus className="h-3 w-3" />
-            New chat
-          </button>
-        </div>
-        <div className="mt-6 space-y-2 text-xs">
-          <p className="text-slate-500 uppercase tracking-[0.25em]">Saved itineraries</p>
-          <div className="space-y-2 overflow-y-auto">
-            {history.length ? (
-              history.map((trip) => (
-                <button
-                  key={trip.id}
-                  type="button"
-                  className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-left text-xs text-slate-600 transition hover:border-blue-300 hover:bg-blue-50"
-                  onClick={() => handleSelectHistory(trip)}
-                >
-                  <p className="font-semibold text-slate-900">{trip.destination}</p>
-                  <p className="mt-0.5">{friendlyDate(trip.start_date)}</p>
-                </button>
-              ))
-            ) : (
-              <p className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-slate-500">
-                Saved plans will appear here once you generate and save them.
-              </p>
-            )}
+    <div className="flex h-100vh bg-slate-100 pt-20">
+      <aside className="hidden w-[280px] flex-none border-r border-slate-200 bg-white md:flex xl:w-[320px]">
+        <div className="flex h-full flex-col">
+          <div className="border-b border-slate-100 px-5 py-5">
+            <div className="flex items-center justify-between">
+              <h2 className="text-sm font-semibold text-slate-900">Roamy AI</h2>
+              <button
+                type="button"
+                onClick={resetConversation}
+                className="inline-flex items-center gap-1 rounded-full border border-slate-200 px-3 py-1 text-xs font-semibold text-slate-600 transition hover:border-blue-400 hover:text-blue-600"
+              >
+                <Plus className="h-3 w-3" />
+                New chat
+              </button>
+            </div>
+          </div>
+          <div className="flex-1 overflow-y-auto px-5 py-6">
+            <p className="text-[11px] font-semibold uppercase tracking-[0.35em] text-slate-500">
+              Saved itineraries
+            </p>
+            <div className="mt-3 space-y-2 text-xs">
+              {history.length ? (
+                history.map((trip) => (
+                  <button
+                    key={trip.id}
+                    type="button"
+                    className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-left text-slate-600 transition hover:border-blue-300 hover:bg-blue-50"
+                    onClick={() => handleSelectHistory(trip)}
+                  >
+                    <p className="font-semibold text-slate-900">{trip.destination}</p>
+                    <p className="mt-0.5 text-slate-500">{friendlyDate(trip.start_date)}</p>
+                  </button>
+                ))
+              ) : (
+                <p className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-slate-500">
+                  Saved plans will appear here once you generate and save them.
+                </p>
+              )}
+            </div>
           </div>
         </div>
       </aside>
 
-      <main className="flex-1 bg-gradient-to-br from-white via-slate-50 to-blue-100">
-        <div className="mx-auto flex h-full w-full max-w-4xl flex-col">
+      <main className="flex-1 overflow-hidden bg-gradient-to-br from-white via-slate-50 to-blue-100">
+        <div className="flex h-full flex-col">
+          <header className="border-b border-slate-200 bg-gradient-to-r from-white via-slate-50 to-blue-50 px-4 py-6 shadow-sm sm:px-6">
+            <div className="mx-auto flex max-w-3xl flex-col gap-2">
+              <span className="text-xs font-semibold uppercase tracking-[0.35em] text-blue-600">
+                Travel concierge
+              </span>
+              <h1 className="text-2xl font-semibold text-slate-900 sm:text-3xl">
+                Chat with Roamy to build journeys that match your style
+              </h1>
+              <p className="text-sm text-slate-500">
+                Ask for inspiration, fine-tune details, or launch a full itinerary. Every response focuses on travel.
+              </p>
+            </div>
+          </header>
+
           <div
             ref={scrollRef}
             onScroll={handleScroll}
             className="flex-1 overflow-y-auto px-3 pb-32 pt-8 sm:px-6"
           >
-            <div className="flex flex-col gap-6">
+            <div className="mx-auto flex max-w-3xl flex-col gap-6">
             {messages.map((message) => {
               if (message.type === "text") {
                 const isAssistant = message.role === "assistant";
                 return (
                   <div
                     key={message.id}
-                    className={`flex ${isAssistant ? "justify-start" : "justify-end"} px-1`}
+                    className={`flex ${isAssistant ? "justify-start" : "justify-end"}`}
                   >
-                    <div className={`flex max-w-[90%] items-start gap-3 sm:max-w-[85%]`}>
+                    <div className="flex w-full items-start gap-3">
                       {isAssistant && (
                         <div className="relative mt-0.5 h-9 w-9 flex-shrink-0 overflow-hidden rounded-full border border-blue-200 bg-blue-50">
                           <Image src="/favicon.png" alt="Roamy AI" fill sizes="36px" className="object-contain p-1" />
                         </div>
                       )}
                       <div
-                        className={`flex-1 rounded-2xl border px-4 py-3 text-sm leading-relaxed shadow-sm ${
+                        className={`flex-1 rounded-3xl border px-5 py-4 text-[15px] leading-relaxed shadow-sm ${
                           isAssistant
                             ? "border-slate-200 bg-white text-slate-700"
-                            : "border-blue-500/50 bg-blue-600 text-white shadow-lg"
+                            : "border-transparent bg-blue-600 text-white shadow-lg"
                         }`}
                       >
                         {parseContent(message.content).map((block) =>
@@ -346,7 +365,7 @@ export default function PlanChatShell({ initialTrips, userId }: PlannerProps) {
 
               if (message.type === "wizard") {
                 return (
-                  <div key={message.id} className="flex justify-start px-1">
+                  <div key={message.id} className="flex justify-start">
                     <PlanWizard
                       initialValues={{
                         destination: "",
@@ -368,7 +387,7 @@ export default function PlanChatShell({ initialTrips, userId }: PlannerProps) {
 
               if (message.type === "plan") {
                 return (
-                  <div key={message.id} className="flex justify-start px-1">
+                  <div key={message.id} className="flex justify-start">
                     <PlanMessage
                       itinerary={message.itinerary}
                       onSave={
@@ -388,7 +407,7 @@ export default function PlanChatShell({ initialTrips, userId }: PlannerProps) {
             </div>
           </div>
 
-          <div className="sticky bottom-0 w-full border-t border-slate-200 bg-white/95 px-3 py-4 backdrop-blur sm:px-6">
+          <div className="flex-none w-full border-t border-slate-200 bg-white/95 px-3 py-4 backdrop-blur sm:px-6">
             <div className="mx-auto flex w-full max-w-3xl items-center gap-3 rounded-full border border-slate-200 bg-white px-3 py-2 shadow sm:px-4">
               <MessageCircle className="h-5 w-5 text-blue-600" />
               <input
@@ -432,6 +451,37 @@ function friendlyDate(value: string) {
 
 function formatDate(date: Date) {
   return date.toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" });
+}
+
+const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
+async function requestWithRetry(fetcher: () => Promise<Response>, attempts = 3, baseDelay = 1200) {
+  let attempt = 0;
+  while (attempt < attempts) {
+    const response = await fetcher();
+    if (response.ok) {
+      return response;
+    }
+
+    const isServerError = response.status >= 500 && response.status < 600;
+    let errorMessage: string | undefined;
+    try {
+      const data = await response.json();
+      errorMessage = data?.error;
+    } catch {
+      // ignore parsing error
+    }
+
+    if (isServerError && attempt < attempts - 1) {
+      await delay(baseDelay * Math.pow(2, attempt));
+      attempt += 1;
+      continue;
+    }
+
+    throw new Error(errorMessage || `Request failed with status ${response.status}`);
+  }
+
+  throw new Error("Request failed after multiple attempts");
 }
 
 type ContentBlock =
