@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { ReactNode, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { TripsRow } from "@/types/supabase";
 import type { FormData, TravelItinerary } from "@/types/itinerary";
 import { supabase } from "@/utils/supabaseClient";
