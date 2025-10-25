@@ -251,7 +251,7 @@ useEffect(() => {
 
   return (
     <div className="flex h-100vh bg-slate-100 pt-20">
-      <aside className="hidden w-[280px] flex-none border-r border-slate-200 bg-white md:flex xl:w-[320px]">
+      <aside className="hidden w-[280px] flex-none border-r border-slate-200 bg-white md:flex xl:w-[320px] fixed left-0 top-20 bottom-0">
         <div className="flex h-full flex-col">
           <div className="border-b border-slate-100 px-5 py-5">
             <div className="flex items-center justify-between">
