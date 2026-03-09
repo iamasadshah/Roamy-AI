@@ -9,14 +9,19 @@ module.exports = {
   theme: {
   	extend: {
   		colors: {
+  			brand: {
+  				900: '#064789',
+  				500: '#427aa1'
+  			},
+  			cream: '#ebf2fa',
   			navy: {
-  				DEFAULT: '#0A4D93',
-  				dark: '#0A2540',
-  				light: '#4C8BBE'
+  				DEFAULT: '#064789',
+  				dark: '#064789',
+  				light: '#427aa1'
   			},
   			gold: {
-  				DEFAULT: '#D4AF37',
-  				light: '#e5c65c'
+  				DEFAULT: '#ebf2fa',
+  				light: '#ebf2fa'
   			},
   			background: 'hsl(var(--background))',
   			foreground: 'hsl(var(--foreground))',
@@ -60,6 +65,14 @@ module.exports = {
   			}
   		},
   		fontFamily: {
+  			display: [
+  				'var(--font-space-grotesk)',
+  				'serif'
+  			],
+  			body: [
+  				'var(--font-work-sans)',
+  				'sans-serif'
+  			],
   			playfair: [
   				'Playfair Display',
   				'serif'

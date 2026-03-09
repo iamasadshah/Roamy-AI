@@ -1,8 +1,17 @@
 import type { Metadata, Viewport } from "next";
-import { Geist, Geist_Mono, Inter, Playfair_Display } from "next/font/google";
+import {
+  Fraunces,
+  Geist,
+  Geist_Mono,
+  Inter,
+  Playfair_Display,
+  Sora,
+  Space_Grotesk,
+  Work_Sans,
+} from "next/font/google";
 import Script from "next/script";
 import "./globals.css";
-import Navbar from "@/components/Navbar";
+import Navbar from "@/components/layout/Navbar";
 import { Toaster } from "react-hot-toast";
 
 const geistSans = Geist({
@@ -23,6 +32,30 @@ const inter = Inter({
 
 const playfair = Playfair_Display({
   variable: "--font-playfair",
+  subsets: ["latin"],
+  display: "swap",
+});
+
+const sora = Sora({
+  variable: "--font-sora",
+  subsets: ["latin"],
+  display: "swap",
+});
+
+const fraunces = Fraunces({
+  variable: "--font-fraunces",
+  subsets: ["latin"],
+  display: "swap",
+});
+
+const spaceGrotesk = Space_Grotesk({
+  variable: "--font-space-grotesk",
+  subsets: ["latin"],
+  display: "swap",
+});
+
+const workSans = Work_Sans({
+  variable: "--font-work-sans",
   subsets: ["latin"],
   display: "swap",
 });
@@ -94,7 +127,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#0a4d93",
+  themeColor: "#064789",
   width: "device-width",
   initialScale: 1,
 };
@@ -136,7 +169,7 @@ export default function RootLayout({
       className="scroll-smooth"
     >
       <body
-        className={`${geistSans.variable} ${geistMono.variable} ${inter.variable} ${playfair.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} ${inter.variable} ${playfair.variable} ${sora.variable} ${fraunces.variable} ${spaceGrotesk.variable} ${workSans.variable} antialiased`}
       >
         <Script
           id="roamy-ai-ld-json"

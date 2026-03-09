@@ -3,19 +3,24 @@
 @tailwind utilities;
 
 :root {
-  --navy: #0a4d93;
-  --navy-dark: #0a2540;
-  --gold: #d4af37;
-  --white: #f8f8f8;
-  --navy-light: #4c8bbe;
-  --gold-light: #e5c65c;
-  --glow-color: rgba(76, 139, 190, 0.5);
-  --text-primary: var(--navy);
-  --text-secondary: #4a5568;
-  --background-primary: var(--white);
+  --brand-900: #064789;
+  --brand-500: #427aa1;
+  --cream: #ebf2fa;
+  --navy: var(--brand-900);
+  --navy-dark: var(--brand-900);
+  --navy-light: var(--brand-500);
+  --gold: var(--cream);
+  --gold-light: var(--cream);
+  --white: var(--cream);
+  --glow-color: rgba(66, 122, 161, 0.45);
+  --text-primary: var(--brand-900);
+  --text-secondary: rgba(6, 71, 137, 0.72);
+  --background-primary: var(--cream);
   --background-secondary: #ffffff;
-  --font-sans-stack: var(--font-inter), -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  --font-serif-stack: var(--font-playfair), "Times New Roman", serif;
+  --glass-bg: rgba(235, 242, 250, 0.7);
+  --glass-border: rgba(6, 71, 137, 0.18);
+  --font-sans-stack: var(--font-work-sans), -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-serif-stack: var(--font-space-grotesk), "Times New Roman", serif;
 }
 
 [data-theme="dark"] {
@@ -1319,10 +1324,10 @@ body {
 
 /* Glass morphism effect */
 .glass-effect {
-  background: rgba(255, 255, 255, 0.8);
-  backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  background: var(--glass-bg);
+  backdrop-filter: blur(16px);
+  border: 1px solid var(--glass-border);
+  box-shadow: 0 20px 50px rgba(6, 71, 137, 0.18);
 }
 
 /* Enhanced text readability */
@@ -1413,10 +1418,10 @@ body {
 
 /* Glass Effect Enhancements */
 .glass-effect {
-  background: rgba(255, 255, 255, 0.8);
-  backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  background: var(--glass-bg);
+  backdrop-filter: blur(16px);
+  border: 1px solid var(--glass-border);
+  box-shadow: 0 20px 50px rgba(6, 71, 137, 0.18);
 }
 
 /* Text Responsiveness */
