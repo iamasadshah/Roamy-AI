@@ -1,10 +1,13 @@
-import { GoogleGenerativeAI } from '@google/generative-ai';
-import { TravelItinerary, FormData, TripOverview } from '@/types/itinerary';
-import { getDestinationData } from './externalData';
-import { format } from 'date-fns';
+import "server-only";
+
+import { GoogleGenerativeAI } from "@google/generative-ai";
+import { format } from "date-fns";
+import { type FormData, type TravelItinerary, type TripOverview } from "@/types/itinerary";
+
+import { getDestinationData } from "./getDestinationData";
 
 // Make sure to use the correct environment variable
-const apiKey = process.env.NEXT_PUBLIC_GEMINI_API_TRAVEL || '';
+const apiKey = process.env.NEXT_PUBLIC_GEMINI_API_TRAVEL || "";
 
 if (!apiKey) {
   console.error('Gemini API key is not configured. Please set NEXT_PUBLIC_GEMINI_API_TRAVEL in your .env.local file.');

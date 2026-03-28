@@ -3,7 +3,7 @@
 import { useCallback, useRef, useState } from "react";
 import type { TravelItinerary } from "@/types/itinerary";
 import { Download, Check, Save } from "lucide-react";
-import StructuredItinerary from "@/components/StructuredItinerary";
+import StructuredItinerary from "./StructuredItinerary";
 import html2pdf from "html2pdf.js";
 
 type PlanMessageProps = {

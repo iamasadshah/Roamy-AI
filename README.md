@@ -69,13 +69,39 @@ Visit [http://localhost:3000](http://localhost:3000) to see your app running!
 
 ## 🏗️ Tech Stack
 
-- **Framework**: [Next.js 14](https://nextjs.org/)
+- **Framework**: [Next.js 15](https://nextjs.org/)
 - **Language**: [TypeScript](https://www.typescriptlang.org/)
 - **Styling**: [Tailwind CSS](https://tailwindcss.com/)
 - **AI Integration**: [Google Gemini](https://deepmind.google/technologies/gemini/)
 - **Animation**: [Framer Motion](https://www.framer.com/motion/)
 - **Icons**: [React Icons](https://react-icons.github.io/react-icons/)
 - **PWA**: [next-pwa](https://www.npmjs.com/package/next-pwa)
+
+## 🗂️ Project Structure
+
+```text
+src/
+├── app/                    # Next.js routes, metadata, and API handlers
+├── features/               # Product features and route-level UI
+│   ├── about/
+│   ├── auth/
+│   ├── home/
+│   ├── marketing/
+│   ├── planner/
+│   └── profile/
+├── server/                 # Server-only services and AI/data integrations
+├── services/               # Shared platform clients (for example Supabase)
+├── shared/                 # Reusable UI, config, constants, and helpers
+└── types/                  # Shared TypeScript contracts
+```
+
+## 🧭 Architecture Notes
+
+- `src/app` is intentionally thin and focuses on routing, metadata, and API boundaries.
+- `src/features` owns screen implementations and feature-specific components.
+- `src/shared` contains reusable building blocks such as layout, UI primitives, config, and retry helpers.
+- `src/server` isolates server-only AI and destination-data logic from client code.
+- `src/services` keeps external platform clients easy to discover and reuse.
 
 ## 📱 PWA Features
 
@@ -86,14 +112,13 @@ Roamy AI is a Progressive Web App (PWA) that offers:
 - 🚀 Fast loading times
 - 🔔 Push notifications (coming soon)
 
-## 🎯 Core Components
+## 🎯 Core Experience
 
-- `MultiStepForm`: Interactive travel preference collection
-- `TripPlan`: AI-generated itinerary display
-- `ItineraryDisplay`: Structured travel plan visualization
-- `BackgroundAnimation`: Engaging visual effects
-- `Features`: Showcase of app capabilities
-- `Testimonials`: User reviews and feedback
+- `HomeChat`: Conversational home experience with saved local chat threads
+- `PlanChatShell`: Guided trip-planning workspace with saved itineraries
+- `PlanWizard`: Structured trip brief intake for itinerary generation
+- `StructuredItinerary`: Rich itinerary renderer for generated travel plans
+- `Navbar`: Shared navigation with auth-aware actions and profile access
 
 ## 🔒 Environment Variables
 

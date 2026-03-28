@@ -11,7 +11,8 @@ import {
 } from "next/font/google";
 import Script from "next/script";
 import "./globals.css";
-import Navbar from "@/components/layout/Navbar";
+import Navbar from "@/shared/components/layout/Navbar";
+import { siteConfig } from "@/shared/config/site";
 import { Toaster } from "react-hot-toast";
 
 const geistSans = Geist({
@@ -60,42 +61,30 @@ const workSans = Work_Sans({
   display: "swap",
 });
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.roamy.ai";
-const sharedTitle = "Roamy AI | Intelligent Travel Planning Assistant";
-const sharedDescription =
-  "Create lightning-fast, AI-powered travel itineraries tailored to your style, budget, and schedule with Roamy AI.";
-const ogImage = "/images/Travel-planing.png";
-
 export const metadata: Metadata = {
-  metadataBase: new URL(siteUrl),
-  applicationName: "Roamy AI",
+  metadataBase: new URL(siteConfig.url),
+  applicationName: siteConfig.name,
   title: {
-    default: sharedTitle,
-    template: "%s | Roamy AI",
+    default: siteConfig.title,
+    template: `%s | ${siteConfig.name}`,
   },
-  description: sharedDescription,
-  keywords: [
-    "AI travel planner",
-    "travel itinerary generator",
-    "personalized trips",
-    "vacation planning app",
-    "Roamy AI",
-  ],
+  description: siteConfig.description,
+  keywords: [...siteConfig.keywords],
   manifest: "/manifest.json",
   category: "travel",
   alternates: {
     canonical: "/",
   },
   openGraph: {
-    title: sharedTitle,
-    description: sharedDescription,
-    url: siteUrl,
-    siteName: "Roamy AI",
+    title: siteConfig.title,
+    description: siteConfig.description,
+    url: siteConfig.url,
+    siteName: siteConfig.name,
     type: "website",
     locale: "en_US",
     images: [
       {
-        url: ogImage,
+        url: siteConfig.ogImage,
         width: 1280,
         height: 720,
         alt: "Roamy AI travel planning dashboard preview",
@@ -104,14 +93,14 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: sharedTitle,
-    description: sharedDescription,
-    images: [ogImage],
+    title: siteConfig.title,
+    description: siteConfig.description,
+    images: [siteConfig.ogImage],
   },
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
-    title: "Roamy AI",
+    title: siteConfig.name,
   },
   formatDetection: {
     telephone: false,
@@ -135,10 +124,10 @@ export const viewport: Viewport = {
 const structuredData = {
   "@context": "https://schema.org",
   "@type": "Organization",
-  name: "Roamy AI",
-  url: siteUrl,
-  description: sharedDescription,
-  logo: `${siteUrl}/favicon.png`,
+  name: siteConfig.name,
+  url: siteConfig.url,
+  description: siteConfig.description,
+  logo: `${siteConfig.url}/favicon.png`,
   sameAs: [
     "https://www.linkedin.com/company/roamy-ai",
     "https://x.com/RoamyAI",
@@ -151,7 +140,7 @@ const structuredData = {
   },
   offers: {
     "@type": "Offer",
-    url: `${siteUrl}/plan`,
+    url: `${siteConfig.url}/plan`,
     price: "0",
     priceCurrency: "USD",
     category: "travel",

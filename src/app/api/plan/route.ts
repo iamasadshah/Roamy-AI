@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
-import { generateTripPlan } from '@/utils/gemini';
+import { generateTripPlan } from '@/server/services/travel/generateTripPlan';
 import type { FormData, TravelItinerary } from '@/types/itinerary';
 
 export async function POST(req: NextRequest) {

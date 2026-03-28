@@ -6,6 +6,7 @@ import { Auth } from "@supabase/auth-ui-react";
 import { ThemeSupa } from "@supabase/auth-ui-shared";
 import { nanoid } from "nanoid";
 import { FaArrowUp } from "react-icons/fa";
+import { requestWithRetry } from "@/shared/lib/requestWithRetry";
 
 const STORAGE_PREFIX = "roamy-chat-threads";
 
@@ -98,12 +99,6 @@ export default function HomeChat() {
     });
   }, [activeChatId, chats]);
 
-  useEffect(() => {
-    if (!user || !pendingMessage) return;
-    void sendMessage(pendingMessage);
-    setPendingMessage(null);
-  }, [pendingMessage, user]);
-
   const activeChat = useMemo(() => {
     if (!activeChatId) return chats[0] ?? null;
     return chats.find((chat) => chat.id === activeChatId) ?? chats[0] ?? null;
@@ -145,76 +140,85 @@ export default function HomeChat() {
     [],
   );
 
-  const sendMessage = async (messageOverride?: string) => {
-    const trimmed = (messageOverride ?? input).trim();
-    if (!trimmed || isResponding) return;
+  const sendMessage = useCallback(
+    async (messageOverride?: string) => {
+      const trimmed = (messageOverride ?? input).trim();
+      if (!trimmed || isResponding) return;
 
-    if (!user) {
-      setPendingMessage(trimmed);
-      setShowLogin(true);
-      return;
-    }
+      if (!user) {
+        setPendingMessage(trimmed);
+        setShowLogin(true);
+        return;
+      }
 
-    const chatId = activeChat?.id ?? nanoid();
-    if (!activeChat) {
-      setActiveChatId(chatId);
-    }
+      const chatId = activeChat?.id ?? nanoid();
+      if (!activeChat) {
+        setActiveChatId(chatId);
+      }
 
-    const userMessage: ChatMessage = {
-      id: nanoid(),
-      role: "user",
-      content: trimmed,
-    };
-
-    setInput("");
-    setIsResponding(true);
-
-    upsertChat(chatId, (chat) => {
-      const nextTitle = chat.title === "New chat" ? shortTitle(trimmed) : chat.title;
-      return {
-        ...chat,
-        title: nextTitle,
-        messages: [...chat.messages, userMessage],
-        updatedAt: new Date().toISOString(),
-      };
-    });
-
-    try {
-      const conversation = getConversation(chatId, trimmed, activeChat);
-      const response = await requestWithRetry(() =>
-        fetch("/api/travel-chat", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ messages: conversation }),
-        }),
-      );
-      const data = await response.json();
-      const assistantMessage: ChatMessage = {
+      const userMessage: ChatMessage = {
         id: nanoid(),
-        role: "assistant",
-        content: data.reply ?? "I could not generate a response.",
+        role: "user",
+        content: trimmed,
       };
 
-      upsertChat(chatId, (chat) => ({
-        ...chat,
-        messages: [...chat.messages, assistantMessage],
-        updatedAt: new Date().toISOString(),
-      }));
-    } catch (error) {
-      const assistantMessage: ChatMessage = {
-        id: nanoid(),
-        role: "assistant",
-        content: "I am having trouble responding right now. Please try again shortly.",
-      };
-      upsertChat(chatId, (chat) => ({
-        ...chat,
-        messages: [...chat.messages, assistantMessage],
-        updatedAt: new Date().toISOString(),
-      }));
-    } finally {
-      setIsResponding(false);
-    }
-  };
+      setInput("");
+      setIsResponding(true);
+
+      upsertChat(chatId, (chat) => {
+        const nextTitle = chat.title === "New chat" ? shortTitle(trimmed) : chat.title;
+        return {
+          ...chat,
+          title: nextTitle,
+          messages: [...chat.messages, userMessage],
+          updatedAt: new Date().toISOString(),
+        };
+      });
+
+      try {
+        const conversation = getConversation(chatId, trimmed, activeChat);
+        const response = await requestWithRetry(() =>
+          fetch("/api/travel-chat", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ messages: conversation }),
+          }),
+        );
+        const data = await response.json();
+        const assistantMessage: ChatMessage = {
+          id: nanoid(),
+          role: "assistant",
+          content: data.reply ?? "I could not generate a response.",
+        };
+
+        upsertChat(chatId, (chat) => ({
+          ...chat,
+          messages: [...chat.messages, assistantMessage],
+          updatedAt: new Date().toISOString(),
+        }));
+      } catch {
+        const assistantMessage: ChatMessage = {
+          id: nanoid(),
+          role: "assistant",
+          content: "I am having trouble responding right now. Please try again shortly.",
+        };
+        upsertChat(chatId, (chat) => ({
+          ...chat,
+          messages: [...chat.messages, assistantMessage],
+          updatedAt: new Date().toISOString(),
+        }));
+      } finally {
+        setIsResponding(false);
+      }
+    },
+    [activeChat, input, isResponding, upsertChat, user],
+  );
+
+  useEffect(() => {
+    if (!user || !pendingMessage) return;
+    void sendMessage(pendingMessage);
+    setPendingMessage(null);
+  }, [pendingMessage, sendMessage, user]);
 
   return (
     <div className="relative min-h-screen bg-cream text-brand-900">
@@ -479,35 +483,4 @@ function getConversation(
   const history = base.map((message) => ({ role: message.role, content: message.content }));
   history.push({ role: "user", content: latestUserMessage });
   return history;
-}
-
-const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
-
-async function requestWithRetry(fetcher: () => Promise<Response>, attempts = 3, baseDelay = 1200) {
-  let attempt = 0;
-  while (attempt < attempts) {
-    const response = await fetcher();
-    if (response.ok) {
-      return response;
-    }
-
-    const isServerError = response.status >= 500 && response.status < 600;
-    let errorMessage: string | undefined;
-    try {
-      const data = await response.json();
-      errorMessage = data?.error;
-    } catch {
-      // ignore parsing error
-    }
-
-    if (isServerError && attempt < attempts - 1) {
-      await delay(baseDelay * Math.pow(2, attempt));
-      attempt += 1;
-      continue;
-    }
-
-    throw new Error(errorMessage || `Request failed with status ${response.status}`);
-  }
-
-  throw new Error("Request failed after multiple attempts");
 }

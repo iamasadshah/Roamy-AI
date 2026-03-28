@@ -3,13 +3,15 @@
 import { ReactNode, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { TripsRow } from "@/types/supabase";
 import type { FormData, TravelItinerary } from "@/types/itinerary";
-import { supabase } from "@/utils/supabaseClient";
-import PlanWizard from "@/components/plan/PlanWizard";
-import PlanMessage from "@/components/plan/PlanMessage";
+import { requestWithRetry } from "@/shared/lib/requestWithRetry";
+import { supabase } from "@/services/supabase/browserClient";
 import { nanoid } from "nanoid";
 import { Sparkles, Plus, Send, Loader2, MessageCircle } from "lucide-react";
 import toast from "react-hot-toast";
 import Image from "next/image";
+
+import PlanMessage from "./PlanMessage";
+import PlanWizard from "./PlanWizard";
 
 type PlannerProps = {
   initialTrips: TripsRow[];
@@ -61,9 +63,9 @@ export default function PlanChatShell({ initialTrips, userId }: PlannerProps) {
   const [input, setInput] = useState("");
   const [isResponding, setIsResponding] = useState(false);
   const [isGeneratingPlan, setIsGeneratingPlan] = useState(false);
-const supabaseClient = supabase;
-const scrollRef = useRef<HTMLDivElement | null>(null);
-const shouldStickToBottom = useRef(true);
+  const supabaseClient = supabase;
+  const scrollRef = useRef<HTMLDivElement | null>(null);
+  const shouldStickToBottom = useRef(true);
 
   const appendMessage = useCallback((message: ChatMessage) => {
     shouldStickToBottom.current = true;
@@ -460,37 +462,6 @@ function friendlyDate(value: string) {
 
 function formatDate(date: Date) {
   return date.toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" });
-}
-
-const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
-
-async function requestWithRetry(fetcher: () => Promise<Response>, attempts = 3, baseDelay = 1200) {
-  let attempt = 0;
-  while (attempt < attempts) {
-    const response = await fetcher();
-    if (response.ok) {
-      return response;
-    }
-
-    const isServerError = response.status >= 500 && response.status < 600;
-    let errorMessage: string | undefined;
-    try {
-      const data = await response.json();
-      errorMessage = data?.error;
-    } catch {
-      // ignore parsing error
-    }
-
-    if (isServerError && attempt < attempts - 1) {
-      await delay(baseDelay * Math.pow(2, attempt));
-      attempt += 1;
-      continue;
-    }
-
-    throw new Error(errorMessage || `Request failed with status ${response.status}`);
-  }
-
-  throw new Error("Request failed after multiple attempts");
 }
 
 type ContentBlock =

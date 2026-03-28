@@ -1,4 +1,6 @@
-import axios from 'axios';
+import "server-only";
+
+import axios from "axios";
 
 interface WeatherResponse {
   current: {

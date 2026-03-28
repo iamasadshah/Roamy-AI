@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { cookies } from "next/headers";
 import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
 import type { Database, TripsRow } from "@/types/supabase";
-import PlanChatShell from "@/components/PlanChatShell";
+import PlanChatShell from "@/features/planner/components/PlanChatShell";
 
 export const metadata: Metadata = {
   title: "Plan a Trip",
