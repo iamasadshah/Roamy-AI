@@ -66,6 +66,35 @@ interface Props {
   itinerary: TravelItinerary;
 }
 
+const infoSectionClasses = {
+  blue: {
+    iconBg: "bg-gradient-to-br from-blue-100 to-blue-200",
+    dot: "bg-blue-500",
+  },
+  green: {
+    iconBg: "bg-gradient-to-br from-green-100 to-green-200",
+    dot: "bg-green-500",
+  },
+  purple: {
+    iconBg: "bg-gradient-to-br from-purple-100 to-purple-200",
+    dot: "bg-purple-500",
+  },
+  pink: {
+    iconBg: "bg-gradient-to-br from-pink-100 to-pink-200",
+    dot: "bg-pink-500",
+  },
+  indigo: {
+    iconBg: "bg-gradient-to-br from-indigo-100 to-indigo-200",
+    dot: "bg-indigo-500",
+  },
+  orange: {
+    iconBg: "bg-gradient-to-br from-orange-100 to-orange-200",
+    dot: "bg-orange-500",
+  },
+} as const;
+
+type InfoSectionColor = keyof typeof infoSectionClasses;
+
 const StructuredItinerary: React.FC<Props> = ({ itinerary }) => {
   if (!itinerary || !itinerary.itinerary || itinerary.itinerary.length === 0) {
     return (
@@ -342,13 +371,21 @@ const StructuredItinerary: React.FC<Props> = ({ itinerary }) => {
               </motion.div>
   );
 
-  const renderInfoSection = (title: string, items: string[], icon: React.ReactNode, color: string) => (
-    <motion.div
-      variants={itemVariants}
-      className={`bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-white/30`}
-    >
+  const renderInfoSection = (
+    title: string,
+    items: string[],
+    icon: React.ReactNode,
+    color: InfoSectionColor,
+  ) => {
+    const styles = infoSectionClasses[color];
+
+    return (
+      <motion.div
+        variants={itemVariants}
+        className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-white/30"
+      >
       <h3 className="text-lg font-bold text-gray-800 mb-4 flex items-center gap-3">
-        <div className={`w-8 h-8 bg-gradient-to-br from-${color}-100 to-${color}-200 rounded-lg flex items-center justify-center`}>
+        <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${styles.iconBg}`}>
           {icon}
               </div>
         {title}
@@ -356,13 +393,14 @@ const StructuredItinerary: React.FC<Props> = ({ itinerary }) => {
       <ul className="space-y-2">
         {items.map((item, index) => (
           <li key={index} className="flex items-start gap-3 text-gray-600">
-            <div className={`w-2 h-2 bg-${color}-500 rounded-full mt-2 flex-shrink-0`}></div>
+            <div className={`w-2 h-2 rounded-full mt-2 flex-shrink-0 ${styles.dot}`}></div>
             <span className="leading-relaxed">{item}</span>
                         </li>
                       ))}
                     </ul>
-    </motion.div>
-  );
+      </motion.div>
+    );
+  };
 
   return (
     <LazyMotion features={domAnimation}>
